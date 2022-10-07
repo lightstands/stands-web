@@ -11,6 +11,7 @@ const SessionSignIn = lazy(() => import("./Sessions/signin"));
 
 const devPages = import.meta.env.DEV
     ? {
+          "/": lazy(() => import("./_dev/IndexPage")),
           "/oauth2": lazy(() => import("./_dev/OAuth2Test")),
           "/session": lazy(() => import("./_dev/session")),
       }
