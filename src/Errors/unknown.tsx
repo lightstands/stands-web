@@ -23,6 +23,9 @@ const ErrorPage: Component<ErrorPageProps> = (p) => {
                 margin: 11px 0 22px;
                 overflow: hidden;
             }
+            code {
+                word-wrap: break-word;
+            }
             * {
                 margin: 0;
                 padding: 0;
