@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: 	AGPL-3.0-or-later
 
 import { Component, For, Show } from "solid-js";
-import { Outlet, Route, Routes } from "@solidjs/router";
+import { Route, Routes } from "@solidjs/router";
 import { lazy } from "solid-js";
 
 const OAuth2ConfirmPage = lazy(() => import("./OAuth2/confirm"));
@@ -25,6 +25,8 @@ const FeedPage = lazy(() => import("./Feeds/feed"));
 
 const Scaffold = lazy(() => import("./common/Scaffold"));
 
+const PostPage = lazy(() => import("./Feeds/post"));
+
 const App: Component = () => {
     return (
         <Routes>
@@ -41,10 +43,7 @@ const App: Component = () => {
                     )}
                 >
                     <Route path="/" />
-                    <Route
-                        path="/posts/:post"
-                        component={() => <p>Placeholder</p>}
-                    />
+                    <Route path="/posts/:post" component={PostPage} />
                 </Route>
             </Route>
 

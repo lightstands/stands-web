@@ -1,4 +1,9 @@
-import { Outlet, useParams, useSearchParams } from "@solidjs/router";
+import {
+    Outlet,
+    useNavigate,
+    useParams,
+    useSearchParams,
+} from "@solidjs/router";
 import AppBar from "@suid/material/AppBar";
 import IconButton from "@suid/material/IconButton";
 import Toolbar from "@suid/material/Toolbar";
@@ -32,7 +37,8 @@ import ListItemText from "@suid/material/ListItemText";
 import Divider from "@suid/material/Divider";
 import LinearProgress from "@suid/material/LinearProgress";
 
-function PostListItem(props: { metadata: PublicPost }) {
+function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
+    const navigate = useNavigate();
     const hasContent = () => props.metadata.contentTypes.length > 0;
     const hasLink = () => typeof props.metadata.link !== "undefined";
     return (
@@ -69,6 +75,22 @@ function PostListItem(props: { metadata: PublicPost }) {
                     />
                 </ListItem>
             </Match>
+            <Match when={hasContent()}>
+                <ListItem
+                    sx={{ cursor: "pointer" }}
+                    data-index={props.metadata.ref}
+                    onClick={() =>
+                        navigate(
+                            `/feeds/${props.feedUrlBlake3}/posts/${props.metadata.idBlake3}`
+                        )
+                    }
+                >
+                    <ListItemText
+                        primary={props.metadata.title}
+                        secondary={props.metadata.summary}
+                    />
+                </ListItem>
+            </Match>
             <Match when={true}>
                 <ListItem data-index={props.metadata.ref}>
                     <ListItemText
@@ -82,7 +104,7 @@ function PostListItem(props: { metadata: PublicPost }) {
 }
 
 const FeedPage: Component = () => {
-    const data = useParams<{ feed: string }>();
+    const data = useParams<{ feed: string; post?: string }>();
     const [query, setQuery] = useSearchParams<{
         ref_gt: string;
         ref_le: string;
@@ -212,7 +234,10 @@ const FeedPage: Component = () => {
                                                     <Divider />
                                                 </Show>
 
-                                                <PostListItem metadata={item} />
+                                                <PostListItem
+                                                    metadata={item}
+                                                    feedUrlBlake3={data.feed}
+                                                />
                                             </>
                                         );
                                     }}
