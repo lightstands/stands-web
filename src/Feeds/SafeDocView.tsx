@@ -3,7 +3,6 @@ import {
     createEffect,
     createSignal,
     JSX,
-    on,
     onCleanup,
     onMount,
 } from "solid-js";
@@ -60,21 +59,33 @@ const SafeDocView: Component<SafeDocViewProps> = (props) => {
         }
     });
 
-    const onDocLoaded = () => {
+    const onDOMLoaded = () => {
         const docEl = el.contentDocument!.documentElement;
-        for (const node of docEl.querySelectorAll("a")) {
-            node.onclick = onLinkClick;
-        }
-        for (const node of docEl.querySelectorAll("img")) {
-            // Rubicon: Taking note:
-            // Browsers could not lazy load images unless JavaScript-enabled for privacy concern.
-            // They are smart enough to acknowledge that JavaScript-disabled = "do not track me"!
-            // FIXME: We need a workaround to load images lazily, or we may trigger the rate limit from different sites even in normal reading.
-            // We may need a image proxy in future
+        const imgs = docEl.querySelectorAll("img");
+        for (const node of imgs) {
+            node.loading = "lazy";
             node.crossOrigin = "anonymous";
             node.style.width = "100%";
         }
+    };
+
+    const waitForDOMLoaded = () => {
+        const wait = () => {
+            if (el.contentDocument?.documentElement) {
+                onDOMLoaded();
+            } else {
+                setTimeout(wait, 0);
+            }
+        };
+        setTimeout(wait, 0);
+    };
+
+    const onDocLoaded = () => {
+        const docEl = el.contentDocument!.documentElement;
         docEl.style.overflow = "hidden";
+        for (const node of docEl.querySelectorAll("a")) {
+            node.onclick = onLinkClick;
+        }
         if (currentObservedElement !== docEl) {
             if (currentObservedElement) {
                 docResizingOb.unobserve(currentObservedElement);
@@ -86,6 +97,10 @@ const SafeDocView: Component<SafeDocViewProps> = (props) => {
 
     onCleanup(() => {
         el.removeEventListener("load", onDocLoaded);
+        el.contentWindow!.removeEventListener(
+            "DOMContentLoaded",
+            waitForDOMLoaded
+        );
         if (currentObservedElement) {
             docResizingOb.unobserve(currentObservedElement);
             currentObservedElement = undefined;
@@ -94,6 +109,9 @@ const SafeDocView: Component<SafeDocViewProps> = (props) => {
 
     onMount(() => {
         el.addEventListener("load", onDocLoaded, {
+            passive: true,
+        });
+        el.contentWindow!.addEventListener("unload", waitForDOMLoaded, {
             passive: true,
         });
     });
