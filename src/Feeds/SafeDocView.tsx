@@ -65,7 +65,7 @@ const SafeDocView: Component<SafeDocViewProps> = (props) => {
         for (const node of imgs) {
             node.loading = "lazy";
             node.crossOrigin = "anonymous";
-            node.style.width = "100%";
+            node.style.maxWidth = "100%";
         }
     };
 
