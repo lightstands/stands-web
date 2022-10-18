@@ -1,4 +1,4 @@
-import { useLocation } from "@solidjs/router";
+import { useLocation, useNavigate } from "@solidjs/router";
 import List from "@suid/material/List";
 import ListItemButton from "@suid/material/ListItemButton";
 import ListItemIcon from "@suid/material/ListItemIcon";
@@ -14,6 +14,7 @@ const FEED_REGEXP = /\/feeds\/([^\/]*?)\/?(?!.+)$/;
 const NviDrawerList: Component = () => {
     const loc = useLocation();
     const client = useClient();
+    const navigate = useNavigate();
     const pathname = () => loc.pathname;
     const feedPostConfig = () => {
         const name = pathname();
@@ -49,13 +50,23 @@ const NviDrawerList: Component = () => {
     );
     return (
         <List sx={{ width: "100%", height: "100%" }} disablePadding>
-            <ListItemButton selected={!!feedPostConfig()?.feed}>
+            <ListItemButton
+                selected={pathname() === "/feedlists/default"}
+                onClick={() => navigate("/feedlists/default")}
+            >
                 <ListItemIcon>
                     <ListIcon />
                 </ListItemIcon>
-                <ListItemText primary={"Feeds"} />
+                <ListItemText primary="Subscribed" />
             </ListItemButton>
+
             <Show when={feedPostConfig()}>
+                <ListItemButton selected={!!feedPostConfig()?.feed}>
+                    <ListItemIcon>
+                        <ListIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Feeds"} />
+                </ListItemButton>
                 <List disablePadding>
                     <ListItemButton
                         sx={{ pl: 4 }}

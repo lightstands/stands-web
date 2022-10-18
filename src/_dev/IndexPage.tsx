@@ -13,6 +13,9 @@ const IndexPage: Component = () => {
                 <li>
                     <Link href="/_dev/session">Current Session</Link>
                 </li>
+                <li>
+                    <Link href="/_dev/euid">EUId Playground</Link>
+                </li>
             </ul>
         </>
     );

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: 	AGPL-3.0-or-later
 
 import { Component, For, Show } from "solid-js";
-import { Route, Routes } from "@solidjs/router";
+import { Outlet, Route, Routes } from "@solidjs/router";
 import { lazy } from "solid-js";
 
 const OAuth2ConfirmPage = lazy(() => import("./OAuth2/confirm"));
@@ -14,6 +14,7 @@ const devPages = import.meta.env.DEV
           "/": lazy(() => import("./_dev/IndexPage")),
           "/oauth2": lazy(() => import("./_dev/OAuth2Test")),
           "/session": lazy(() => import("./_dev/session")),
+          "/euid": lazy(() => import("./_dev/EUID")),
       }
     : {};
 
@@ -26,6 +27,8 @@ const FeedPage = lazy(() => import("./Feeds/feed"));
 const Scaffold = lazy(() => import("./common/Scaffold"));
 
 const PostPage = lazy(() => import("./Feeds/post"));
+
+const DefaultFeedListPage = lazy(() => import("./FeedLists/default"));
 
 const App: Component = () => {
     return (
@@ -45,6 +48,16 @@ const App: Component = () => {
                     <Route path="/" />
                     <Route path="/posts/:post" component={PostPage} />
                 </Route>
+            </Route>
+            <Route
+                path="/feedlists"
+                component={() => (
+                    <Scaffold>
+                        <Outlet />
+                    </Scaffold>
+                )}
+            >
+                <Route path="/default" component={DefaultFeedListPage} />
             </Route>
 
             <Show when={import.meta.env.DEV}>
