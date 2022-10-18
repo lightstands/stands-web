@@ -17,6 +17,8 @@ interface ScaffoldProps {}
 type ScaffoldState = {
     drawerType: "permanent" | "temporary";
     drawerOpen: boolean;
+    width: number | null;
+    height: number | null;
 };
 
 type ScaffoldContext = {
@@ -29,11 +31,13 @@ const Cx = createContext<ScaffoldContext>();
 const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
     const [el, setEl] = createSignal<HTMLDivElement>();
     const [drawerOpen, setDrawerOpen] = createSignal(false);
+    const size = createElementSize(el);
     const [state, setState] = createStore<ScaffoldState>({
         drawerType: "temporary",
         drawerOpen: false,
+        width: size.width,
+        height: size.height,
     });
-    const size = createElementSize(el);
     const showPermanentDrawer = () => !!(size.width && size.width > 772);
     const cx: ScaffoldContext = {
         state,
@@ -54,6 +58,9 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
             setState({ drawerType: "temporary" });
             setDrawerOpen(false);
         }
+    });
+    createEffect(() => {
+        setState({ width: size.width, height: size.height });
     });
     return (
         <Cx.Provider value={cx}>
