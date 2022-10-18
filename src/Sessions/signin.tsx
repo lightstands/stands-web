@@ -33,7 +33,7 @@ import Link from "@suid/material/Link";
 import { error2explain } from "../common/utils";
 
 const DEFAULT_SCOPE =
-    "session.list session.revoke_other user.change_password user.create_session user.read";
+    "session.list session.revoke_other user.change_password user.create_session user.read feedlist.read feedlist.write feedlist.list";
 
 function getUserAgent() {
     const browser = browserDetect();

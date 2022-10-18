@@ -86,6 +86,24 @@ const EXPLAINS: Record<string, PermissionExplain> = {
             "This app will able to read the private part of your personal profile on LightStands, including email address.",
         iconEl: () => <AccountCircleIcon />,
     },
+    "feedlist.read": {
+        title: "Read your feed lists",
+        subtitle:
+            "This app will be able to read all the feed lists you can access",
+        iconEl: () => <ViewListIcon />,
+    },
+    "feedlist.write": {
+        title: "Apply changes to your feed lists",
+        subtitle:
+            "This app will be able to apply changes all the feed lists you can apply changes",
+        iconEl: () => <ViewListIcon />,
+    },
+    "feedlist.list": {
+        title: "List your feed lists",
+        subtitle:
+            "This app will be able to list all the feed lists you can access",
+        iconEl: () => <ViewListIcon />,
+    },
 };
 
 function mapExplain<P>(
