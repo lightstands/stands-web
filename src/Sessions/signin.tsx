@@ -10,7 +10,14 @@ import CardContent from "@suid/material/CardContent";
 import CardHeader from "@suid/material/CardHeader";
 import TextField from "@suid/material/TextField";
 import Typography from "@suid/material/Typography";
-import { Component, createEffect, createSignal, Show, untrack } from "solid-js";
+import {
+    batch,
+    Component,
+    createEffect,
+    createSignal,
+    Show,
+    untrack,
+} from "solid-js";
 import Style from "./signin.module.css";
 import { useStore } from "@nanostores/solid";
 import {
@@ -20,6 +27,7 @@ import {
 import {
     isRight,
     newSessionByPassword,
+    NotFoundError,
     unboxLeft,
     unboxRight,
     UserAgent,
@@ -67,9 +75,14 @@ const LoginPage: Component = () => {
     const [params] = useSearchParams<LoginPageSearchParams>();
     const [techInfoDlg, setTechInfoDlg] = createSignal<string>();
     const [unknownError, setUnknownError] = createSignal<Error | undefined>();
+    const [knownError, setKnownError] = createSignal<"usernotfound">();
 
     const signIn = async () => {
-        setSignInProgress(true);
+        batch(() => {
+            setUnknownError(undefined);
+            setKnownError(undefined);
+            setSignInProgress(true);
+        });
         try {
             const ua = getUserAgent();
             const result = await newSessionByPassword(
@@ -86,7 +99,9 @@ const LoginPage: Component = () => {
                 await refreshSession(client);
             } else {
                 const fail = unboxLeft(result);
-                console.log("signin error", fail);
+                if (fail instanceof NotFoundError) {
+                    setKnownError("usernotfound");
+                }
             }
         } catch (e) {
             if (e instanceof Error) {
@@ -109,6 +124,13 @@ const LoginPage: Component = () => {
             }
         }
     });
+
+    const getKnownErrorHelperText = () => {
+        const errId = knownError();
+        if (errId === "usernotfound") {
+            return "Please check your password. We could not found the user on LightStands.";
+        }
+    };
 
     return (
         <>
@@ -145,6 +167,7 @@ const LoginPage: Component = () => {
                             value={username()}
                             onChange={(el) => setUsername(el.target.value)}
                             sx={{ marginBottom: "16px" }}
+                            error={typeof knownError() !== "undefined"}
                         />
                         <TextField
                             variant="standard"
@@ -156,6 +179,8 @@ const LoginPage: Component = () => {
                             autoComplete="current-password"
                             value={password()}
                             onChange={(el) => setPassword(el.target.value)}
+                            error={typeof knownError() !== "undefined"}
+                            helperText={getKnownErrorHelperText()}
                         />
                         <Show when={unknownError()}>
                             <Typography color="error">
