@@ -1,6 +1,5 @@
-// Copyright 2022 Rubicon.
-// SPDX-License-Identifier: 	AGPL-3.0-or-later
-
+// The SVG Drawable is from materialdesignicons.com
+// Licensed by https://github.com/Templarian/MaterialDesign/blob/master/LICENSE
 import SvgIcon from "@suid/material/SvgIcon";
 
 export default () => (
