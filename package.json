@@ -13,6 +13,7 @@
         "@babel/core": "^7.19.3",
         "@suid/vite-plugin": "0.0.3",
         "@types/cuint": "^0.2.1",
+        "@types/ua-parser-js": "^0.7.36",
         "@types/uuid": "^8.3.4",
         "babel-preset-solid": "^1.5.9",
         "eslint": "^8.25.0",
@@ -30,13 +31,13 @@
         "@solidjs/router": "^0.5.0",
         "@suid/icons-material": "~0.4.1",
         "@suid/material": "^0.6.3",
-        "browser-detect": "^0.2.28",
         "cuint": "^0.2.2",
         "date-fns": "^2.29.3",
         "lightstands-js": "^1.1.1",
         "nanostores": "0.7",
         "solid-hcaptcha": "^0.2.5",
         "solid-js": "^1.5.9",
+        "ua-parser-js": "^1.0.32",
         "uuid": "^9.0.0"
     }
 }

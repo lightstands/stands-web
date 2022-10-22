@@ -33,28 +33,23 @@ import {
 import { useClient } from "../client";
 import { Params, useNavigate, useSearchParams } from "@solidjs/router";
 import { deviceIdStore } from "../stores/device";
-import browserDetect from "browser-detect";
 import TechInfoDialog from "../common/TechInfoDlg";
 import Link from "@suid/material/Link";
 import { error2explain } from "../common/utils";
 import CenterCard from "../common/CenterCard";
+import { UAParser } from "ua-parser-js";
 
 const DEFAULT_SCOPE =
     "session.list session.revoke_other user.change_password user.create_session user.read feedlist.read feedlist.write feedlist.list";
 
 function getUserAgent() {
-    const browser = browserDetect();
-    const name = typeof browser.name !== "undefined" ? browser.name : "Browser";
-    const mobile =
-        typeof browser.mobile !== "undefined"
-            ? browser.mobile
-                ? " Mobile"
-                : ""
-            : "";
-    const sys = typeof browser.os !== "undefined" ? browser.os : "Unknown OS";
+    const ua = UAParser();
+    const name =
+        typeof ua.browser.name !== "undefined" ? ua.browser.name : "Browser";
+    const sys = typeof ua.os.name !== "undefined" ? ua.os.name : "Unknown OS";
     return {
         p: "web",
-        dev: `${name}${mobile} on ${sys}`,
+        dev: `${name} on ${sys}`,
     } as UserAgent;
 }
 
