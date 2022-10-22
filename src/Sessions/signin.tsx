@@ -63,10 +63,13 @@ interface LoginPageSearchParams extends Params {
 }
 
 const LoginPage: Component = () => {
+    const [searchParams] = useSearchParams<{ username: string }>();
     const currentSession = useStore(currentSessionStore);
     const deviceId = useStore(deviceIdStore);
     const client = useClient();
-    const [username, setUsername] = createSignal("");
+    const [username, setUsername] = createSignal(
+        searchParams.username ? searchParams.username : ""
+    );
     const [password, setPassword] = createSignal("");
     const [signInProgress, setSignInProgress] = createSignal(false);
     const navigate = useNavigate();
@@ -210,7 +213,9 @@ const LoginPage: Component = () => {
                             flexGrow: 1,
                         }}
                     >
-                        <Button disabled>Create account</Button>
+                        <Button onClick={() => navigate("/sign-up/")}>
+                            Create account
+                        </Button>
                     </Box>
                     <Box
                         sx={{

@@ -9,14 +9,17 @@ interface CenterCardProps {}
 const CenterCard: ParentComponent<CenterCardProps> = (props) => {
     const isMidSmallerScreen = createMediaQuery("screen and (width < 600px)");
     return (
-        <Box class={Style.SmartDialog}>
-            <Card
-                class={Style.ComfortHeader}
-                elevation={isMidSmallerScreen() ? 0 : 1}
-            >
-                {props.children}
-            </Card>
-        </Box>
+        <>
+            <Box class={Style.SmartDialog}>
+                <Card
+                    class={Style.ComfortHeader}
+                    elevation={isMidSmallerScreen() ? 0 : 1}
+                >
+                    {props.children}
+                </Card>
+            </Box>
+            <style>{`#root { overflow-y: hidden; }`}</style>
+        </>
     );
 };
 

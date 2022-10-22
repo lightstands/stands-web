@@ -30,6 +30,10 @@ const PostPage = lazy(() => import("./Feeds/post"));
 
 const DefaultFeedListPage = lazy(() => import("./FeedLists/default"));
 
+const SignUpEmailFlow0 = lazy(() => import("./UsrCreation/EmailFlowStage0"));
+const SignUpEmailFlow1 = lazy(() => import("./UsrCreation/EmailFlowStage1"));
+const SignUpSetPassword = lazy(() => import("./UsrCreation/SetPassword"));
+
 const App: Component = () => {
     return (
         <Routes>
@@ -59,6 +63,22 @@ const App: Component = () => {
             >
                 <Route path="/default" component={DefaultFeedListPage} />
             </Route>
+            <Route path="/sign-up">
+                <Route path="/" component={SignUpEmailFlow0} />
+                <Route path="/email">
+                    <Route path="/" component={SignUpEmailFlow0} />
+                    <Route path="/:email" component={SignUpEmailFlow1} />
+                </Route>
+                <Route path="/set-password" component={SignUpSetPassword} />
+            </Route>
+            <Route
+                path="/"
+                component={() => (
+                    <Scaffold>
+                        <DefaultFeedListPage />
+                    </Scaffold>
+                )}
+            />
 
             <Show when={import.meta.env.DEV}>
                 <Route path="/_dev">
