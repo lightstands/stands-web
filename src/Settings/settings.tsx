@@ -5,7 +5,7 @@ import ListItemText from "@suid/material/ListItemText";
 import ListSubheader from "@suid/material/ListSubheader";
 import Paper from "@suid/material/Paper";
 import Typography from "@suid/material/Typography";
-import { Component, createResource, Show } from "solid-js";
+import { Component, createResource, createSignal, lazy, Show } from "solid-js";
 import SharedAppBar from "../common/SharedAppBar";
 import CommonStyle from "../common/Style.module.css";
 import {
@@ -22,10 +22,13 @@ import ListItem from "@suid/material/ListItem";
 import { OpenInNew as OpenInNewIcon } from "@suid/icons-material";
 import { useNavigate } from "@solidjs/router";
 
+const SetPasswordDlg = lazy(() => import("./SetPasswordDlg"));
+
 const SettingsPage: Component = () => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
+    const [openSetPassword, setOpenSetPassword] = createSignal(false);
     const [userPrivateInfo] = createResource(
         (): [ClientConfig, { session: Session } | undefined] => [
             client,
@@ -46,6 +49,12 @@ const SettingsPage: Component = () => {
     return (
         <>
             <SharedAppBar title="Settings" />
+            <Show when={openSetPassword()}>
+                <SetPasswordDlg
+                    open={openSetPassword()}
+                    onClose={() => setOpenSetPassword((prev) => !prev)}
+                />
+            </Show>
             <Box
                 class={`${CommonStyle.SmartBodyWidth} ${CommonStyle.FixedCenterX}`}
             >
@@ -98,9 +107,17 @@ const SettingsPage: Component = () => {
                                 secondary={userPrivateInfo()?.username}
                             />
                         </ListItemButton>
-                        <ListItemButton disabled>
-                            <ListItemText primary="Set new password" />
-                        </ListItemButton>
+                        <Show
+                            when={session()?.session.accessTokenObject.scope.includes(
+                                "user.change_password"
+                            )}
+                        >
+                            <ListItemButton
+                                onClick={() => setOpenSetPassword(true)}
+                            >
+                                <ListItemText primary="Set new password" />
+                            </ListItemButton>
+                        </Show>
                     </Paper>
                     <ListSubheader>
                         <Typography>About</Typography>

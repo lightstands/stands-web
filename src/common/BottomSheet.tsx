@@ -3,7 +3,8 @@ import Drawer from "@suid/material/Drawer";
 import Modal from "@suid/material/Modal";
 import Paper from "@suid/material/Paper";
 import { ParentComponent, Show } from "solid-js";
-import { useScaffold } from "../common/Scaffold";
+import { useScaffold } from "./Scaffold";
+import CommonStyle from "./Style.module.css";
 
 interface BottomSheetProps {
     open: boolean;
@@ -26,7 +27,7 @@ const BottomSheet: ParentComponent<BottomSheetProps> = (props) => {
                         sx={{
                             display: "flex",
                             flexDirection: "column",
-                            minHeight: "52vh",
+                            minHeight: "20vh",
                         }}
                     >
                         {props.children}
@@ -36,13 +37,10 @@ const BottomSheet: ParentComponent<BottomSheetProps> = (props) => {
         >
             <Modal open={props.open} onClose={props.onClose}>
                 <Paper
+                    class={CommonStyle.FixedCenter}
                     sx={{
                         display: "flex",
                         flexDirection: "column",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        position: "relative",
                         maxWidth: "560px",
                     }}
                 >

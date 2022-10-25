@@ -9,14 +9,13 @@ import { Component, createEffect, createSignal } from "solid-js";
 import CenterCard from "../common/CenterCard";
 import { aeither, setUserPassword } from "lightstands-js";
 import { useClient } from "../client";
+import { PASS_REGEX } from "../common/regex";
 
 /* Accept session (the access token) from search string.
 
 For exmaple:
 ?session=xxxxx
 */
-
-const PASS_REGEX = /^[a-zA-Z0-9\-_\$%&@^`~.,;:\\/|<>*+!?=\[\]{}\(\)]+$/;
 
 const SetPasswordPage: Component = () => {
     const navigate = useNavigate();

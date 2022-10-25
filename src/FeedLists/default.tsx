@@ -17,7 +17,7 @@ import { useLocation, useNavigate } from "@solidjs/router";
 import Box from "@suid/material/Box";
 import { Add as AddIcon } from "@suid/icons-material";
 import Fab from "@suid/material/Fab";
-import BottomSheet from "./BottomSheet";
+import BottomSheet from "../common/BottomSheet";
 import AddFeedDlg from "./AddFeedDlg";
 import List from "@suid/material/List";
 import ListItem from "@suid/material/ListItem";
