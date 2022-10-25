@@ -68,6 +68,15 @@ const SettingsPage: Component = () => {
                     </ListSubheader>
                     <Paper>
                         <ListItemButton
+                            divider
+                            onClick={() => navigate("/sign-out")}
+                        >
+                            <ListItemText
+                                primary="Sign out"
+                                primaryTypographyProps={{ color: "error" }}
+                            />
+                        </ListItemButton>
+                        <ListItemButton
                             disabled={userPrivateInfo.loading || true}
                             divider
                         >
