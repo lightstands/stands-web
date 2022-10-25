@@ -1,15 +1,3 @@
-@media (width >= 532px) {
-    .auto-width {
-        width: 80%;
-    }
-}
-
-@media (width < 532px) {
-    .auto-width {
-        width: 100%;
-    }
-}
-
 .post-list-item-primary-title {
     display: inline-flex;
     flex-direction: row;

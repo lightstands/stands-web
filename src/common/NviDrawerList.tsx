@@ -3,10 +3,14 @@ import List from "@suid/material/List";
 import ListItemButton from "@suid/material/ListItemButton";
 import ListItemIcon from "@suid/material/ListItemIcon";
 import { Component, createResource, Show } from "solid-js";
-import { List as ListIcon } from "@suid/icons-material";
+import {
+    List as ListIcon,
+    Settings as SettingsIcon,
+} from "@suid/icons-material";
 import ListItemText from "@suid/material/ListItemText";
 import { aunwrap, getFeedInfo, PublicFeed } from "lightstands-js";
 import { useClient } from "../client";
+import Divider from "@suid/material/Divider";
 
 const FEED_POST_REGEXP = /\/feeds\/(.*?)\/posts\/(.+)\/?$/;
 const FEED_REGEXP = /\/feeds\/([^\/]*?)\/?(?!.+)$/;
@@ -49,45 +53,59 @@ const NviDrawerList: Component = () => {
         }
     );
     return (
-        <List sx={{ width: "100%", height: "100%" }} disablePadding>
-            <ListItemButton
-                selected={pathname() === "/feedlists/default"}
-                onClick={() => navigate("/feedlists/default")}
-            >
-                <ListItemIcon>
-                    <ListIcon />
-                </ListItemIcon>
-                <ListItemText primary="Subscribed" />
-            </ListItemButton>
-
-            <Show when={feedPostConfig()}>
-                <ListItemButton selected={!!feedPostConfig()?.feed}>
+        <>
+            <List sx={{ width: "100%", height: "100%" }} disablePadding>
+                <ListItemButton
+                    selected={pathname() === "/feedlists/default"}
+                    onClick={() => navigate("/feedlists/default")}
+                >
                     <ListItemIcon>
                         <ListIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Feeds"} />
+                    <ListItemText primary="Subscribed" />
                 </ListItemButton>
-                <List disablePadding>
-                    <ListItemButton
-                        sx={{ pl: 4 }}
-                        selected={!!feedPostConfig()?.feed}
-                    >
-                        <ListItemText
-                            inset
-                            primaryTypographyProps={{
-                                noWrap: true,
-                                textOverflow: "ellipsis",
-                            }}
-                            primary={
-                                feedMetadata()
-                                    ? feedMetadata()?.title || "..."
-                                    : "..."
-                            }
-                        />
+
+                <Show when={feedPostConfig()}>
+                    <ListItemButton selected={!!feedPostConfig()?.feed}>
+                        <ListItemIcon>
+                            <ListIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={"Feeds"} />
                     </ListItemButton>
-                </List>
-            </Show>
-        </List>
+                    <List disablePadding>
+                        <ListItemButton
+                            sx={{ pl: 4 }}
+                            selected={!!feedPostConfig()?.feed}
+                        >
+                            <ListItemText
+                                inset
+                                primaryTypographyProps={{
+                                    noWrap: true,
+                                    textOverflow: "ellipsis",
+                                }}
+                                primary={
+                                    feedMetadata()
+                                        ? feedMetadata()?.title || "..."
+                                        : "..."
+                                }
+                            />
+                        </ListItemButton>
+                    </List>
+                </Show>
+            </List>
+            <List disablePadding>
+                <Divider />
+                <ListItemButton
+                    selected={pathname().startsWith("/settings")}
+                    onClick={() => navigate("/settings")}
+                >
+                    <ListItemIcon>
+                        <SettingsIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Settings" />
+                </ListItemButton>
+            </List>
+        </>
     );
 };
 

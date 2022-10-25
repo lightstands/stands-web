@@ -4,13 +4,10 @@ import {
     useParams,
     useSearchParams,
 } from "@solidjs/router";
-import AppBar from "@suid/material/AppBar";
 import IconButton from "@suid/material/IconButton";
-import Toolbar from "@suid/material/Toolbar";
 import { Component, createResource, For, Match, Show, Switch } from "solid-js";
 import { useScaffold } from "../common/Scaffold";
 import {
-    Menu as MenuIcon,
     OpenInNew as OpenInNewIcon,
     ChevronLeft as ChevronLeftIcon,
     ChevronRight as ChevronRightIcon,
@@ -36,6 +33,8 @@ import Style from "./feed.module.css";
 import ListItemText from "@suid/material/ListItemText";
 import Divider from "@suid/material/Divider";
 import LinearProgress from "@suid/material/LinearProgress";
+import SharedAppBar from "../common/SharedAppBar";
+import CommonStyle from "../common/Style.module.css";
 
 function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
     const navigate = useNavigate();
@@ -110,7 +109,6 @@ const FeedPage: Component = () => {
         ref_le: string;
         limit: string;
     }>();
-    const scaffoldCx = useScaffold();
     const client = useClient();
     const refGt = () => {
         if (query.ref_gt) {
@@ -182,45 +180,28 @@ const FeedPage: Component = () => {
     return (
         <>
             <Outlet /> {/* For post dialog */}
-            <AppBar position="static">
-                <Toolbar>
-                    <Show when={scaffoldCx.state.drawerType === "temporary"}>
-                        <IconButton
-                            size="large"
-                            edge="start"
-                            color="inherit"
-                            sx={{ mr: 2 }}
-                            onClick={() =>
-                                scaffoldCx.setDrawerOpen(
-                                    !scaffoldCx.state.drawerOpen
-                                )
-                            }
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                    </Show>
-                    <Show
-                        when={feedMetadata.state == "ready"}
-                        fallback={
-                            <Box sx={{ flex: "1", display: "flex" }}>
-                                <CircularProgress color="inherit" size={20} />
-                            </Box>
-                        }
-                    >
-                        <ToolbarTitle
-                            primary={feedMetadata()?.title || "No title"}
-                        />
-                    </Show>
-                    <Box sx={{ display: "flex" }}></Box>
-                </Toolbar>
-            </AppBar>
+            <SharedAppBar>
+                <Show
+                    when={feedMetadata.state == "ready"}
+                    fallback={
+                        <Box sx={{ flex: "1", display: "flex" }}>
+                            <CircularProgress color="inherit" size={20} />
+                        </Box>
+                    }
+                >
+                    <ToolbarTitle
+                        primary={feedMetadata()?.title || "No title"}
+                    />
+                </Show>
+                <Box sx={{ display: "flex" }}></Box>
+            </SharedAppBar>
             <Box
                 sx={{
                     position: "relative",
                     left: "50%",
                     transform: "translateX(-50%)",
                 }}
-                class={Style["auto-width"]}
+                class={CommonStyle.SmartBodyWidth}
             >
                 <Switch>
                     <Match when={postList.state === "ready"}>

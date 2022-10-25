@@ -1,7 +1,6 @@
 // Copyright 2022 Rubicon.
 // SPDX-License-Identifier: 	AGPL-3.0-or-later
 
-import { createMediaQuery } from "@solid-primitives/media";
 import Box from "@suid/material/Box";
 import Button from "@suid/material/Button";
 import CardActions from "@suid/material/CardActions";

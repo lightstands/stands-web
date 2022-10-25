@@ -1,7 +1,7 @@
 // Copyright 2022 The LightStands Web Contributors.
 // SPDX-License-Identifier: 	AGPL-3.0-or-later
 
-import { Component, createResource, createSignal, For, Show } from "solid-js";
+import { Component, createResource, createSignal, For } from "solid-js";
 import { useClient } from "../client";
 import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
@@ -14,13 +14,8 @@ import {
 } from "lightstands-js";
 import { onMount } from "solid-js";
 import { useLocation, useNavigate } from "@solidjs/router";
-import AppBar from "@suid/material/AppBar";
 import Box from "@suid/material/Box";
-import IconButton from "@suid/material/IconButton";
-import Toolbar from "@suid/material/Toolbar";
-import ToolbarTitle from "../common/ToolbarTitle";
-import { useScaffold } from "../common/Scaffold";
-import { Menu as MenuIcon, Add as AddIcon } from "@suid/icons-material";
+import { Add as AddIcon } from "@suid/icons-material";
 import Fab from "@suid/material/Fab";
 import BottomSheet from "./BottomSheet";
 import AddFeedDlg from "./AddFeedDlg";
@@ -28,12 +23,12 @@ import List from "@suid/material/List";
 import ListItem from "@suid/material/ListItem";
 import ListItemText from "@suid/material/ListItemText";
 import ListItemButton from "@suid/material/ListItemButton";
+import SharedAppBar from "../common/SharedAppBar";
 
 const DefaultFeedListPage: Component = () => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
-    const scaffoldCx = useScaffold();
     const loc = useLocation();
     const [showAddFeed, setShowAddFeed] = createSignal(false);
     const [defaultListMeta] = createResource(session, async (session) => {
@@ -109,26 +104,7 @@ const DefaultFeedListPage: Component = () => {
                     <AddIcon />
                 </Fab>
             </Box>
-            <AppBar position="static">
-                <Toolbar>
-                    <Show when={scaffoldCx.state.drawerType === "temporary"}>
-                        <IconButton
-                            size="large"
-                            edge="start"
-                            color="inherit"
-                            sx={{ mr: 2 }}
-                            onClick={() =>
-                                scaffoldCx.setDrawerOpen(
-                                    !scaffoldCx.state.drawerOpen
-                                )
-                            }
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                    </Show>
-                    <ToolbarTitle primary="Subscribed" />
-                </Toolbar>
-            </AppBar>
+            <SharedAppBar title="Subscribed" />
             <Box>
                 <List>
                     <For each={listItemDetails()}>
