@@ -19,10 +19,13 @@ import { currentSessionStore } from "../stores/session";
 import { useStore } from "@nanostores/solid";
 import CircularProgress from "@suid/material/CircularProgress";
 import ListItem from "@suid/material/ListItem";
+import { OpenInNew as OpenInNewIcon } from "@suid/icons-material";
+import { useNavigate } from "@solidjs/router";
 
 const SettingsPage: Component = () => {
     const client = useClient();
     const session = useStore(currentSessionStore);
+    const navigate = useNavigate();
     const [userPrivateInfo] = createResource(
         (): [ClientConfig, { session: Session } | undefined] => [
             client,
@@ -104,18 +107,54 @@ const SettingsPage: Component = () => {
                                 secondary={import.meta.env.PACKAGE_VERSION}
                             />
                         </ListItem>
-                        <ListItemButton divider>
-                            <ListItemText primary="Open source licenses" />
-                        </ListItemButton>
-                        <ListItemButton divider>
-                            <ListItemText primary="Source code" />
-                        </ListItemButton>
-                        <ListItemButton divider>
+                        <ListItemButton divider disabled>
                             <ListItemText
-                                primary="This software is free software"
-                                secondary="Licensed by Affero Gernal Public License, version 3"
+                                primary="Open source licenses"
+                                secondary="Coming soon"
                             />
                         </ListItemButton>
+                        <ListItemButton
+                            divider
+                            onClick={() =>
+                                window.open(
+                                    "https://github.com/lightstands/stands-web/",
+                                    "_blank"
+                                )
+                            }
+                        >
+                            <ListItemText
+                                primary={
+                                    <Typography>
+                                        Source code
+                                        <OpenInNewIcon fontSize="inherit" />
+                                    </Typography>
+                                }
+                            />
+                        </ListItemButton>
+                        <ListItemButton
+                            divider
+                            onClick={() =>
+                                window.open(
+                                    "https://www.gnu.org/licenses/agpl-3.0.en.html",
+                                    "_blank"
+                                )
+                            }
+                        >
+                            <ListItemText
+                                primary={
+                                    <Typography>
+                                        This software is free software
+                                        <OpenInNewIcon fontSize="inherit" />
+                                    </Typography>
+                                }
+                                secondary="Licensed by Affero Gernal Public License, version 3 or later"
+                            />
+                        </ListItemButton>
+                        <Show when={import.meta.env.DEV}>
+                            <ListItemButton onClick={() => navigate("/_dev/")}>
+                                <ListItemText primary="Development Tools" />
+                            </ListItemButton>
+                        </Show>
                     </Paper>
                 </List>
             </Box>
