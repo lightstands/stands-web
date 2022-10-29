@@ -9,13 +9,32 @@ import Button from "@suid/material/Button";
 import Card from "@suid/material/Card";
 import Toolbar from "@suid/material/Toolbar";
 import Typography from "@suid/material/Typography";
-import { Component, Match, Show, Switch } from "solid-js";
+import { aunwrap, getAllFeedLists, newFeedList } from "lightstands-js";
+import { Component, createResource, createSignal, Show } from "solid-js";
+import { useClient } from "../client";
+import TechInfoDialog from "../common/TechInfoDlg";
 import { currentSessionStore } from "../stores/session";
 import CommonStyle from "./common.module.css";
 
 const CurrentSessionPage: Component = () => {
+    const client = useClient();
     const currentSession = useStore(currentSessionStore);
     const navigate = useNavigate();
+    const [technicalError, setTechnicalError] = createSignal<string>();
+
+    const [defaultListMeta, defaultListMetaCtl] = createResource(
+        currentSession,
+        async (session) => {
+            const lists = await aunwrap(
+                getAllFeedLists(client, session.session)
+            );
+            for (const l of lists) {
+                if (l.tags.includes("_default")) {
+                    return l;
+                }
+            }
+        }
+    );
 
     const goSignOut = () => {
         const path = window.location.pathname;
@@ -26,8 +45,31 @@ const CurrentSessionPage: Component = () => {
         const path = window.location.pathname;
         navigate(`/sign-in?back=${encodeURIComponent(path)}`);
     };
+
+    const setupDefaultFeedList = async () => {
+        try {
+            await aunwrap(
+                newFeedList(client, currentSession()!.session, "", {
+                    tags: ["_default"],
+                })
+            );
+            defaultListMetaCtl.refetch();
+        } catch (e) {
+            if (e instanceof Error) {
+                setTechnicalError(e.toString());
+            } else {
+                console.log(e);
+            }
+        }
+    };
+
     return (
         <>
+            <TechInfoDialog
+                open={!!technicalError()}
+                value={technicalError()}
+                onClose={() => setTechnicalError()}
+            />
             <Box>
                 <AppBar position="static">
                     <Toolbar>
@@ -39,12 +81,9 @@ const CurrentSessionPage: Component = () => {
 
                 <Card
                     sx={{
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        position: "relative",
                         marginTop: "24px",
                     }}
-                    class={CommonStyle.SmartFullMaxWidth}
+                    class={`${CommonStyle.SmartFullMaxWidth} ${CommonStyle.ViewpointXCenter}`}
                 >
                     <Box
                         sx={{
@@ -120,6 +159,41 @@ const CurrentSessionPage: Component = () => {
                                 }
                             >
                                 <Button onClick={goSignIn}>Sign in...</Button>
+                            </Show>
+                        </Box>
+                        <Box>
+                            <Typography variant="h6">
+                                Default Feed List
+                            </Typography>
+                            <Show
+                                when={defaultListMeta.state === "ready"}
+                                fallback={<Typography>Fetching</Typography>}
+                            >
+                                <Typography>
+                                    List ID: {defaultListMeta()?.id?.toString()}
+                                </Typography>
+                                <Typography>
+                                    Tags: {defaultListMeta()?.tags?.join(", ")}
+                                </Typography>
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        justifyContent: "end",
+                                    }}
+                                >
+                                    <Show
+                                        when={
+                                            typeof currentSession() !==
+                                                "undefined" &&
+                                            typeof defaultListMeta() ===
+                                                "undefined"
+                                        }
+                                    >
+                                        <Button onClick={setupDefaultFeedList}>
+                                            Setup Default Feed List
+                                        </Button>
+                                    </Show>
+                                </Box>
                             </Show>
                         </Box>
                     </Box>
