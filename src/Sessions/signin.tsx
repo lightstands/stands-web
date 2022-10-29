@@ -38,8 +38,18 @@ import { error2explain } from "../common/utils";
 import CenterCard from "../common/CenterCard";
 import { UAParser } from "ua-parser-js";
 
-const DEFAULT_SCOPE =
-    "session.list session.revoke_other user.change_password user.create_session user.read feedlist.read feedlist.write feedlist.list";
+const DEFAULT_SCOPE = [
+    "session.list",
+    "session.revoke_other",
+    "user.change_password",
+    "user.create_session",
+    "user.read",
+    "feedlist.read",
+    "feedlist.write",
+    "feedlist.list",
+    "feedlist.new",
+    "feedlist.rm",
+].join(" ");
 
 function getUserAgent() {
     const ua = UAParser();
