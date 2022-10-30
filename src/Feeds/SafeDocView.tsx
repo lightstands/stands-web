@@ -2,17 +2,14 @@ import {
     Component,
     createEffect,
     createSignal,
+    createUniqueId,
     JSX,
     onCleanup,
     onMount,
 } from "solid-js";
 import { untrack } from "solid-js/web";
 import innerDocStyle from "./inner-doc.css?inline";
-
-function makeUniqueId() {
-    const n = Math.floor(Math.random() * 1000);
-    return `safe-doc-view-${n.toString(16)}`;
-}
+import { UAParser } from "ua-parser-js";
 
 interface SafeDocViewProps {
     srcdoc?: string;
@@ -23,11 +20,16 @@ interface SafeDocViewProps {
     onDocumentResize?: (size: { height: number; width: number }) => void;
 }
 
+function iframeProcessingBlockedBySandbox() {
+    const parser = UAParser();
+    return parser.engine.name === "WebKit";
+}
+
 const SafeDocView: Component<SafeDocViewProps> = (props) => {
     let el: HTMLIFrameElement;
     let currentObservedElement: HTMLElement | undefined;
     const [jumpExLink, setJumpExLink] = createSignal<string>();
-    const elId = makeUniqueId();
+    const elId = createUniqueId();
     const docResizingOb = new ResizeObserver((entries) => {
         if (props.onDocumentResize) {
             const target = entries[0].target;
@@ -103,12 +105,21 @@ const SafeDocView: Component<SafeDocViewProps> = (props) => {
         }
     };
 
+    const sandboxOptions = () => {
+        if (!iframeProcessingBlockedBySandbox()) {
+            return "allow-same-origin";
+        } else {
+            // Safari blocks script execution without allow-scripts even if allow-same-origin is set.
+            // For example, any bound handlers for click events of nodes inside an iframe throw an error for blocked script execution.
+            // Chrome <= 70 does the same, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#browser_compatibility
+            // We have sanitized the html when the server software fetched the content. So security here might be just fine,
+            // but allow these two make me feels sick. (Rubicon)
+            return "allow-same-origin allow-scripts";
+        }
+    };
+
     onCleanup(() => {
-        el.removeEventListener("load", onDocLoaded);
-        el.contentWindow!.removeEventListener(
-            "DOMContentLoaded",
-            waitForDOMLoaded
-        );
+        el.contentWindow!.removeEventListener("pagehide", waitForDOMLoaded);
         if (currentObservedElement) {
             docResizingOb.unobserve(currentObservedElement);
             currentObservedElement = undefined;
@@ -116,10 +127,7 @@ const SafeDocView: Component<SafeDocViewProps> = (props) => {
     });
 
     onMount(() => {
-        el.addEventListener("load", onDocLoaded, {
-            passive: true,
-        });
-        el.contentWindow!.addEventListener("unload", waitForDOMLoaded, {
+        el.contentWindow!.addEventListener("pagehide", waitForDOMLoaded, {
             passive: true,
         });
     });
@@ -129,12 +137,13 @@ const SafeDocView: Component<SafeDocViewProps> = (props) => {
             ref={el!}
             srcdoc={props.srcdoc}
             title={props.title}
-            sandbox="allow-same-origin"
+            sandbox={/* @once */ sandboxOptions()}
             referrerpolicy="strict-origin"
             height={props.height}
             width={props.width}
             style={{ border: "0", ...props.style }}
             id={elId}
+            onLoad={onDocLoaded}
         >
             LightStands could not display your content, since your browser does
             not support.
