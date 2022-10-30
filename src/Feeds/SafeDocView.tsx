@@ -63,10 +63,11 @@ const SafeDocView: Component<SafeDocViewProps> = (props) => {
     });
 
     const onDOMLoaded = () => {
-        const docEl = el.contentDocument!.documentElement;
+        const doc = el.contentDocument!;
+        const docEl = doc.documentElement;
         let head = docEl.querySelector("head");
         if (!head) {
-            head = el.contentDocument!.createElement("head");
+            head = doc.createElement("head");
             docEl.appendChild(head);
         }
         const globalStyle = el.contentDocument!.createElement("style");
@@ -76,6 +77,15 @@ const SafeDocView: Component<SafeDocViewProps> = (props) => {
         for (const node of imgs) {
             node.loading = "lazy";
             node.crossOrigin = "anonymous";
+        }
+        if (docEl.querySelector("pre code .token")) {
+            // inject prism.js styles
+            import("../assets/prism.css?inline").then((prismCss) => {
+                const prismStyle = doc.createElement("style");
+                head!.appendChild(prismStyle);
+                prismStyle.id = "prism-js-style";
+                prismStyle.textContent = prismCss.default;
+            });
         }
     };
 
