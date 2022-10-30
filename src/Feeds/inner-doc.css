@@ -19,5 +19,5 @@ h6 {
 }
 
 pre {
-    overflow: scroll;
+    overflow: auto;
 }

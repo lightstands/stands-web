@@ -88,7 +88,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
                 </IconButton>
             </Toolbar>
             <Box
-                sx={{ overflow: "scroll" }}
+                sx={{ overflow: "auto" }}
                 onScroll={(ev) => setScrolled(ev.currentTarget.scrollTop !== 0)}
             >
                 <Typography
