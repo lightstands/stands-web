@@ -7,6 +7,7 @@ import {
     onMount,
 } from "solid-js";
 import { untrack } from "solid-js/web";
+import innerDocStyle from "./inner-doc.css?inline";
 
 function makeUniqueId() {
     const n = Math.floor(Math.random() * 1000);
@@ -61,11 +62,18 @@ const SafeDocView: Component<SafeDocViewProps> = (props) => {
 
     const onDOMLoaded = () => {
         const docEl = el.contentDocument!.documentElement;
+        let head = docEl.querySelector("head");
+        if (!head) {
+            head = el.contentDocument!.createElement("head");
+            docEl.appendChild(head);
+        }
+        const globalStyle = el.contentDocument!.createElement("style");
+        head.appendChild(globalStyle);
+        globalStyle.textContent = innerDocStyle;
         const imgs = docEl.querySelectorAll("img");
         for (const node of imgs) {
             node.loading = "lazy";
             node.crossOrigin = "anonymous";
-            node.style.maxWidth = "100%";
         }
     };
 
