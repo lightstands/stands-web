@@ -83,6 +83,7 @@ const LoginPage: Component = () => {
     const [knownError, setKnownError] = createSignal<"usernotfound">();
 
     const signIn = async () => {
+        if (signInProgress()) return;
         batch(() => {
             setUnknownError(undefined);
             setKnownError(undefined);
@@ -137,6 +138,12 @@ const LoginPage: Component = () => {
         }
     };
 
+    const onTextFieldKeyDown = (ev: KeyboardEvent) => {
+        if (ev.code == "Enter") {
+            signIn();
+        }
+    };
+
     return (
         <>
             <TechInfoDialog
@@ -167,6 +174,7 @@ const LoginPage: Component = () => {
                         onChange={(el) => setUsername(el.target.value)}
                         sx={{ marginBottom: "16px" }}
                         error={typeof knownError() !== "undefined"}
+                        onKeyDown={onTextFieldKeyDown}
                     />
                     <TextField
                         variant="standard"
@@ -180,6 +188,7 @@ const LoginPage: Component = () => {
                         onChange={(el) => setPassword(el.target.value)}
                         error={typeof knownError() !== "undefined"}
                         helperText={getKnownErrorHelperText()}
+                        onKeyDown={onTextFieldKeyDown}
                     />
                     <Show when={unknownError()}>
                         <Typography color="error">
