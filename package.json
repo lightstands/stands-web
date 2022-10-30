@@ -34,7 +34,7 @@
         "@suid/material": "^0.6.3",
         "cuint": "^0.2.2",
         "date-fns": "^2.29.3",
-        "lightstands-js": "^1.2.1",
+        "lightstands-js": "^1.2.2",
         "nanostores": "0.7",
         "solid-hcaptcha": "^0.2.5",
         "solid-js": "^1.5.9",
