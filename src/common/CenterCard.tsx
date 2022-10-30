@@ -8,7 +8,7 @@ import CommonStyle from "./Style.module.css";
 interface CenterCardProps {}
 
 const CenterCard: ParentComponent<CenterCardProps> = (props) => {
-    const isMidSmallerScreen = createMediaQuery("screen and (width < 600px)");
+    const isMidSmallerScreen = createMediaQuery("screen and (width < 772px)");
     return (
         <>
             <Box class={CommonStyle.SmartDialog}>

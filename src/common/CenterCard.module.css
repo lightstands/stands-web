@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: 	AGPL-3.0-or-later
  */
 
-@media screen and (width >= 600px) {
+@media screen and (width >= 772px) {
     .ComfortHeader {
         padding-top: inherit;
     }
 }
 
-@media screen and (width < 600px) {
+@media screen and (width < 772px) {
     .ComfortHeader {
         padding-top: 48px;
     }
