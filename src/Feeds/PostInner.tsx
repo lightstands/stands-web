@@ -62,6 +62,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
                     : "100%",
                 height: "100%",
                 flexDirection: "column",
+                borderRadius: "1px",
             }}
         >
             <Toolbar
