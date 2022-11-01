@@ -10,6 +10,7 @@ import CenterCard from "../common/CenterCard";
 import { aeither, setUserPassword } from "lightstands-js";
 import { useClient } from "../client";
 import { PASS_REGEX } from "../common/regex";
+import { revokeSession } from "lightstands-js";
 
 /* Accept session (the access token) from search string.
 
@@ -44,19 +45,23 @@ const SetPasswordPage: Component = () => {
         setPasswordGuidance(makeGuidance(pass) || undefined);
     });
 
-    const setPasswordAndCompleteReg = () => {
+    const setPasswordAndCompleteReg = async () => {
         const userId = Number.parseInt(searchParams.userid);
-        aeither(
+        await aeither(
             {
                 left(l) {
                     throw l;
                 },
                 right() {
-                    navigate(
-                        `/sign-in/?username=${encodeURIComponent(
-                            searchParams.username
-                        )}`
-                    );
+                    revokeSession(client, {
+                        accessToken: searchParams.session,
+                    }).then(() => {
+                        navigate(
+                            `/sign-in/?username=${encodeURIComponent(
+                                searchParams.username
+                            )}`
+                        );
+                    });
                 },
             },
             setUserPassword(

@@ -18,7 +18,7 @@ specifiers:
   cuint: ^0.2.2
   date-fns: ^2.29.3
   eslint: ^8.25.0
-  lightstands-js: ^1.2.2
+  lightstands-js: ^1.2.3
   nanostores: '0.7'
   prettier: ^2.7.1
   solid-hcaptcha: ^0.2.5
@@ -41,7 +41,7 @@ dependencies:
   '@suid/material': 0.6.3_solid-js@1.5.9
   cuint: 0.2.2
   date-fns: 2.29.3
-  lightstands-js: 1.2.2
+  lightstands-js: 1.2.3
   nanostores: 0.7.0
   solid-hcaptcha: 0.2.5_solid-js@1.5.9
   solid-js: 1.5.9
@@ -1680,8 +1680,8 @@ packages:
       type-check: 0.4.0
     dev: true
 
-  /lightstands-js/1.2.2:
-    resolution: {integrity: sha512-c5TYNHH4rqss+Aa3FeF4lNvazY2MASgFwqU1Tui3YX+BFNwy8ceT67bBMcA+wzDCDZjGd1dj5nDSvt6nqiORbQ==}
+  /lightstands-js/1.2.3:
+    resolution: {integrity: sha512-HXSv66YCaGu/NOHsw4GQBoZ6zV2TJpX84yQgfDINsMxKDDdThxYXUXsCMNjNIb2KadKJDiQPGCEuoIdXyOpVTA==}
     engines: {node: '>=10'}
     dependencies:
       '@noble/hashes': 1.1.3
