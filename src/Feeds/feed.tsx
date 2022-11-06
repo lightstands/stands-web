@@ -4,18 +4,21 @@ import {
     useParams,
     useSearchParams,
 } from "@solidjs/router";
-import IconButton from "@suid/material/IconButton";
-import { Component, createResource, For, Match, Show, Switch } from "solid-js";
-import { useScaffold } from "../common/Scaffold";
 import {
-    OpenInNew as OpenInNewIcon,
-    ChevronLeft as ChevronLeftIcon,
-    ChevronRight as ChevronRightIcon,
-} from "@suid/icons-material";
+    Component,
+    createResource,
+    createSignal,
+    For,
+    Match,
+    onMount,
+    Show,
+    Switch,
+} from "solid-js";
+import { OpenInNew as OpenInNewIcon } from "@suid/icons-material";
 import ToolbarTitle from "../common/ToolbarTitle";
 import {
+    aeither,
     aunwrap,
-    FeedPostListPage,
     getFeedInfo,
     getFeedPosts,
     PublicPost,
@@ -35,6 +38,7 @@ import Divider from "@suid/material/Divider";
 import LinearProgress from "@suid/material/LinearProgress";
 import SharedAppBar from "../common/SharedAppBar";
 import CommonStyle from "../common/Style.module.css";
+import { createStore } from "solid-js/store";
 
 function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
     const navigate = useNavigate();
@@ -104,26 +108,18 @@ function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
 
 const FeedPage: Component = () => {
     const data = useParams<{ feed: string; post?: string }>();
+    const searchParams = useSearchParams<{ parent_id: string }>();
     const [query, setQuery] = useSearchParams<{
         ref_gt: string;
         ref_le: string;
         limit: string;
     }>();
     const client = useClient();
-    const refGt = () => {
-        if (query.ref_gt) {
-            return Number(query.ref_gt);
-        } else {
-            return undefined;
-        }
-    };
-    const refLe = () => {
-        if (query.ref_le) {
-            return Number(query.ref_le);
-        } else {
-            return undefined;
-        }
-    };
+    const [fetchStat, setFetchStat] = createSignal<
+        "initial" | "fetching" | "error" | "ready"
+    >("initial");
+    const [postBuffer, setPostBuffer] = createStore<readonly PublicPost[]>([]);
+    const [isListEnded, setIsListEnded] = createSignal(false);
     const limit = () => {
         if (query.limit) {
             return Number(query.limit);
@@ -134,51 +130,59 @@ const FeedPage: Component = () => {
     const [feedMetadata] = createResource(data.feed, (feedUrlBak3) => {
         return aunwrap(getFeedInfo(client, feedUrlBak3));
     });
-    const [postList, postListResCtl] = createResource<
-        FeedPostListPage,
-        [string, number | undefined, number | undefined, number | undefined],
-        FeedPostListPage
-    >(
-        () => [data.feed, refGt(), refLe(), limit()],
-        ([feedUrlBlake3, refGt, refLe, limit]) => {
-            return aunwrap(
-                getFeedPosts(client, feedUrlBlake3, {
-                    refGt: refGt,
-                    refLe: refLe,
-                    limit: limit,
-                })
-            );
-        }
-    );
 
-    /** Go to next page.
-     * This function assumes:
-     * - `postList` is already loaded
-     * - `postList().nextRefGt` is a number
-     */
-    const nextPage = async () => {
-        setQuery({
-            ref_le: null,
-            ref_gt: postList()!.nextRefGt!,
-            limit: limit(),
-        });
-        postListResCtl.refetch();
+    const loadMorePosts = async () => {
+        if (isListEnded()) return;
+        const maxPubTime =
+            postBuffer.length > 0
+                ? Math.min.apply(
+                      undefined,
+                      postBuffer.map((p) => p.publishedAt)
+                  )
+                : undefined;
+        setFetchStat("fetching");
+        await aeither(
+            {
+                left(l) {
+                    setFetchStat("error");
+                },
+                right(r) {
+                    setPostBuffer((prev) => {
+                        return [
+                            ...prev,
+                            ...r.posts.filter(
+                                (p) => !prev.map((v) => v.ref).includes(p.ref)
+                            ),
+                        ];
+                    });
+                    setFetchStat("ready");
+                    if (r.posts.length === 0) {
+                        setIsListEnded(true);
+                    }
+                },
+            },
+            getFeedPosts(client, data!.feed, {
+                pubBefore: maxPubTime,
+                limit: limit(),
+            })
+        );
     };
 
-    /** Go to previous page.
-     * This function assumes:
-     * - `refGt()` is a number
-     */
-    const prevPage = async () => {
-        setQuery({
-            ref_gt: null,
-            ref_le: refGt(),
-            limit: limit(),
-        });
-        postListResCtl.refetch();
+    onMount(() => {
+        loadMorePosts();
+    });
+
+    const onScrollBoxScroll = (ev: Event) => {
+        const target = ev.target as HTMLElement;
+        if (target.scrollTop + target.clientHeight >= target.scrollHeight) {
+            loadMorePosts();
+        }
     };
     return (
-        <>
+        <div
+            style={{ height: "100vh", overflow: "auto" }}
+            onScroll={onScrollBoxScroll}
+        >
             <Outlet /> {/* For post dialog */}
             <SharedAppBar>
                 <Show
@@ -203,81 +207,29 @@ const FeedPage: Component = () => {
                 }}
                 class={CommonStyle.SmartBodyWidth}
             >
-                <Switch>
-                    <Match when={postList.state === "ready"}>
-                        <Card sx={{ marginTop: "24px" }}>
-                            <List>
-                                <For each={postList()!.posts}>
-                                    {(item, index) => {
-                                        return (
-                                            <>
-                                                <Show when={index() !== 0}>
-                                                    <Divider />
-                                                </Show>
+                <Card sx={{ marginTop: "24px" }}>
+                    <List>
+                        <For each={postBuffer}>
+                            {(item, index) => {
+                                return (
+                                    <>
+                                        <Show when={index() !== 0}>
+                                            <Divider />
+                                        </Show>
 
-                                                <PostListItem
-                                                    metadata={item}
-                                                    feedUrlBlake3={data.feed}
-                                                />
-                                            </>
-                                        );
-                                    }}
-                                </For>
-                            </List>
-                        </Card>
-                    </Match>
-                    <Match
-                        when={
-                            postList.state === "pending" ||
-                            postList.state === "refreshing" ||
-                            postList.state === "unresolved"
-                        }
-                    >
-                        <Card
-                            sx={{
-                                marginTop: "24px",
+                                        <PostListItem
+                                            metadata={item}
+                                            feedUrlBlake3={data.feed}
+                                        />
+                                    </>
+                                );
                             }}
-                        >
-                            <LinearProgress />
-                            <Typography sx={{ textAlign: "center" }}>
-                                Reading posts from LightStands...
-                            </Typography>
-                        </Card>
-                    </Match>
-                </Switch>
-            </Box>
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    paddingX: "20%",
-                    paddingY: "20px",
-                }}
-            >
-                <Box
-                    sx={{ display: "flex", justifyContent: "left", flex: "1" }}
-                >
-                    <IconButton
-                        size="large"
-                        disabled={
-                            typeof refGt() === "undefined" || refGt() === 0
-                        }
-                        onClick={prevPage}
-                    >
-                        <ChevronLeftIcon />
-                    </IconButton>
-                </Box>
-                <Box
-                    sx={{ display: "flex", justifyContent: "right", flex: "1" }}
-                >
-                    <IconButton
-                        size="large"
-                        disabled={typeof postList()?.nextRefGt === "undefined"}
-                        onClick={nextPage}
-                    >
-                        <ChevronRightIcon />
-                    </IconButton>
-                </Box>
+                        </For>
+                    </List>
+                    <Show when={fetchStat() === "fetching"}>
+                        <LinearProgress />
+                    </Show>
+                </Card>
             </Box>
             <Box
                 sx={{
@@ -288,6 +240,9 @@ const FeedPage: Component = () => {
                     margin: "16px",
                 }}
             >
+                <Show when={isListEnded()} fallback={<Typography></Typography>}>
+                    <Typography>That's the end.</Typography>
+                </Show>
                 <Typography>
                     Updated{" "}
                     {feedMetadata.state == "ready"
@@ -309,7 +264,7 @@ const FeedPage: Component = () => {
                     </Link>
                 </Show>
             </Box>
-        </>
+        </div>
     );
 };
 
