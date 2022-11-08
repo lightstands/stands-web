@@ -19,6 +19,7 @@ type ScaffoldState = {
     drawerOpen: boolean;
     width: number | null;
     height: number | null;
+    suggestExpandableMenuWidth: number | null;
 };
 
 type ScaffoldContext = {
@@ -40,6 +41,7 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
         drawerOpen: false,
         width: size.width,
         height: size.height,
+        suggestExpandableMenuWidth: null,
     });
     const showPermanentDrawer = () => !!(size.width && size.width > 772);
     const cx: ScaffoldContext = {
@@ -63,7 +65,15 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
         }
     });
     createEffect(() => {
-        setState({ width: size.width, height: size.height });
+        setState({
+            width: size.width,
+            height: size.height,
+            suggestExpandableMenuWidth: size.width
+                ? Math.floor(
+                      size.width - (showPermanentDrawer() ? 240 : 0) * 0.2
+                  )
+                : null,
+        });
     });
     return (
         <Cx.Provider value={cx}>
