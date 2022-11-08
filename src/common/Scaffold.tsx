@@ -28,6 +28,9 @@ type ScaffoldContext = {
 
 const Cx = createContext<ScaffoldContext>();
 
+/* Scaffold current bulit-in tricks:
+- Block swipe to back gesture on iOS 13.4+, by preventDefault on touchstart event.
+*/
 const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
     const [el, setEl] = createSignal<HTMLDivElement>();
     const [drawerOpen, setDrawerOpen] = createSignal(false);
@@ -73,6 +76,10 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
                     height: "100%",
                     overflowY: "hidden",
                 }}
+                onTouchStart={
+                    (e) => e.preventDefault()
+                    /* Block swipe to back gesture on iOS 13.4+, per https://pqina.nl/blog/blocking-navigation-gestures-on-ios-13-4/ */
+                }
             >
                 <Drawer
                     sx={{
