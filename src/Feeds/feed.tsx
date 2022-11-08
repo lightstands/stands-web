@@ -10,6 +10,7 @@ import {
     createSignal,
     For,
     Match,
+    onCleanup,
     onMount,
     Show,
     Switch,
@@ -38,7 +39,6 @@ import Divider from "@suid/material/Divider";
 import LinearProgress from "@suid/material/LinearProgress";
 import SharedAppBar from "../common/SharedAppBar";
 import CommonStyle from "../common/Style.module.css";
-import { createStore } from "solid-js/store";
 
 function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
     const navigate = useNavigate();
@@ -107,6 +107,7 @@ function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
 }
 
 const FeedPage: Component = () => {
+    let listEndEl: HTMLDivElement;
     const data = useParams<{ feed: string; post?: string }>();
     const searchParams = useSearchParams<{ parent_id: string }>();
     const [query, setQuery] = useSearchParams<{
@@ -118,7 +119,7 @@ const FeedPage: Component = () => {
     const [fetchStat, setFetchStat] = createSignal<
         "initial" | "fetching" | "error" | "ready"
     >("initial");
-    const [postBuffer, setPostBuffer] = createStore<readonly PublicPost[]>([]);
+    const [postBuffer, setPostBuffer] = createSignal<readonly PublicPost[]>([]);
     const [isListEnded, setIsListEnded] = createSignal(false);
     const limit = () => {
         if (query.limit) {
@@ -130,14 +131,15 @@ const FeedPage: Component = () => {
     const [feedMetadata] = createResource(data.feed, (feedUrlBak3) => {
         return aunwrap(getFeedInfo(client, feedUrlBak3));
     });
+    let shouldLoadMorePosts = false;
 
     const loadMorePosts = async () => {
         if (isListEnded()) return;
         const maxPubTime =
-            postBuffer.length > 0
+            postBuffer().length > 0
                 ? Math.min.apply(
                       undefined,
-                      postBuffer.map((p) => p.publishedAt)
+                      postBuffer().map((p) => p.publishedAt)
                   )
                 : undefined;
         setFetchStat("fetching");
@@ -168,21 +170,29 @@ const FeedPage: Component = () => {
         );
     };
 
-    onMount(() => {
-        loadMorePosts();
-    });
-
-    const onScrollBoxScroll = (ev: Event) => {
-        const target = ev.target as HTMLElement;
-        if (target.scrollTop + target.clientHeight >= target.scrollHeight) {
+    const loadMorePostsIfPossible = () => {
+        if (!shouldLoadMorePosts && !isListEnded()) {
+            shouldLoadMorePosts = true;
             loadMorePosts();
+            shouldLoadMorePosts = false;
         }
     };
+
+    const listEndInsetOb = new IntersectionObserver((e) => {
+        if (e[0].intersectionRatio > 0) {
+            loadMorePostsIfPossible();
+        }
+    });
+
+    onMount(() => {
+        listEndInsetOb.observe(listEndEl);
+    });
+
+    onCleanup(() => {
+        listEndInsetOb.disconnect();
+    });
     return (
-        <div
-            style={{ height: "100vh", overflow: "auto" }}
-            onScroll={onScrollBoxScroll}
-        >
+        <>
             <Outlet /> {/* For post dialog */}
             <SharedAppBar>
                 <Show
@@ -209,7 +219,7 @@ const FeedPage: Component = () => {
             >
                 <Card sx={{ marginTop: "24px" }}>
                     <List>
-                        <For each={postBuffer}>
+                        <For each={postBuffer()}>
                             {(item, index) => {
                                 return (
                                     <>
@@ -239,6 +249,7 @@ const FeedPage: Component = () => {
                     alignItems: "end",
                     margin: "16px",
                 }}
+                ref={listEndEl!}
             >
                 <Show when={isListEnded()} fallback={<Typography></Typography>}>
                     <Typography>That's the end.</Typography>
@@ -264,7 +275,7 @@ const FeedPage: Component = () => {
                     </Link>
                 </Show>
             </Box>
-        </div>
+        </>
     );
 };
 
