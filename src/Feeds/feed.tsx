@@ -39,6 +39,8 @@ import Divider from "@suid/material/Divider";
 import LinearProgress from "@suid/material/LinearProgress";
 import SharedAppBar from "../common/SharedAppBar";
 import CommonStyle from "../common/Style.module.css";
+import { default as ExpandableMenu, MenuItem } from "../common/ExpandableMenu";
+import { useScaffold } from "../common/Scaffold";
 
 function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
     const navigate = useNavigate();
@@ -121,6 +123,7 @@ const FeedPage: Component = () => {
     >("initial");
     const [postBuffer, setPostBuffer] = createSignal<readonly PublicPost[]>([]);
     const [isListEnded, setIsListEnded] = createSignal(false);
+    const [menuOpen, setMenuOpen] = createSignal(false);
     const limit = () => {
         if (query.limit) {
             return Number(query.limit);
@@ -132,6 +135,7 @@ const FeedPage: Component = () => {
         return aunwrap(getFeedInfo(client, feedUrlBak3));
     });
     let shouldLoadMorePosts = false;
+    const scaffoldCx = useScaffold();
 
     const loadMorePosts = async () => {
         if (isListEnded()) return;
@@ -207,7 +211,33 @@ const FeedPage: Component = () => {
                         primary={feedMetadata()?.title || "No title"}
                     />
                 </Show>
-                <Box sx={{ display: "flex" }}></Box>
+                <Box
+                    class={CommonStyle.FlexboxRow}
+                    sx={{ justifyContent: "end" }}
+                >
+                    <ExpandableMenu
+                        open={menuOpen()}
+                        onItemClick={(f) => (f as () => void)()}
+                        onClose={() => setMenuOpen(false)}
+                        onOpen={() => setMenuOpen(true)}
+                        suggestWidth={
+                            scaffoldCx.state.suggestExpandableMenuWidth ||
+                            undefined
+                        }
+                    >
+                        <MenuItem
+                            primary="Visit website..."
+                            data={() =>
+                                window.open(feedMetadata()!.link, "_blank")
+                            }
+                            disabled={
+                                feedMetadata.state !== "ready" ||
+                                typeof feedMetadata()?.link === "undefined"
+                            }
+                            icon={<OpenInNewIcon />}
+                        />
+                    </ExpandableMenu>
+                </Box>
             </SharedAppBar>
             <Box
                 sx={{
