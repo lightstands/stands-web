@@ -42,29 +42,6 @@ const App: Component = () => {
             <Route path="/oauth2" component={OAuth2ConfirmPage} />
             <Route path="/sign-in" component={SessionSignIn} />
             <Route path="/sign-out" component={SignOutPage} />
-            <Route path="/feeds">
-                <Route
-                    path="/:feed"
-                    component={() => (
-                        <Scaffold>
-                            <FeedPage />
-                        </Scaffold>
-                    )}
-                >
-                    <Route path="/" />
-                    <Route path="/posts/:post" component={PostPage} />
-                </Route>
-            </Route>
-            <Route
-                path="/feedlists"
-                component={() => (
-                    <Scaffold>
-                        <Outlet />
-                    </Scaffold>
-                )}
-            >
-                <Route path="/default" component={DefaultFeedListPage} />
-            </Route>
             <Route path="/sign-up">
                 <Route path="/" component={SignUpEmailFlow0} />
                 <Route path="/email">
@@ -83,6 +60,15 @@ const App: Component = () => {
             >
                 <Route path="/" component={DefaultFeedListPage} />
                 <Route path="/settings" component={SettingsPage} />
+                <Route path="/feedlists">
+                    <Route path="/default" component={DefaultFeedListPage} />
+                </Route>
+                <Route path="/feeds">
+                    <Route path="/:feed" component={() => <FeedPage />}>
+                        <Route path="/" />
+                        <Route path="/posts/:post" component={PostPage} />
+                    </Route>
+                </Route>
             </Route>
 
             <Show when={import.meta.env.DEV}>
