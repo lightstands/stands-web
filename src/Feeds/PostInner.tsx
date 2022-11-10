@@ -1,5 +1,11 @@
 import Box from "@suid/material/Box";
-import { batch, Component, createResource, createSignal } from "solid-js";
+import {
+    Component,
+    createResource,
+    createSignal,
+    onCleanup,
+    onMount,
+} from "solid-js";
 import Paper from "@suid/material/Paper";
 import Toolbar from "@suid/material/Toolbar";
 import Typography from "@suid/material/Typography";
@@ -9,6 +15,7 @@ import { useClient } from "../client";
 import { aunwrap, fetchContent, getPost } from "lightstands-js";
 import SafeDocView from "./SafeDocView";
 import { useScaffold } from "../common/Scaffold";
+import { useNavigate } from "@solidjs/router";
 
 interface PostInnerProps {
     feedUrlBlake3: string;
@@ -50,7 +57,10 @@ const PostInner: Component<PostInnerProps> = (props) => {
                   transition:
                       "box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
               }
-            : {};
+            : {
+                  transition:
+                      "box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+              };
     return (
         <Paper
             sx={{
