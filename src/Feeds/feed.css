@@ -1,0 +1,19 @@
+.post-list .MuiListItemText-secondary {
+    text-overflow: ellipsis;
+    overflow-wrap: break-word;
+    overflow: hidden;
+    max-height: 2.4rem;
+    line-height: 1.2rem;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    display: block;
+}
+
+@media (width > 772px) {
+    .post-list .MuiListItemText-secondary {
+        max-height: 1.2rem;
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+    }
+}

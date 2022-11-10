@@ -41,6 +41,7 @@ import SharedAppBar from "../common/SharedAppBar";
 import CommonStyle from "../common/Style.module.css";
 import { default as ExpandableMenu, MenuItem } from "../common/ExpandableMenu";
 import { useScaffold } from "../common/Scaffold";
+import "./feed.css";
 
 function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
     const navigate = useNavigate();
@@ -249,7 +250,7 @@ const FeedPage: Component = () => {
                 class={CommonStyle.SmartBodyWidth}
             >
                 <Card sx={{ marginTop: "24px" }}>
-                    <List>
+                    <List class="post-list">
                         <For each={postBuffer()}>
                             {(item, index) => {
                                 return (
