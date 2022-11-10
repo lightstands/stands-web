@@ -30,6 +30,7 @@ interface MenuItemRecord<C> {
     primary: string;
     data: C;
     disabled?: boolean;
+    ariaDescrption?: string;
 }
 
 interface ExpandableMenuProps<C> {
@@ -57,6 +58,7 @@ export const MenuItem: Component<MenuItemRecord<unknown>> = (props) => {
                 primary: props.primary,
                 data: props.data,
                 disabled: props.disabled,
+                ariaDescrption: props.ariaDescrption,
             };
         });
     });
@@ -97,7 +99,7 @@ const ExpandableMenu: ParentComponent<ExpandableMenuProps<unknown>> = (
 
     const expandedItems = () => {
         const n = expandedIconNumber();
-        return items().slice(0, n + 1);
+        return items().slice(0, n);
     };
 
     return (
@@ -111,6 +113,10 @@ const ExpandableMenu: ParentComponent<ExpandableMenuProps<unknown>> = (
                                 size="large"
                                 onClick={[handleItemClick, item.data]}
                                 disabled={item.disabled}
+                                aria-description={item.ariaDescrption}
+                                class={
+                                    item.ariaDescrption ? "tooltip" : undefined
+                                }
                             >
                                 {item.icon}
                             </IconButton>

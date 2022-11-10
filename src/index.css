@@ -16,3 +16,27 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
         monospace;
 }
+
+.tooltip:hover::before {
+    --_tooltip-bg: #323232;
+    --_tooltip-text-color: #fff;
+    content: attr(aria-description);
+    font-family: Roboto, -apple-system, sans-serif;
+    text-transform: capitalize;
+    font-size: 11px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    opacity: 0.75;
+    background-color: var(--_tooltip-bg);
+    color: var(--_tooltip-text-color);
+    padding: 4px;
+    border-radius: 2px;
+    display: inline-flex;
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
+    inline-size: fit-content;
+    max-inline-size: 25ch;
+}

@@ -226,7 +226,7 @@ const FeedPage: Component = () => {
                         }
                     >
                         <MenuItem
-                            primary="Visit website..."
+                            primary="Visit the website"
                             data={() =>
                                 window.open(feedMetadata()!.link, "_blank")
                             }
@@ -234,6 +234,7 @@ const FeedPage: Component = () => {
                                 feedMetadata.state !== "ready" ||
                                 typeof feedMetadata()?.link === "undefined"
                             }
+                            ariaDescrption={"Visit the website"}
                             icon={<OpenInNewIcon />}
                         />
                     </ExpandableMenu>
