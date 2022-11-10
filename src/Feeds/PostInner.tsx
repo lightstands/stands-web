@@ -1,11 +1,5 @@
 import Box from "@suid/material/Box";
-import {
-    Component,
-    createResource,
-    createSignal,
-    onCleanup,
-    onMount,
-} from "solid-js";
+import { Component, createResource, createSignal, Show } from "solid-js";
 import Paper from "@suid/material/Paper";
 import Toolbar from "@suid/material/Toolbar";
 import Typography from "@suid/material/Typography";
@@ -15,7 +9,7 @@ import { useClient } from "../client";
 import { aunwrap, fetchContent, getPost } from "lightstands-js";
 import SafeDocView from "./SafeDocView";
 import { useScaffold } from "../common/Scaffold";
-import { useNavigate } from "@solidjs/router";
+import Delayed from "./Delayed";
 
 interface PostInnerProps {
     feedUrlBlake3: string;
@@ -26,7 +20,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
     const client = useClient();
     const scaffoldCx = useScaffold();
     const [webViewHeight, setWebViewHeight] = createSignal<number | string>(
-        "150px"
+        scaffoldCx.state.height || "100vh"
     );
     const [postMetadata] = createResource(
         () => [props.feedUrlBlake3, props.postIdBlake3],
@@ -85,13 +79,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
                     size="large"
                     color="inherit"
                     onClick={() => {
-                        if (content.state === "ready") {
-                            window.history.go(-2);
-                            // Rubicon: Idk who decide merge iframe's session history into the main frame.
-                            // Here it's a quick workaround for correctly going backward to closing the post window
-                        } else {
-                            window.history.go(-1);
-                        }
+                        window.history.go(-1);
                     }}
                 >
                     <CloseIcon />
@@ -110,15 +98,28 @@ const PostInner: Component<PostInnerProps> = (props) => {
                 >
                     {postMetadata()?.title}
                 </Typography>
-                <SafeDocView
-                    width="100%"
-                    height={webViewHeight()}
-                    srcdoc={content()}
-                    title={postMetadata()?.title}
-                    onDocumentResize={({ height }) => {
-                        setWebViewHeight(height);
-                    }}
-                />
+                <Show
+                    when={content.state === "ready"}
+                    fallback={
+                        <Delayed timeout={1000}>
+                            <Typography
+                                sx={{ width: "100%", textAlign: "center" }}
+                            >
+                                Waiting for post...
+                            </Typography>
+                        </Delayed>
+                    }
+                >
+                    <SafeDocView
+                        width="100%"
+                        height={webViewHeight()}
+                        srcdoc={content()}
+                        title={postMetadata()?.title}
+                        onDocumentResize={({ height }) => {
+                            setWebViewHeight(height);
+                        }}
+                    />
+                </Show>
             </Box>
         </Paper>
     );
