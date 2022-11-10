@@ -1,4 +1,4 @@
-/* @refresh granular */
+/* @refresh reload */
 import Box from "@suid/material/Box";
 import IconButton from "@suid/material/IconButton";
 import {
@@ -88,10 +88,15 @@ const ExpandableMenu: ParentComponent<ExpandableMenuProps<unknown>> = (
 
     const expandedIconNumber = () => {
         if (props.suggestWidth) {
-            return Math.min(
+            const n = Math.min(
                 items().length,
                 Math.floor(props.suggestWidth / 48)
             );
+            if (n === items().length) {
+                return n;
+            } else {
+                return n - 1; // left one item space for the more button
+            }
         } else {
             return 0;
         }
@@ -100,6 +105,11 @@ const ExpandableMenu: ParentComponent<ExpandableMenuProps<unknown>> = (
     const expandedItems = () => {
         const n = expandedIconNumber();
         return items().slice(0, n);
+    };
+
+    const notExpandedItems = () => {
+        const n = expandedIconNumber();
+        return items().slice(n);
     };
 
     return (
@@ -123,7 +133,7 @@ const ExpandableMenu: ParentComponent<ExpandableMenuProps<unknown>> = (
                         );
                     }}
                 </For>
-                <Show when={items().length - expandedIconNumber() > 0}>
+                <Show when={expandedIconNumber() !== items().length}>
                     <IconButton
                         color="inherit"
                         size="large"
@@ -144,7 +154,7 @@ const ExpandableMenu: ParentComponent<ExpandableMenuProps<unknown>> = (
                         onClose={props.onClose}
                     >
                         <List disablePadding sx={{ minWidth: "160px" }}>
-                            <For each={items()}>
+                            <For each={notExpandedItems()}>
                                 {(item) => {
                                     return (
                                         <ListItemButton
