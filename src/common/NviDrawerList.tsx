@@ -17,7 +17,11 @@ import { currentSessionStore } from "../stores/session";
 const FEED_POST_REGEXP = /\/feeds\/(.*?)\/posts\/(.+)\/?$/;
 const FEED_REGEXP = /\/feeds\/([^\/]*?)\/?(?!.+)$/;
 
-const NviDrawerList: Component = () => {
+interface NviDrawerListProps {
+    afterItemClicked: (ev: {}) => void;
+}
+
+const NviDrawerList: Component<NviDrawerListProps> = (props) => {
     const loc = useLocation();
     const client = useClient();
     const navigate = useNavigate();
@@ -61,7 +65,10 @@ const NviDrawerList: Component = () => {
                 <Show when={!!currentSession()}>
                     <ListItemButton
                         selected={pathname() === "/feedlists/default"}
-                        onClick={() => navigate("/feedlists/default")}
+                        onClick={() => {
+                            navigate("/feedlists/default");
+                            props.afterItemClicked({});
+                        }}
                     >
                         <ListItemIcon>
                             <ListIcon />
@@ -99,18 +106,22 @@ const NviDrawerList: Component = () => {
                     fallback={
                         <>
                             <ListItemButton
-                                onClick={() =>
+                                onClick={() => {
                                     navigate(
                                         `/sign-in?back=${encodeURIComponent(
                                             pathname()
                                         )}`
-                                    )
-                                }
+                                    );
+                                    props.afterItemClicked({});
+                                }}
                             >
                                 <ListItemText primary="Sign in" />
                             </ListItemButton>
                             <ListItemButton
-                                onClick={() => navigate("/sign-up/")}
+                                onClick={() => {
+                                    navigate("/sign-up/");
+                                    props.afterItemClicked({});
+                                }}
                             >
                                 <ListItemText primary="Create account" />
                             </ListItemButton>
@@ -119,7 +130,10 @@ const NviDrawerList: Component = () => {
                 >
                     <ListItemButton
                         selected={pathname().startsWith("/settings")}
-                        onClick={() => navigate("/settings")}
+                        onClick={() => {
+                            navigate("/settings");
+                            props.afterItemClicked({});
+                        }}
                     >
                         <ListItemIcon>
                             <SettingsIcon />

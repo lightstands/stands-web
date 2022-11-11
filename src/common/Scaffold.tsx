@@ -105,7 +105,13 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
                     open={drawerOpen()}
                     onClose={() => setDrawerOpen(false)}
                 >
-                    <NviDrawerList />
+                    <NviDrawerList
+                        afterItemClicked={() =>
+                            state.drawerType === "temporary"
+                                ? setDrawerOpen(false)
+                                : undefined
+                        }
+                    />
                 </Drawer>
                 <Box sx={{ height: "100%", flexGrow: 1 }}>{props.children}</Box>
             </Box>
