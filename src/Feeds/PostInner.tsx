@@ -4,12 +4,17 @@ import Paper from "@suid/material/Paper";
 import Toolbar from "@suid/material/Toolbar";
 import Typography from "@suid/material/Typography";
 import IconButton from "@suid/material/IconButton";
-import { Close as CloseIcon } from "@suid/icons-material";
+import {
+    Close as CloseIcon,
+    OpenInNew as OpenInNewIcon,
+} from "@suid/icons-material";
 import { useClient } from "../client";
 import { aunwrap, fetchContent, getPost } from "lightstands-js";
 import SafeDocView from "./SafeDocView";
 import { useScaffold } from "../common/Scaffold";
 import Delayed from "./Delayed";
+import Style from "../common/Style.module.css";
+import ExpandableMenu, { MenuItem } from "../common/ExpandableMenu";
 
 interface PostInnerProps {
     feedUrlBlake3: string;
@@ -22,6 +27,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
     const [webViewHeight, setWebViewHeight] = createSignal<number | string>(
         scaffoldCx.state.height || "100vh"
     );
+    const [menuOpen, setMenuOpen] = createSignal(false);
     const [postMetadata] = createResource(
         () => [props.feedUrlBlake3, props.postIdBlake3],
         ([feedUrlBlake3, postIdBlake3]) => {
@@ -31,7 +37,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
     const [content] = createResource(
         () => [props.feedUrlBlake3, props.postIdBlake3],
         async ([feedUrlBlake3, postIdBlake3]) => {
-            const response = await aunwrap(
+            const response: Response = await aunwrap(
                 fetchContent(client, feedUrlBlake3, postIdBlake3, {
                     contentType: "text/html",
                 })
@@ -75,15 +81,48 @@ const PostInner: Component<PostInnerProps> = (props) => {
                     ...toolbarShadowSx(),
                 }}
             >
-                <IconButton
-                    size="large"
-                    color="inherit"
-                    onClick={() => {
-                        window.history.go(-1);
-                    }}
-                >
-                    <CloseIcon />
-                </IconButton>
+                <Box class={Style.FlexboxRow} sx={{ flexGrow: 1 }}>
+                    <IconButton
+                        size="large"
+                        color="inherit"
+                        onClick={() => {
+                            window.history.go(-1);
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+                <Box class={Style.FlexboxRow} sx={{ justifyContent: "end" }}>
+                    <ExpandableMenu
+                        open={menuOpen()}
+                        onOpen={() => setMenuOpen(true)}
+                        onClose={() => setMenuOpen(false)}
+                        onItemClick={(f) => (f as () => void)()}
+                        suggestWidth={
+                            scaffoldCx.state.suggestExpandableMenuWidth ||
+                            undefined
+                        }
+                    >
+                        <MenuItem
+                            primary="Open link..."
+                            data={() => {
+                                if (
+                                    window.confirm(
+                                        `Open link?\n${postMetadata()!.link}`
+                                    )
+                                ) {
+                                    window.open(postMetadata()!.link, "_blank");
+                                }
+                            }}
+                            icon={<OpenInNewIcon />}
+                            disabled={
+                                postMetadata.state !== "ready" ||
+                                typeof postMetadata()?.link === "undefined"
+                            }
+                            ariaDescrption="Open link..."
+                        />
+                    </ExpandableMenu>
+                </Box>
             </Toolbar>
             <Box
                 sx={{ overflow: "auto" }}
@@ -105,7 +144,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
                             <Typography
                                 sx={{ width: "100%", textAlign: "center" }}
                             >
-                                Waiting for post...
+                                Waiting for traffic...
                             </Typography>
                         </Delayed>
                     }
