@@ -8,6 +8,7 @@ interface ImportMetaEnv {
     readonly VITE_LIGHTSTANDS_CLIENT_ID: string;
     readonly VITE_LIGHTSTANDS_CLIENT_SECRET: string;
     readonly PACKAGE_VERSION: string;
+    readonly BUILD_AT: number;
 }
 
 interface ImportMeta {

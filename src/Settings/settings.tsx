@@ -21,6 +21,7 @@ import CircularProgress from "@suid/material/CircularProgress";
 import ListItem from "@suid/material/ListItem";
 import { OpenInNew as OpenInNewIcon } from "@suid/icons-material";
 import { useNavigate } from "@solidjs/router";
+import { formatDistanceToNow } from "date-fns";
 
 const SetPasswordDlg = lazy(() => import("./SetPasswordDlg"));
 
@@ -130,7 +131,13 @@ const SettingsPage: Component = () => {
                                         ? "LightStands for Web"
                                         : "LightStands for Web (dev)"
                                 }
-                                secondary={import.meta.env.PACKAGE_VERSION}
+                                secondary={
+                                    /* @once */ `${
+                                        import.meta.env.PACKAGE_VERSION
+                                    } (updated ${formatDistanceToNow(
+                                        new Date(import.meta.env.BUILD_AT)
+                                    )})`
+                                }
                             />
                         </ListItem>
                         <ListItemButton divider disabled>
