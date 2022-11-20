@@ -12,6 +12,8 @@ import {
     Session,
     unboxLeft,
     unboxRight,
+    revokeSession as RevokeRemoteSession,
+    aunwrap,
 } from "lightstands-js";
 
 interface SessionStore {
@@ -96,10 +98,10 @@ export function getIdPresentation(
 export const revokeSession = action(
     currentSessionStore,
     "revokeSession",
-    async (store) => {
+    async (store, client: ClientConfig) => {
         const session = store.get();
         if (session) {
-            // TODO: revoke on remote
+            await aunwrap(RevokeRemoteSession(client, session.session));
             store.set(undefined);
         }
     }

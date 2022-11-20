@@ -3,6 +3,7 @@
 
 import { Params, useNavigate, useSearchParams } from "@solidjs/router";
 import { Component, onMount } from "solid-js";
+import { useClient } from "../client";
 import { revokeSession } from "../stores/session";
 
 interface SignOutSearchParams extends Params {
@@ -10,10 +11,11 @@ interface SignOutSearchParams extends Params {
 }
 
 const SignOutPage: Component = () => {
+    const client = useClient();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams<SignOutSearchParams>();
     onMount(() => {
-        revokeSession().then(() => {
+        revokeSession(client).then(() => {
             if (searchParams.back) {
                 navigate(searchParams.back);
             } else {
