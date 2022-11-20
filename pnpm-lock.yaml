@@ -17,8 +17,9 @@ specifiers:
   babel-preset-solid: ^1.5.9
   cuint: ^0.2.2
   date-fns: ^2.29.3
+  dexie: ^3.2.2
   eslint: ^8.27.0
-  lightstands-js: ^1.3.1
+  lightstands-js: ^1.3.2
   nanostores: '0.7'
   prettier: ^2.7.1
   solid-hcaptcha: ^0.2.5
@@ -41,7 +42,8 @@ dependencies:
   '@suid/material': 0.6.3_solid-js@1.5.9
   cuint: 0.2.2
   date-fns: 2.29.3
-  lightstands-js: 1.3.1
+  dexie: 3.2.2
+  lightstands-js: 1.3.2
   nanostores: 0.7.0
   solid-hcaptcha: 0.2.5_solid-js@1.5.9
   solid-js: 1.5.9
@@ -1032,6 +1034,11 @@ packages:
     engines: {node: '>=0.4.0'}
     dev: false
 
+  /dexie/3.2.2:
+    resolution: {integrity: sha512-q5dC3HPmir2DERlX+toCBbHQXW5MsyrFqPFcovkH9N2S/UW/H3H5AWAB6iEOExeraAu+j+zRDG+zg/D7YhH0qg==}
+    engines: {node: '>=6.0'}
+    dev: false
+
   /doctrine/3.0.0:
     resolution: {integrity: sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==}
     engines: {node: '>=6.0.0'}
@@ -1578,8 +1585,8 @@ packages:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
 
-  /js-base64/3.7.2:
-    resolution: {integrity: sha512-NnRs6dsyqUXejqk/yv2aiXlAvOs56sLkX6nUdeaNezI5LFFLlsZjOThmwnrcwh5ZZRwZlCMnVAY3CvhIhoVEKQ==}
+  /js-base64/3.7.3:
+    resolution: {integrity: sha512-PAr6Xg2jvd7MCR6Ld9Jg3BmTcjYsHEBx1VlwEwULb/qowPf5VD9kEMagj23Gm7JRnSvE/Da/57nChZjnvL8v6A==}
     dev: false
 
   /js-sdsl/4.1.4:
@@ -1625,15 +1632,15 @@ packages:
       type-check: 0.4.0
     dev: true
 
-  /lightstands-js/1.3.1:
-    resolution: {integrity: sha512-iJnKmWsKfEko49P0zk3j/YeSkYFwP44+j9a9JRsip5haH9bIcx6HszVnttwls9KcDZvFVNfOuPPWYQRZNLy/Lg==}
+  /lightstands-js/1.3.2:
+    resolution: {integrity: sha512-EqS2fFusatljHX+p/6rj5dInlrsOoj2bjjxSy2sk3FJ9+gYq6Qes5JMrtZ1Zy7agpJCjlyWJ+vmozZFnQSYgfw==}
     engines: {node: '>=10'}
     dependencies:
       '@noble/hashes': 1.1.3
       axios: 1.1.3
       cuint: 0.2.2
       form-data: 4.0.0
-      js-base64: 3.7.2
+      js-base64: 3.7.3
     transitivePeerDependencies:
       - debug
     dev: false

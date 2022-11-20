@@ -1,6 +1,6 @@
 {
     "name": "stands-web",
-    "version": "0.1.0-alpha.0",
+    "version": "0.1-pre",
     "description": "LightStands Web Application",
     "scripts": {
         "start": "vite",
@@ -34,7 +34,8 @@
         "@suid/material": "^0.6.3",
         "cuint": "^0.2.2",
         "date-fns": "^2.29.3",
-        "lightstands-js": "^1.3.1",
+        "dexie": "^3.2.2",
+        "lightstands-js": "^1.3.2",
         "nanostores": "0.7",
         "solid-hcaptcha": "^0.2.5",
         "solid-js": "^1.5.9",

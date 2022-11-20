@@ -16,6 +16,9 @@ const IndexPage: Component = () => {
                 <li>
                     <Link href="/_dev/euid">EUId Playground</Link>
                 </li>
+                <li>
+                    <Link href="/_dev/tags">Tags</Link>
+                </li>
             </ul>
         </>
     );

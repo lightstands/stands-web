@@ -49,6 +49,8 @@ const DEFAULT_SCOPE = [
     "feedlist.list",
     "feedlist.new",
     "feedlist.rm",
+    "tags.read",
+    "tags.write",
 ].join(" ");
 
 function getUserAgent() {
