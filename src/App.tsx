@@ -1,9 +1,13 @@
 // Copyright 2022 Rubicon.
 // SPDX-License-Identifier: 	AGPL-3.0-or-later
 
-import { Component, For, Show } from "solid-js";
+import { Component, For, onCleanup, onMount, Show } from "solid-js";
 import { Outlet, Route, Routes } from "@solidjs/router";
 import { lazy } from "solid-js";
+import { useClient } from "./client";
+import { useStore } from "@nanostores/solid";
+import { currentSessionStore } from "./stores/session";
+import { doSync } from "./common/synmgr";
 
 const OAuth2ConfirmPage = lazy(() => import("./OAuth2/confirm"));
 
@@ -36,8 +40,27 @@ const SignUpEmailFlow1 = lazy(() => import("./UsrCreation/EmailFlowStage1"));
 const SignUpSetPassword = lazy(() => import("./UsrCreation/SetPassword"));
 
 const SettingsPage = lazy(() => import("./Settings/settings"));
+const SettingStoragePage = lazy(() => import("./Settings/storage"));
 
 const App: Component = () => {
+    let syncTimerId: number | undefined;
+    const client = useClient();
+    const session = useStore(currentSessionStore);
+
+    onMount(() => {
+        const sessionObject = session();
+        if (sessionObject) {
+            doSync(client, sessionObject.session);
+            syncTimerId = setInterval(
+                () => doSync(client, sessionObject.session),
+                30 * 60 * 1000
+            ); // do this every 30 minutes
+        }
+    });
+
+    onCleanup(() => {
+        clearInterval(syncTimerId);
+    });
     return (
         <Routes>
             <Route path="/oauth2" component={OAuth2ConfirmPage} />
@@ -60,7 +83,10 @@ const App: Component = () => {
                 )}
             >
                 <Route path="/" component={DefaultFeedListPage} />
-                <Route path="/settings" component={SettingsPage} />
+                <Route path="/settings">
+                    <Route path="/" component={SettingsPage} />
+                    <Route path="/storage" component={SettingStoragePage} />
+                </Route>
                 <Route path="/feedlists">
                     <Route path="/default" component={DefaultFeedListPage} />
                 </Route>

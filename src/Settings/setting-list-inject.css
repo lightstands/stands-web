@@ -1,0 +1,13 @@
+.SettingList .MuiListSubheader-root {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+.SettingList .MuiPaper-root {
+    border-radius: 2px;
+    margin-bottom: 12px;
+}
+.SettingList .MuiPaper-root ~ .MuiTypography-root {
+    margin-left: 16px;
+    margin-right: 16px;
+    margin-bottom: 16px;
+}

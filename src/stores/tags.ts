@@ -220,6 +220,13 @@ function getTimestamp() {
     return Math.floor(new Date().getTime() / 1000);
 }
 
+/** tag a post in local database
+ *
+ * @param tag
+ * @param postRef
+ * @param feedUrlB3Base64
+ * @param postIdB3Base64
+ */
 export async function tagPost(
     tag: string,
     postRef: number,
@@ -240,6 +247,13 @@ export async function tagPost(
     );
 }
 
+/** untag a post in local database
+ *
+ * @param tag
+ * @param postRef
+ * @param feedUrlB3Base64
+ * @param postIdB3Base64
+ */
 export async function untagPost(
     tag: string,
     postRef: number,
@@ -257,6 +271,113 @@ export async function untagPost(
         feedUrlB3Base64,
         postIdB3Base64
     );
+}
+
+/** tag a post and sync to lightstands.
+ * It's cheaper than the 'sync later' option, since this operation can avoid the merging cost.
+ *
+ * This function will sliently fail when it could not sync the change to lightstands.
+ *
+ * @param client
+ * @param session
+ * @param userId
+ * @param tag
+ * @param postRef
+ * @param feedUrlB3Base64
+ * @param postIdB3Base64
+ */
+export async function tagPostAndSync(
+    client: ClientConfig,
+    session: SessionAccess,
+    userId: number,
+    tag: string,
+    postRef: number,
+    feedUrlB3Base64: string,
+    postIdB3Base64: string
+) {
+    const db = await openDb();
+    const ts = getTimestamp();
+    await localTag(
+        db,
+        postRef,
+        tag,
+        ts,
+        ts,
+        false,
+        feedUrlB3Base64,
+        postIdB3Base64
+    );
+    try {
+        await aunwrap(
+            patchPostTags(
+                client,
+                session,
+                userId,
+                feedUrlB3Base64,
+                postIdB3Base64,
+                {
+                    tag: [tag],
+                }
+            )
+        );
+        await db.postTags.update([postRef, tag], {
+            is_sync: 1,
+        });
+    } catch (e) {
+        console.error("tagPostAndSync", "sync error", e);
+    }
+}
+
+/** untag a post and sync to lightstands.
+ * It's cheaper than the 'sync later' option, since this operation can avoid the merging cost.
+ *
+ * This function will sliently fail when it could not sync the change to lightstands.
+ *
+ * @param client
+ * @param session
+ * @param userId
+ * @param tag
+ * @param postRef
+ * @param feedUrlB3Base64
+ * @param postIdB3Base64
+ */
+export async function untagPostAndSync(
+    client: ClientConfig,
+    session: SessionAccess,
+    userId: number,
+    tag: string,
+    postRef: number,
+    feedUrlB3Base64: string,
+    postIdB3Base64: string
+) {
+    const db = await openDb();
+    await localTag(
+        db,
+        postRef,
+        tag,
+        0,
+        getTimestamp(),
+        false,
+        feedUrlB3Base64,
+        postIdB3Base64
+    );
+    try {
+        await aunwrap(
+            patchPostTags(
+                client,
+                session,
+                userId,
+                feedUrlB3Base64,
+                postIdB3Base64,
+                {
+                    untag: [tag],
+                }
+            )
+        );
+        await db.postTags.delete([postRef, tag]);
+    } catch (e) {
+        console.error("untagPostAndSync", "sync error", e);
+    }
 }
 
 export async function isPostTagged(postRef: number, tag: string) {

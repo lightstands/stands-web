@@ -1,6 +1,7 @@
 import { ClientConfig, Session } from "lightstands-js";
 import { createSignal } from "solid-js";
 import { syncTags } from "../stores/tags";
+import { settingStore } from "../stores/settings";
 
 export type TaskNames = "tags";
 
@@ -32,4 +33,5 @@ export async function doSync(client: ClientConfig, session: Session) {
                 setWorkingTasks((old) => old.filter((v) => v !== "tags"))
             ),
     ]);
+    settingStore.setKey("lastTimeSync", new Date().getTime());
 }

@@ -1,7 +1,7 @@
 // Copyright 2022 The LightStands Web Contributors.
 // SPDX-License-Identifier: 	AGPL-3.0-or-later
 
-import { Component, createResource, createSignal, For } from "solid-js";
+import { Component, createResource, createSignal, For, Show } from "solid-js";
 import { useClient } from "../client";
 import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
@@ -24,11 +24,21 @@ import ListItem from "@suid/material/ListItem";
 import ListItemText from "@suid/material/ListItemText";
 import ListItemButton from "@suid/material/ListItemButton";
 import SharedAppBar from "../common/SharedAppBar";
+import Card from "@suid/material/Card";
+import CardContent from "@suid/material/CardContent";
+import Typography from "@suid/material/Typography";
+import CardActions from "@suid/material/CardActions";
+import Button from "@suid/material/Button";
+import Style from "../common/Style.module.css";
+import { settingStore } from "../stores/settings";
+import { usePermission } from "../common/utils";
 
 const DefaultFeedListPage: Component = () => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
+    const storagePermission = usePermission({ name: "persistent-storage" });
+    const settings = useStore(settingStore);
     const loc = useLocation();
     const [showAddFeed, setShowAddFeed] = createSignal(false);
     const [defaultListMeta] = createResource(session, async (session) => {
@@ -76,6 +86,10 @@ const DefaultFeedListPage: Component = () => {
             navigate(`/sign-in?back=${encodeURIComponent(loc.pathname)}`);
         }
     });
+
+    const setStoragePermission = () => {
+        navigator.storage.persist();
+    };
     return (
         <>
             <BottomSheet
@@ -106,6 +120,46 @@ const DefaultFeedListPage: Component = () => {
             </Box>
             <SharedAppBar title="Subscribed" />
             <Box>
+                <Show
+                    when={
+                        storagePermission() === "prompt" &&
+                        !settings().ignorePermissionTip
+                    }
+                >
+                    <Card
+                        class={Style.FixedCenterX}
+                        sx={{ maxWidth: "560px", marginTop: "16px" }}
+                    >
+                        <CardContent>
+                            <Typography>
+                                The browser may wipe up our storage on your
+                                device.
+                            </Typography>
+                            <Typography>
+                                We need your permission to store data on your
+                                device. The data is only for your experience, we
+                                won't use the data to track you without your
+                                attention.
+                            </Typography>
+                            <Typography>
+                                You may find the option in "Settings" later.
+                            </Typography>
+                        </CardContent>
+                        <CardActions class={Style.ButtonGroupEndAligned}>
+                            <Button onClick={setStoragePermission}>Ok</Button>
+                            <Button
+                                onClick={() =>
+                                    settingStore.setKey(
+                                        "ignorePermissionTip",
+                                        true
+                                    )
+                                }
+                            >
+                                Ignore
+                            </Button>
+                        </CardActions>
+                    </Card>
+                </Show>
                 <List>
                     <For each={listItemDetails()}>
                         {(item, index) => {

@@ -22,6 +22,8 @@ import ListItem from "@suid/material/ListItem";
 import { OpenInNew as OpenInNewIcon } from "@suid/icons-material";
 import { useNavigate } from "@solidjs/router";
 import { formatDistanceToNow } from "date-fns";
+import { usePermission } from "../common/utils";
+import SettingListInject from "./setting-list-inject.css?inline";
 
 const SetPasswordDlg = lazy(() => import("./SetPasswordDlg"));
 
@@ -29,6 +31,7 @@ const SettingsPage: Component = () => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
+    const storagePermission = usePermission({ name: "persistent-storage" });
     const [openSetPassword, setOpenSetPassword] = createSignal(false);
     const [userPrivateInfo] = createResource(
         (): [ClientConfig, { session: Session } | undefined] => [
@@ -59,7 +62,7 @@ const SettingsPage: Component = () => {
             <Box
                 class={`${CommonStyle.SmartBodyWidth} ${CommonStyle.FixedCenterX}`}
             >
-                <style>{`.SettingList .MuiListSubheader-root {margin-top: 4px; margin-bottom:4px;} .SettingList .MuiPaper-root {border-radius: 2px; margin-bottom: 12px}`}</style>
+                <style>{SettingListInject}</style>
                 <List class="SettingList">
                     <ListSubheader>
                         <Typography>
@@ -119,6 +122,20 @@ const SettingsPage: Component = () => {
                                 <ListItemText primary="Set new password" />
                             </ListItemButton>
                         </Show>
+                    </Paper>
+                    <Paper>
+                        <Show when={storagePermission() === "prompt"}>
+                            <ListItemButton divider>
+                                <ListItemText primary="Grant persistent storage permission" />
+                            </ListItemButton>
+                        </Show>
+
+                        <ListItemButton
+                            divider
+                            onClick={() => navigate("/settings/storage")}
+                        >
+                            <ListItemText primary="Storage" />
+                        </ListItemButton>
                     </Paper>
                     <ListSubheader>
                         <Typography>About</Typography>
