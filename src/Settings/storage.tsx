@@ -112,9 +112,9 @@ const StoragePage: Component = () => {
                     </Paper>
                     <Typography>
                         The number here may significantly differ from the actual
-                        number.
+                        number due to privacy concern and other reasons.
                         <Link href="https://developer.mozilla.org/en-US/docs/Web/API/Storage_API#quotas_and_usage_estimates">
-                            Learn more from Mozilla Developer Network...
+                            Learn more about why the number is different...
                         </Link>
                     </Typography>
                     <ListSubheader>
@@ -159,8 +159,8 @@ const StoragePage: Component = () => {
                     </Paper>
                     <Typography>
                         LightStands for Web can automatically keep the data up
-                        to date. You can trigger synchronisation manually when
-                        you believe something wrong to your local data.
+                        to date. You may trigger synchronisation manually when
+                        you believe something went wrong.
                     </Typography>
                 </List>
             </Box>
