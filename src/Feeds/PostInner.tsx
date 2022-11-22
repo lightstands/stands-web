@@ -7,6 +7,8 @@ import IconButton from "@suid/material/IconButton";
 import {
     Close as CloseIcon,
     OpenInNew as OpenInNewIcon,
+    DoneAll as DoneAllIcon,
+    RemoveDone as RemoveDoneIcon,
 } from "@suid/icons-material";
 import { useClient } from "../client";
 import { aunwrap, fetchContent, getPost } from "lightstands-js";
@@ -15,6 +17,13 @@ import { useScaffold } from "../common/Scaffold";
 import Delayed from "./Delayed";
 import Style from "../common/Style.module.css";
 import ExpandableMenu, { MenuItem } from "../common/ExpandableMenu";
+import { useLiveQuery } from "../common/utils";
+import { isPostTagged, tagPostAndSync, untagPostAndSync } from "../stores/tags";
+import { useStore } from "@nanostores/solid";
+import { currentSessionStore } from "../stores/session";
+import AdvMenu from "../common/AdvMenu";
+import ListItemButton from "@suid/material/ListItemButton";
+import ListItemText from "@suid/material/ListItemText";
 
 interface PostInnerProps {
     feedUrlBlake3: string;
@@ -23,11 +32,12 @@ interface PostInnerProps {
 
 const PostInner: Component<PostInnerProps> = (props) => {
     const client = useClient();
+    const session = useStore(currentSessionStore);
     const scaffoldCx = useScaffold();
+    const [expandedMenuIconNumber, setExpandedMenuIconNumber] = createSignal(0);
     const [webViewHeight, setWebViewHeight] = createSignal<number | string>(
         scaffoldCx.state.height || "100vh"
     );
-    const [menuOpen, setMenuOpen] = createSignal(false);
     const [postMetadata] = createResource(
         () => [props.feedUrlBlake3, props.postIdBlake3],
         ([feedUrlBlake3, postIdBlake3]) => {
@@ -56,6 +66,102 @@ const PostInner: Component<PostInnerProps> = (props) => {
                       "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
               }
             : {};
+    // TODO: Sync the read status with local database
+    const [isPostRead, isPostReadCtl] = createResource(
+        () => [postMetadata()],
+        async ([postMeta]) => {
+            if (postMeta) {
+                return await isPostTagged(postMeta.ref, "_read");
+            } else {
+                return undefined;
+            }
+        }
+    );
+
+    const markAsRead = async () => {
+        const currentSession = session();
+        const postMeta = postMetadata();
+        if (currentSession && postMeta) {
+            await tagPostAndSync(
+                client,
+                currentSession.session,
+                currentSession.session.accessTokenObject.userid,
+                "_read",
+                postMeta.ref,
+                props.feedUrlBlake3,
+                props.postIdBlake3
+            );
+        }
+        isPostReadCtl.refetch();
+    };
+
+    const markAsUnread = async () => {
+        const currentSession = session();
+        const postMeta = postMetadata();
+        if (currentSession && postMeta) {
+            await untagPostAndSync(
+                client,
+                currentSession.session,
+                currentSession.session.accessTokenObject.userid,
+                "_read",
+                postMeta.ref,
+                props.feedUrlBlake3,
+                props.postIdBlake3
+            );
+        }
+        isPostReadCtl.refetch();
+    };
+
+    const expandedMenuItems = () => {
+        const n = expandedMenuIconNumber();
+        if (n > 1 && session()) {
+            return [
+                isPostRead() ? (
+                    <IconButton
+                        size="large"
+                        color="inherit"
+                        class="tooltip"
+                        aria-description="Mark as unread"
+                        onClick={markAsUnread}
+                        disabled={!postMetadata()}
+                    >
+                        <RemoveDoneIcon />
+                    </IconButton>
+                ) : (
+                    <IconButton
+                        size="large"
+                        color="inherit"
+                        class="tooltip"
+                        aria-description="Mark as read"
+                        onClick={markAsRead}
+                        disabled={!postMetadata()}
+                    >
+                        <DoneAllIcon />
+                    </IconButton>
+                ),
+            ];
+        } else {
+            return [];
+        }
+    };
+
+    const hiddenMenuItems = () => {
+        const n = expandedMenuIconNumber();
+
+        const items = [
+            <ListItemButton>
+                <ListItemText primary="Open link..." />
+            </ListItemButton>,
+        ];
+        if (n < 1 && session()) {
+            items.unshift(
+                <ListItemButton>
+                    <ListItemText primary="Mark as read" />
+                </ListItemButton>
+            );
+        }
+        return items;
+    };
     return (
         <Paper
             sx={{
@@ -90,35 +196,16 @@ const PostInner: Component<PostInnerProps> = (props) => {
                     </IconButton>
                 </Box>
                 <Box class={Style.FlexboxRow} sx={{ justifyContent: "end" }}>
-                    <ExpandableMenu
-                        open={menuOpen()}
-                        onOpen={() => setMenuOpen(true)}
-                        onClose={() => setMenuOpen(false)}
-                        onItemClick={(f) => (f as () => void)()}
+                    <AdvMenu
                         suggestWidth={
                             scaffoldCx.state.suggestExpandableMenuWidth ||
                             undefined
                         }
-                    >
-                        <MenuItem
-                            primary="Open link..."
-                            data={() => {
-                                if (
-                                    window.confirm(
-                                        `Open link?\n${postMetadata()!.link}`
-                                    )
-                                ) {
-                                    window.open(postMetadata()!.link, "_blank");
-                                }
-                            }}
-                            icon={<OpenInNewIcon />}
-                            disabled={
-                                postMetadata.state !== "ready" ||
-                                typeof postMetadata()?.link === "undefined"
-                            }
-                            ariaDescrption="Open link..."
-                        />
-                    </ExpandableMenu>
+                        hidden={hiddenMenuItems()}
+                        expanded={expandedMenuItems()}
+                        totalIconNumber={2}
+                        onExpandedIconNumberChanged={setExpandedMenuIconNumber}
+                    />
                 </Box>
             </Toolbar>
             <Box

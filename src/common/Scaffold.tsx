@@ -70,7 +70,7 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
             height: size.height,
             suggestExpandableMenuWidth: size.width
                 ? Math.floor(
-                      (size.width - (showPermanentDrawer() ? 240 : 0)) * 0.25
+                      (size.width - (showPermanentDrawer() ? 240 : 0)) * 0.3
                   )
                 : null,
         });
