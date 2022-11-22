@@ -320,9 +320,6 @@ export async function tagPostAndSync(
                 }
             )
         );
-        await db.postTags.update([postRef, tag], {
-            is_sync: 1,
-        });
     } catch (e) {
         console.error("tagPostAndSync", "sync error", e);
     }
