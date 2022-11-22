@@ -6,7 +6,6 @@ import Typography from "@suid/material/Typography";
 import IconButton from "@suid/material/IconButton";
 import {
     Close as CloseIcon,
-    OpenInNew as OpenInNewIcon,
     DoneAll as DoneAllIcon,
     RemoveDone as RemoveDoneIcon,
 } from "@suid/icons-material";
@@ -16,8 +15,6 @@ import SafeDocView from "./SafeDocView";
 import { useScaffold } from "../common/Scaffold";
 import Delayed from "./Delayed";
 import Style from "../common/Style.module.css";
-import ExpandableMenu, { MenuItem } from "../common/ExpandableMenu";
-import { useLiveQuery } from "../common/utils";
 import { isPostTagged, tagPostAndSync, untagPostAndSync } from "../stores/tags";
 import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
