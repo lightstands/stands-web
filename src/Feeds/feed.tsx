@@ -5,9 +5,11 @@ import {
     useSearchParams,
 } from "@solidjs/router";
 import {
+    batch,
     Component,
     createResource,
     createSignal,
+    createUniqueId,
     For,
     Match,
     onCleanup,
@@ -15,7 +17,11 @@ import {
     Show,
     Switch,
 } from "solid-js";
-import { OpenInNew as OpenInNewIcon } from "@suid/icons-material";
+import {
+    OpenInNew as OpenInNewIcon,
+    FilterList as FilterListIcon,
+    FilterListOff as FilterListOffIcon,
+} from "@suid/icons-material";
 import ToolbarTitle from "../common/ToolbarTitle";
 import {
     aeither,
@@ -23,6 +29,7 @@ import {
     getFeedInfo,
     getFeedPosts,
     PublicPost,
+    unboxRight,
 } from "lightstands-js";
 import { useClient } from "../client";
 import CircularProgress from "@suid/material/CircularProgress";
@@ -39,9 +46,20 @@ import Divider from "@suid/material/Divider";
 import LinearProgress from "@suid/material/LinearProgress";
 import SharedAppBar from "../common/SharedAppBar";
 import CommonStyle from "../common/Style.module.css";
-import { default as ExpandableMenu, MenuItem } from "../common/ExpandableMenu";
 import { useScaffold } from "../common/Scaffold";
 import "./feed.css";
+import { isPostTagged } from "../stores/tags";
+import AdvMenu from "../common/AdvMenu";
+import ListItemButton from "@suid/material/ListItemButton";
+import ListItemIcon from "@suid/material/ListItemIcon";
+import Chip from "@suid/material/Chip";
+import Button from "@suid/material/Button";
+import Popover from "@suid/material/Popover";
+import ListSubheader from "@suid/material/ListSubheader";
+import Radio from "@suid/material/Radio";
+import FormControl from "@suid/material/FormControl";
+import RadioGroup from "@suid/material/RadioGroup";
+import FormControlLabel from "@suid/material/FormControlLabel";
 
 function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
     const navigate = useNavigate();
@@ -111,8 +129,12 @@ function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
 
 const FeedPage: Component = () => {
     let listEndEl: HTMLDivElement;
+    let filterButEl: HTMLButtonElement;
     const data = useParams<{ feed: string; post?: string }>();
-    const searchParams = useSearchParams<{ parent_id: string }>();
+    const [searchParams, setSearchParams] = useSearchParams<{
+        parent_id: string;
+        filter_tag: string;
+    }>();
     const [query, setQuery] = useSearchParams<{
         ref_gt: string;
         ref_le: string;
@@ -122,9 +144,18 @@ const FeedPage: Component = () => {
     const [fetchStat, setFetchStat] = createSignal<
         "initial" | "fetching" | "error" | "ready"
     >("initial");
-    const [postBuffer, setPostBuffer] = createSignal<readonly PublicPost[]>([]);
+    const [postBuffer, setPostBuffer] = createSignal<readonly PublicPost[]>(
+        [],
+        {
+            equals: (prev, next) => {
+                return (
+                    prev.length === next.length &&
+                    prev.every((v, i) => v === next[i])
+                );
+            },
+        }
+    );
     const [isListEnded, setIsListEnded] = createSignal(false);
-    const [menuOpen, setMenuOpen] = createSignal(false);
     const limit = () => {
         if (query.limit) {
             return Number(query.limit);
@@ -137,6 +168,21 @@ const FeedPage: Component = () => {
     });
     let shouldLoadMorePosts = false;
     const scaffoldCx = useScaffold();
+
+    const filterPopId = createUniqueId();
+    const [filterPopOpen, setFilterPopOpen] = createSignal(false);
+
+    const applyFilter = async (post: PublicPost) => {
+        if (searchParams.filter_tag) {
+            const expr = searchParams.filter_tag;
+            if (expr[0] === "!") {
+                return !(await isPostTagged(post.ref, expr.slice(1)));
+            } else {
+                return await isPostTagged(post.ref, expr);
+            }
+        }
+        return true;
+    };
 
     const loadMorePosts = async () => {
         if (isListEnded()) return;
@@ -153,13 +199,18 @@ const FeedPage: Component = () => {
                 left(l) {
                     setFetchStat("error");
                 },
-                right(r) {
+                async right(r) {
+                    const posts: PublicPost[] = [];
+                    for (const p of r.posts) {
+                        if (await applyFilter(p)) {
+                            posts.push(p);
+                        }
+                    }
+                    const oldRefs = new Set(postBuffer().map((v) => v.ref));
                     setPostBuffer((prev) => {
                         return [
                             ...prev,
-                            ...r.posts.filter(
-                                (p) => !prev.map((v) => v.ref).includes(p.ref)
-                            ),
+                            ...posts.filter((v) => !oldRefs.has(v.ref)),
                         ];
                     });
                     setFetchStat("ready");
@@ -189,6 +240,30 @@ const FeedPage: Component = () => {
         }
     });
 
+    const reloadWholeList = () => {
+        batch(() => {
+            setPostBuffer([]);
+            setIsListEnded(false);
+        });
+        loadMorePosts();
+    };
+
+    const hasFilter = () => !!searchParams.filter_tag;
+
+    const unsetFilterTag = () => {
+        setSearchParams({
+            filter_tag: null,
+        });
+        reloadWholeList();
+    };
+
+    const setFilterTag = async (filterTag: string) => {
+        setSearchParams({
+            filter_tag: filterTag ? filterTag : undefined,
+        });
+        reloadWholeList();
+    };
+
     onMount(() => {
         listEndInsetOb.observe(listEndEl);
     });
@@ -216,40 +291,151 @@ const FeedPage: Component = () => {
                     class={CommonStyle.FlexboxRow}
                     sx={{ justifyContent: "end" }}
                 >
-                    <ExpandableMenu
-                        open={menuOpen()}
-                        onItemClick={(f) => (f as () => void)()}
-                        onClose={() => setMenuOpen(false)}
-                        onOpen={() => setMenuOpen(true)}
+                    <AdvMenu
                         suggestWidth={
                             scaffoldCx.state.suggestExpandableMenuWidth ||
                             undefined
                         }
-                    >
-                        <MenuItem
-                            primary="Visit the website"
-                            data={() =>
-                                window.open(feedMetadata()!.link, "_blank")
-                            }
-                            disabled={
-                                feedMetadata.state !== "ready" ||
-                                typeof feedMetadata()?.link === "undefined"
-                            }
-                            ariaDescrption={"Visit the website"}
-                            icon={<OpenInNewIcon />}
-                        />
-                    </ExpandableMenu>
+                        expanded={[]}
+                        onExpandedIconNumberChanged={() => {}}
+                        totalIconNumber={1}
+                        hidden={[
+                            <ListItemButton
+                                disabled={
+                                    feedMetadata.state !== "ready" ||
+                                    typeof feedMetadata()?.link === "undefined"
+                                }
+                                onClick={() =>
+                                    window.open(feedMetadata()!.link, "_blank")
+                                }
+                            >
+                                <ListItemIcon>
+                                    <OpenInNewIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Visit the website..." />
+                            </ListItemButton>,
+                        ]}
+                    />
                 </Box>
             </SharedAppBar>
             <Box
-                sx={{
-                    position: "relative",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                }}
-                class={CommonStyle.SmartBodyWidth}
+                class={`${CommonStyle.SmartBodyWidth} ${CommonStyle.FixedCenterX}`}
             >
-                <Card sx={{ marginTop: "24px" }}>
+                <div style="height: 8px"></div>
+                <Box
+                    aria-label="Filters"
+                    class={CommonStyle.FlexboxRow}
+                    sx={{ marginX: "12px", marginBottom: "2px" }}
+                >
+                    <Box
+                        class={CommonStyle.FlexboxRow}
+                        sx={{ alignItems: "center" }}
+                    >
+                        <Show when={searchParams.filter_tag === "_read"}>
+                            <Chip
+                                label="Read"
+                                onDelete={unsetFilterTag}
+                                color="primary"
+                            />
+                        </Show>
+
+                        <Show when={searchParams.filter_tag === "!_read"}>
+                            <Chip
+                                label="Unread"
+                                onDelete={unsetFilterTag}
+                                color="primary"
+                            />
+                        </Show>
+                    </Box>
+
+                    <Box
+                        class={CommonStyle.FlexboxRow}
+                        sx={{
+                            flexGrow: 1,
+                            justifyContent: "end",
+                        }}
+                    >
+                        <Button
+                            ref={filterButEl!}
+                            class="tooltip"
+                            aria-description="Manage the filters applied on this page"
+                            onClick={() => setFilterPopOpen(true)}
+                        >
+                            <Show
+                                when={hasFilter()}
+                                fallback={<FilterListOffIcon />}
+                            >
+                                <FilterListIcon
+                                    sx={{
+                                        paddingInlineEnd: "4px",
+                                    }}
+                                />
+                            </Show>
+                            Filter
+                        </Button>
+                        <Popover
+                            id={filterPopId}
+                            open={filterPopOpen()}
+                            onClose={() => setFilterPopOpen(false)}
+                            anchorEl={filterButEl!}
+                            anchorOrigin={{
+                                vertical: "top",
+                                horizontal: "right",
+                            }}
+                            PaperProps={{ sx: { borderRadius: "2px" } }}
+                        >
+                            <List disablePadding sx={{ minWidth: "160px" }}>
+                                <FormControl sx={{ width: "100%" }}>
+                                    <ListSubheader id="filter-tag-label">
+                                        Read or Not
+                                    </ListSubheader>
+
+                                    <RadioGroup
+                                        aria-labelledby="filter-tag-label"
+                                        name="filter-tag"
+                                        value={searchParams.filter_tag || ""}
+                                        onChange={async (ev, value) => {
+                                            await setFilterTag(value);
+                                            setFilterPopOpen(false);
+                                        }}
+                                    >
+                                        <FormControlLabel
+                                            sx={{
+                                                width: "100%",
+                                                marginLeft: 0,
+                                                paddingLeft: 0,
+                                            }}
+                                            value={""}
+                                            control={<Radio size="small" />}
+                                            label="Unset"
+                                        />
+                                        <FormControlLabel
+                                            sx={{
+                                                width: "100%",
+                                                marginLeft: 0,
+                                                paddingLeft: 0,
+                                            }}
+                                            value={"!_read"}
+                                            control={<Radio size="small" />}
+                                            label="Unread"
+                                        />
+                                        <FormControlLabel
+                                            sx={{
+                                                width: "100%",
+                                                marginLeft: 0,
+                                                paddingLeft: 0,
+                                            }}
+                                            value={"_read"}
+                                            control={<Radio size="small" />}
+                                            label="Read"
+                                        />
+                                    </RadioGroup>
+                                </FormControl>
+                            </List>
+                        </Popover>
+                    </Box>
+                </Box>
+                <Card>
                     <List class="post-list">
                         <For each={postBuffer()}>
                             {(item, index) => {
