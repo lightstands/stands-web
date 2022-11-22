@@ -22,7 +22,7 @@ import ListItem from "@suid/material/ListItem";
 import { OpenInNew as OpenInNewIcon } from "@suid/icons-material";
 import { useNavigate } from "@solidjs/router";
 import { formatDistanceToNow } from "date-fns";
-import { usePermission } from "../common/utils";
+import { isPermissionSupported, usePermission } from "../common/utils";
 import SettingListInject from "./setting-list-inject.css?inline";
 
 const SetPasswordDlg = lazy(() => import("./SetPasswordDlg"));
@@ -31,7 +31,9 @@ const SettingsPage: Component = () => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
-    const storagePermission = usePermission({ name: "persistent-storage" });
+    const storagePermission = isPermissionSupported()
+        ? usePermission({ name: "persistent-storage" })
+        : () => "denied";
     const [openSetPassword, setOpenSetPassword] = createSignal(false);
     const [userPrivateInfo] = createResource(
         (): [ClientConfig, { session: Session } | undefined] => [

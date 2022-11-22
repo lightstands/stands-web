@@ -31,13 +31,15 @@ import CardActions from "@suid/material/CardActions";
 import Button from "@suid/material/Button";
 import Style from "../common/Style.module.css";
 import { settingStore } from "../stores/settings";
-import { usePermission } from "../common/utils";
+import { isPermissionSupported, usePermission } from "../common/utils";
 
 const DefaultFeedListPage: Component = () => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
-    const storagePermission = usePermission({ name: "persistent-storage" });
+    const storagePermission = isPermissionSupported()
+        ? usePermission({ name: "persistent-storage" })
+        : () => "denied";
     const settings = useStore(settingStore);
     const loc = useLocation();
     const [showAddFeed, setShowAddFeed] = createSignal(false);

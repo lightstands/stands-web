@@ -59,3 +59,7 @@ export function useCurrentTime(updatePeriod: number): Accessor<Date> {
 
     return time;
 }
+
+export function isPermissionSupported() {
+    return !!(navigator.permissions && navigator.permissions.query);
+}

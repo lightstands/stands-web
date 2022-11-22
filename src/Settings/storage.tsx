@@ -35,13 +35,20 @@ function formatSize(nbytes: number): string {
     return `${nbytes.toFixed(2)} ${SIZE_UNITS[0]}`;
 }
 
+// Compatibility table see https://devdocs.io/dom/storagemanager
+function isOverviewSupported() {
+    return !!(navigator.storage && navigator.storage.estimate);
+}
+
 const StoragePage: Component = () => {
     const settings = useStore(settingStore);
     const client = useClient();
     const session = useStore(currentSessionStore);
     const currentTime = useCurrentTime(60 * 1000);
     const [storageEstimate] = createResource(() => {
-        return navigator.storage.estimate();
+        if (isOverviewSupported()) {
+            return navigator.storage.estimate();
+        }
     });
 
     const tagCount = useLiveQuery(async () => {
@@ -102,21 +109,25 @@ const StoragePage: Component = () => {
                 class={`${CommonStyle.SmartBodyWidth} ${CommonStyle.FixedCenterX}`}
             >
                 <List class="SettingList">
-                    <ListSubheader>
-                        <Typography>Overview</Typography>
-                    </ListSubheader>
-                    <Paper>
-                        <ListItem divider>
-                            <ListItemText primary={getOverviewString()} />
-                        </ListItem>
-                    </Paper>
-                    <Typography>
-                        The number here may significantly differ from the actual
-                        number due to privacy concern and other reasons.
-                        <Link href="https://developer.mozilla.org/en-US/docs/Web/API/Storage_API#quotas_and_usage_estimates">
-                            Learn more about why the number is different...
-                        </Link>
-                    </Typography>
+                    <Show when={isOverviewSupported()}>
+                        <ListSubheader>
+                            <Typography>Overview</Typography>
+                        </ListSubheader>
+                        <Paper>
+                            <ListItem divider>
+                                <ListItemText primary={getOverviewString()} />
+                            </ListItem>
+                        </Paper>
+                        <Typography>
+                            The number here may significantly differ from the
+                            actual number due to privacy concern and other
+                            reasons.
+                            <Link href="https://developer.mozilla.org/en-US/docs/Web/API/Storage_API#quotas_and_usage_estimates">
+                                Learn more about why the number is different...
+                            </Link>
+                        </Typography>
+                    </Show>
+
                     <ListSubheader>
                         <Typography>Tags</Typography>
                     </ListSubheader>
