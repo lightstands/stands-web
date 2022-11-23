@@ -1,9 +1,4 @@
-import {
-    Outlet,
-    useNavigate,
-    useParams,
-    useSearchParams,
-} from "@solidjs/router";
+import { Outlet, useParams } from "@solidjs/router";
 import {
     batch,
     Component,
@@ -29,7 +24,6 @@ import {
     getFeedInfo,
     getFeedPosts,
     PublicPost,
-    unboxRight,
 } from "lightstands-js";
 import { useClient } from "../client";
 import CircularProgress from "@suid/material/CircularProgress";
@@ -62,6 +56,7 @@ import RadioGroup from "@suid/material/RadioGroup";
 import FormControlLabel from "@suid/material/FormControlLabel";
 import { useStore } from "@nanostores/solid";
 import { settingStore } from "../stores/settings";
+import { useNavigate, useSearchParams } from "../common/nav";
 
 function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
     const navigate = useNavigate();
@@ -257,17 +252,20 @@ const FeedPage: Component = () => {
         reloadWholeList();
     };
 
-    const setFilterTag = async (filterTag: string) => {
-        setSearchParams({
-            filter_tag: filterTag ? filterTag : undefined,
-        });
+    const setFilterTag = async (filterTag: string, replace?: boolean) => {
+        setSearchParams(
+            {
+                filter_tag: filterTag ? filterTag : undefined,
+            },
+            { replace: replace }
+        );
         reloadWholeList();
     };
 
     onMount(() => {
         listEndInsetOb.observe(listEndEl);
         if (!searchParams.filter_tag && settings().feedDefaultFilterTag) {
-            setFilterTag(settings().feedDefaultFilterTag);
+            setFilterTag(settings().feedDefaultFilterTag, true);
         }
     });
 

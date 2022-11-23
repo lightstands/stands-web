@@ -22,7 +22,7 @@ import {
     OpenInNew as OpenInNewIcon,
     Logout as LogoutIcon,
 } from "@suid/icons-material";
-import { useNavigate } from "@solidjs/router";
+import { useNavigate } from "../common/nav";
 import { formatDistanceToNow } from "date-fns";
 import { isPermissionSupported, usePermission } from "../common/utils";
 import SettingListInject from "./setting-list-inject.css?inline";
@@ -152,7 +152,10 @@ const SettingsPage: Component = () => {
                                     onChange={(ev) => {
                                         const target =
                                             ev.target as HTMLSelectElement;
-                                            settingStore.setKey("feedDefaultFilterTag", target.value)
+                                        settingStore.setKey(
+                                            "feedDefaultFilterTag",
+                                            target.value
+                                        );
                                     }}
                                 >
                                     <option value={""}>Unset</option>

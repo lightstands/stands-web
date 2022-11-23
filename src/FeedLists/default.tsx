@@ -13,7 +13,7 @@ import {
     getFeedList,
 } from "lightstands-js";
 import { onMount } from "solid-js";
-import { useLocation, useNavigate } from "@solidjs/router";
+import { useLocation } from "@solidjs/router";
 import Box from "@suid/material/Box";
 import { Add as AddIcon } from "@suid/icons-material";
 import Fab from "@suid/material/Fab";
@@ -33,6 +33,7 @@ import Style from "../common/Style.module.css";
 import { settingStore } from "../stores/settings";
 import { isPermissionSupported, usePermission } from "../common/utils";
 import { doSync } from "../common/synmgr";
+import { useNavigate } from "../common/nav";
 
 const DefaultFeedListPage: Component = () => {
     const client = useClient();
@@ -88,8 +89,9 @@ const DefaultFeedListPage: Component = () => {
         if (!session()) {
             navigate(`/sign-in?back=${encodeURIComponent(loc.pathname)}`);
         } else {
-            if (settings().lastTimeSync === 0) { // Sync data when first-time sign in
-                doSync(client, session()!.session)
+            if (settings().lastTimeSync === 0) {
+                // Sync data when first-time sign in
+                doSync(client, session()!.session);
             }
         }
     });
@@ -125,7 +127,7 @@ const DefaultFeedListPage: Component = () => {
                     <AddIcon />
                 </Fab>
             </Box>
-            <SharedAppBar title="Subscribed" />
+            <SharedAppBar title="Subscribed" forceLeftIcon="drawer" />
             <Box>
                 <Show
                     when={

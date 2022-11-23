@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "@solidjs/router";
+import { useLocation } from "@solidjs/router";
 import List from "@suid/material/List";
 import ListItemButton from "@suid/material/ListItemButton";
 import ListItemIcon from "@suid/material/ListItemIcon";
@@ -13,6 +13,7 @@ import { useClient } from "../client";
 import Divider from "@suid/material/Divider";
 import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
+import { useNavigate } from "./nav";
 
 const FEED_POST_REGEXP = /\/feeds\/(.*?)\/posts\/(.+)\/?$/;
 const FEED_REGEXP = /\/feeds\/([^\/]*?)\/?(?!.+)$/;
