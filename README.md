@@ -1,6 +1,18 @@
-# LightStands Web
+# LightStands for Web
 
-LightStands Server Software, LightStands Web, LightStands JS are still in progress, check out here later.
+Note: LightStands Server Software, LightStands for Web are still in early progress.
+
+LightStands for Web is application for you to read your RSS on your browser, and works like an application.
+
+Goals:
+- Progressive downloading.
+- Accessbility for all.
+- Feels like a native application.
+
+## Serving
+
+- Nightly (tracking master branch): https://web-nightly.lightstands.xyz
+- Stable: Coming soon
 
 ## Looking for API libraries?
 
@@ -11,6 +23,11 @@ LightStands Server Software, LightStands Web, LightStands JS are still in progre
 Maintainer: `Rubicon <rubicon lightstands.xyz>`
 
 Recommend use [pnpm](https://pnpm.io) to manage packages.
+
+## Documents
+
+- [Deployment](./docs/deploy-guide.md)
+- Compatibility (TBD)
 
 ## LICENSE
 SPDX: AGPL-3.0-or-later
