@@ -19,10 +19,10 @@ export function usePermission(
 ): Accessor<PermissionState> {
     const [status, setStatus] = createSignal<PermissionState>("prompt");
 
-    let query: PermissionStatus;
+    let query: PermissionStatus | undefined;
 
     const onStateChanged = () => {
-        setStatus(query.state);
+        setStatus(query!.state);
     };
 
     onMount(() => {
@@ -34,7 +34,9 @@ export function usePermission(
     });
 
     onCleanup(() => {
-        query.removeEventListener("change", onStateChanged);
+        if (query) {
+            query.removeEventListener("change", onStateChanged);
+        }
     });
 
     return status;

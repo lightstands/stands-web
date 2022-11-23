@@ -31,17 +31,15 @@ import CardActions from "@suid/material/CardActions";
 import Button from "@suid/material/Button";
 import Style from "../common/Style.module.css";
 import { settingStore } from "../stores/settings";
-import { isPermissionSupported, usePermission } from "../common/utils";
 import { doSync } from "../common/synmgr";
 import { useNavigate } from "../common/nav";
+import { requestPersistentStorage, usePersistentStoragePermission } from "../common/storage";
 
 const DefaultFeedListPage: Component = () => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
-    const storagePermission = isPermissionSupported()
-        ? usePermission({ name: "persistent-storage" })
-        : () => "denied";
+    const storagePermission = usePersistentStoragePermission()
     const settings = useStore(settingStore);
     const loc = useLocation();
     const [showAddFeed, setShowAddFeed] = createSignal(false);
@@ -96,8 +94,8 @@ const DefaultFeedListPage: Component = () => {
         }
     });
 
-    const setStoragePermission = () => {
-        navigator.storage.persist();
+    const setStoragePermission = async () => {
+        await requestPersistentStorage()
     };
     return (
         <>

@@ -24,11 +24,14 @@ import {
 } from "@suid/icons-material";
 import { useNavigate } from "../common/nav";
 import { formatDistanceToNow } from "date-fns";
-import { isPermissionSupported, usePermission } from "../common/utils";
 import SettingListInject from "./setting-list-inject.css?inline";
 import AdvMenu from "../common/AdvMenu";
 import { ListItemIcon, ListItemSecondaryAction } from "@suid/material";
 import { settingStore } from "../stores/settings";
+import {
+    requestPersistentStorage,
+    usePersistentStoragePermission,
+} from "../common/storage";
 
 const SetPasswordDlg = lazy(() => import("./SetPasswordDlg"));
 
@@ -36,9 +39,7 @@ const SettingsPage: Component = () => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
-    const storagePermission = isPermissionSupported()
-        ? usePermission({ name: "persistent-storage" })
-        : () => "denied";
+    const storagePermission = usePersistentStoragePermission();
     const [openSetPassword, setOpenSetPassword] = createSignal(false);
     const [userPrivateInfo] = createResource(
         (): [ClientConfig, { session: Session } | undefined] => [
@@ -167,7 +168,10 @@ const SettingsPage: Component = () => {
                     </Paper>
                     <Paper>
                         <Show when={storagePermission() === "prompt"}>
-                            <ListItemButton divider>
+                            <ListItemButton
+                                divider
+                                onClick={() => requestPersistentStorage()}
+                            >
                                 <ListItemText primary="Grant persistent storage permission" />
                             </ListItemButton>
                         </Show>

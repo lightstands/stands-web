@@ -22,6 +22,7 @@ import SettingListInject from "./setting-list-inject.css?inline";
 import { doSync, getWorkingTasks } from "../common/synmgr";
 import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
+import { supportsPersistentStorage } from "../common/storage";
 
 const SIZE_UNITS = ["byte", "kilobyte", "megabyte", "gigabyte", "petabyte"];
 
@@ -173,6 +174,12 @@ const StoragePage: Component = () => {
                         to date. You may trigger synchronisation manually when
                         you believe something went wrong.
                     </Typography>
+                    <Show when={!supportsPersistentStorage()}>
+                        <Typography>
+                            The browser does not support persistent storage,
+                            your data may frequently be wiped.
+                        </Typography>
+                    </Show>
                 </List>
             </Box>
         </Box>
