@@ -27,7 +27,8 @@ import { formatDistanceToNow } from "date-fns";
 import { isPermissionSupported, usePermission } from "../common/utils";
 import SettingListInject from "./setting-list-inject.css?inline";
 import AdvMenu from "../common/AdvMenu";
-import { ListItemIcon } from "@suid/material";
+import { ListItemIcon, ListItemSecondaryAction } from "@suid/material";
+import { settingStore } from "../stores/settings";
 
 const SetPasswordDlg = lazy(() => import("./SetPasswordDlg"));
 
@@ -60,6 +61,7 @@ const SettingsPage: Component = () => {
             }
         }
     );
+    const settings = useStore(settingStore);
     return (
         <>
             <SharedAppBar title="Settings">
@@ -133,6 +135,32 @@ const SettingsPage: Component = () => {
                                 <ListItemText primary="Set new password" />
                             </ListItemButton>
                         </Show>
+                    </Paper>
+                    <ListSubheader>
+                        <Typography>Feeds</Typography>
+                    </ListSubheader>
+                    <Paper>
+                        <ListItem>
+                            <ListItemText
+                                primary="Default filter"
+                                id="feed-default-filter-tag-label"
+                            />
+                            <ListItemSecondaryAction>
+                                <select
+                                    value={settings().feedDefaultFilterTag}
+                                    aria-labelled-by="feed-default-filter-tag-label"
+                                    onChange={(ev) => {
+                                        const target =
+                                            ev.target as HTMLSelectElement;
+                                            settingStore.setKey("feedDefaultFilterTag", target.value)
+                                    }}
+                                >
+                                    <option value={""}>Unset</option>
+                                    <option value={"_read"}>Read</option>
+                                    <option value={"!_read"}>Unread</option>
+                                </select>
+                            </ListItemSecondaryAction>
+                        </ListItem>
                     </Paper>
                     <Paper>
                         <Show when={storagePermission() === "prompt"}>

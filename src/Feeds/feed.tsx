@@ -60,6 +60,8 @@ import Radio from "@suid/material/Radio";
 import FormControl from "@suid/material/FormControl";
 import RadioGroup from "@suid/material/RadioGroup";
 import FormControlLabel from "@suid/material/FormControlLabel";
+import { useStore } from "@nanostores/solid";
+import { settingStore } from "../stores/settings";
 
 function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
     const navigate = useNavigate();
@@ -134,10 +136,6 @@ const FeedPage: Component = () => {
     const [searchParams, setSearchParams] = useSearchParams<{
         parent_id: string;
         filter_tag: string;
-    }>();
-    const [query, setQuery] = useSearchParams<{
-        ref_gt: string;
-        ref_le: string;
         limit: string;
     }>();
     const client = useClient();
@@ -157,8 +155,8 @@ const FeedPage: Component = () => {
     );
     const [isListEnded, setIsListEnded] = createSignal(false);
     const limit = () => {
-        if (query.limit) {
-            return Number(query.limit);
+        if (searchParams.limit) {
+            return Number(searchParams.limit);
         } else {
             return undefined;
         }
@@ -171,6 +169,8 @@ const FeedPage: Component = () => {
 
     const filterPopId = createUniqueId();
     const [filterPopOpen, setFilterPopOpen] = createSignal(false);
+
+    const settings = useStore(settingStore);
 
     const applyFilter = async (post: PublicPost) => {
         if (searchParams.filter_tag) {
@@ -266,6 +266,9 @@ const FeedPage: Component = () => {
 
     onMount(() => {
         listEndInsetOb.observe(listEndEl);
+        if (!searchParams.filter_tag && settings().feedDefaultFilterTag) {
+            setFilterTag(settings().feedDefaultFilterTag);
+        }
     });
 
     onCleanup(() => {
