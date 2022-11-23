@@ -17,7 +17,6 @@ import {
 import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
 import { useStore } from "@nanostores/solid";
-import CircularProgress from "@suid/material/CircularProgress";
 import ListItem from "@suid/material/ListItem";
 import {
     OpenInNew as OpenInNewIcon,
@@ -45,15 +44,19 @@ const SettingsPage: Component = () => {
             client,
             session(),
         ],
-        ([client, session]) => {
+        async ([client, session]) => {
             if (session) {
-                return aunwrap(
-                    getUserPrivateInfo(
-                        client,
-                        session.session,
-                        session.session.accessTokenObject.userid
-                    )
-                );
+                try {
+                    return await aunwrap(
+                        getUserPrivateInfo(
+                            client,
+                            session.session,
+                            session.session.accessTokenObject.userid
+                        )
+                    );
+                } catch (e) {
+                    return undefined;
+                }
             }
         }
     );
@@ -86,23 +89,15 @@ const SettingsPage: Component = () => {
                 <style>{SettingListInject}</style>
                 <List class="SettingList">
                     <ListSubheader>
-                        <Typography>
-                            Account & Security
-                            <Show when={userPrivateInfo.loading}>
-                                <Box
-                                    sx={{
-                                        marginLeft: "4px",
-                                        display: "inline-flex",
-                                    }}
-                                >
-                                    <CircularProgress size="12px" />
-                                </Box>
-                            </Show>
-                        </Typography>
+                        <Typography>Account & Security</Typography>
                     </ListSubheader>
                     <Paper>
                         <ListItemButton
-                            disabled={userPrivateInfo.loading || true}
+                            disabled={
+                                userPrivateInfo.loading ||
+                                typeof userPrivateInfo() === "undefined" ||
+                                true
+                            }
                             divider
                         >
                             <ListItemText
@@ -115,12 +110,16 @@ const SettingsPage: Component = () => {
                             />
                         </ListItemButton>
                         <ListItemButton
-                            disabled={userPrivateInfo.loading || true}
+                            disabled={
+                                userPrivateInfo.loading ||
+                                typeof userPrivateInfo() === "undefined" ||
+                                true
+                            }
                             divider
                         >
                             <ListItemText
                                 primary="Use another username"
-                                secondary={userPrivateInfo()?.username}
+                                secondary={userPrivateInfo()?.username || "..."}
                             />
                         </ListItemButton>
                         <Show
