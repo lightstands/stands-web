@@ -32,6 +32,7 @@ import Button from "@suid/material/Button";
 import Style from "../common/Style.module.css";
 import { settingStore } from "../stores/settings";
 import { isPermissionSupported, usePermission } from "../common/utils";
+import { doSync } from "../common/synmgr";
 
 const DefaultFeedListPage: Component = () => {
     const client = useClient();
@@ -86,6 +87,10 @@ const DefaultFeedListPage: Component = () => {
     onMount(() => {
         if (!session()) {
             navigate(`/sign-in?back=${encodeURIComponent(loc.pathname)}`);
+        } else {
+            if (settings().lastTimeSync === 0) { // Sync data when first-time sign in
+                doSync(client, session()!.session)
+            }
         }
     });
 
