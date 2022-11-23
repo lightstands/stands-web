@@ -19,11 +19,16 @@ import { currentSessionStore } from "../stores/session";
 import { useStore } from "@nanostores/solid";
 import CircularProgress from "@suid/material/CircularProgress";
 import ListItem from "@suid/material/ListItem";
-import { OpenInNew as OpenInNewIcon } from "@suid/icons-material";
+import {
+    OpenInNew as OpenInNewIcon,
+    Logout as LogoutIcon,
+} from "@suid/icons-material";
 import { useNavigate } from "@solidjs/router";
 import { formatDistanceToNow } from "date-fns";
 import { isPermissionSupported, usePermission } from "../common/utils";
 import SettingListInject from "./setting-list-inject.css?inline";
+import AdvMenu from "../common/AdvMenu";
+import { ListItemIcon } from "@suid/material";
 
 const SetPasswordDlg = lazy(() => import("./SetPasswordDlg"));
 
@@ -54,7 +59,21 @@ const SettingsPage: Component = () => {
     );
     return (
         <>
-            <SharedAppBar title="Settings" />
+            <SharedAppBar title="Settings">
+                <AdvMenu
+                    totalIconNumber={1}
+                    expanded={[]}
+                    onExpandedIconNumberChanged={() => {}}
+                    hidden={[
+                        <ListItemButton onClick={() => navigate("/sign-out")}>
+                            <ListItemIcon>
+                                <LogoutIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Sign out..." />
+                        </ListItemButton>,
+                    ]}
+                />
+            </SharedAppBar>
             <Show when={openSetPassword()}>
                 <SetPasswordDlg
                     open={openSetPassword()}
@@ -82,15 +101,6 @@ const SettingsPage: Component = () => {
                         </Typography>
                     </ListSubheader>
                     <Paper>
-                        <ListItemButton
-                            divider
-                            onClick={() => navigate("/sign-out")}
-                        >
-                            <ListItemText
-                                primary="Sign out"
-                                primaryTypographyProps={{ color: "error" }}
-                            />
-                        </ListItemButton>
                         <ListItemButton
                             disabled={userPrivateInfo.loading || true}
                             divider
