@@ -72,9 +72,17 @@ const StoragePage: Component = () => {
                         typeof est.quota !== "undefined" &&
                         typeof est.usage !== "undefined"
                     ) {
-                        return `${(est.usage / est.quota).toPrecision(
-                            1
-                        )}% used (${formatSize(est.quota)} avaliable)`;
+                        const percentage = (est.usage / est.quota) * 100;
+                        const avaliableString = `${formatSize(
+                            est.quota
+                        )} avaliable`;
+                        if (percentage < 1) {
+                            return `less than 1% used (${avaliableString})`;
+                        } else {
+                            return `${percentage.toFixed(
+                                1
+                            )}% used (${avaliableString})`;
+                        }
                     } else if (typeof est.quota !== "undefined") {
                         return `${formatSize(est.quota)} avaliable`;
                     } else if (typeof est.usage !== "undefined") {
