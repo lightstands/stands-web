@@ -1,6 +1,6 @@
 import { ClientConfig, Session } from "lightstands-js";
 import { createSignal } from "solid-js";
-import { syncTags } from "../stores/tags";
+import { resetTags, syncTags } from "../stores/tags";
 import { settingStore } from "../stores/settings";
 
 export type TaskNames = "tags";
@@ -26,12 +26,30 @@ function setWorkingError(task: TaskNames, err?: Error) {
 
 export async function doSync(client: ClientConfig, session: Session) {
     setWorkingTasks((old) => [...old, "tags"]);
-    await Promise.all([
-        syncTags(client, session)
-            .catch((e) => setWorkingError("tags", e))
-            .finally(() =>
-                setWorkingTasks((old) => old.filter((v) => v !== "tags"))
-            ),
-    ]);
-    settingStore.setKey("lastTimeSync", new Date().getTime());
+    try {
+        await Promise.all([
+            syncTags(client, session)
+                .catch((e) => setWorkingError("tags", e))
+                .finally(() =>
+                    setWorkingTasks((old) => old.filter((v) => v !== "tags"))
+                ),
+        ]);
+    } finally {
+        settingStore.setKey("lastTimeSync", new Date().getTime());
+    }
+}
+
+export async function resetData() {
+    setWorkingTasks((old) => [...old, "tags"]);
+    try {
+        await Promise.all([
+            resetTags()
+                .catch((e) => setWorkingError("tags", e))
+                .finally(() =>
+                    setWorkingTasks((old) => old.filter((v) => v !== "tags"))
+                ),
+        ]);
+    } finally {
+        settingStore.setKey("lastTimeSync", 0);
+    }
 }

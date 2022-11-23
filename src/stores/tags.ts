@@ -382,3 +382,8 @@ export async function isPostTagged(postRef: number, tag: string) {
     const tagObject = await db.postTags.get([postRef, tag]);
     return !!tagObject;
 }
+
+export async function resetTags() {
+    const db = await openDb();
+    await db.postTags.clear();
+}

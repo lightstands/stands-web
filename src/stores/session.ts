@@ -12,9 +12,10 @@ import {
     Session,
     unboxLeft,
     unboxRight,
-    revokeSession as RevokeRemoteSession,
+    revokeSession as revokeRemoteSession,
     aunwrap,
 } from "lightstands-js";
+import { resetData } from "../common/synmgr";
 
 interface SessionStore {
     account?: PublicUser;
@@ -101,8 +102,9 @@ export const revokeSession = action(
     async (store, client: ClientConfig) => {
         const session = store.get();
         if (session) {
-            await aunwrap(RevokeRemoteSession(client, session.session));
+            await aunwrap(revokeRemoteSession(client, session.session));
             store.set(undefined);
+            await resetData()
         }
     }
 );
