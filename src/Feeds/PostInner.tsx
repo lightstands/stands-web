@@ -146,13 +146,16 @@ const PostInner: Component<PostInnerProps> = (props) => {
         const n = expandedMenuIconNumber();
 
         const items = [
-            <ListItemButton>
+            <ListItemButton
+                disabled={postMetadata.loading || !postMetadata()?.link}
+                onClick={() => window.open(postMetadata()!.link, "_blank")}
+            >
                 <ListItemText primary="Open link..." />
             </ListItemButton>,
         ];
         if (n < 1 && session()) {
             items.unshift(
-                <ListItemButton>
+                <ListItemButton disabled={!postMetadata()} onClick={markAsRead}>
                     <ListItemText primary="Mark as read" />
                 </ListItemButton>
             );
