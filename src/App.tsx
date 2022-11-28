@@ -41,6 +41,7 @@ const SignUpSetPassword = lazy(() => import("./UsrCreation/SetPassword"));
 
 const SettingsPage = lazy(() => import("./Settings/settings"));
 const SettingStoragePage = lazy(() => import("./Settings/storage"));
+const SettingOfflinePage = lazy(() => import("./Settings/offline"));
 
 const App: Component = () => {
     let syncTimerId: number | undefined;
@@ -51,7 +52,7 @@ const App: Component = () => {
         const sessionObject = session();
         if (sessionObject) {
             doSync(client, sessionObject.session);
-            syncTimerId = setInterval(
+            syncTimerId = window.setInterval(
                 () => doSync(client, sessionObject.session),
                 30 * 60 * 1000
             ); // do this every 30 minutes
@@ -86,6 +87,7 @@ const App: Component = () => {
                 <Route path="/settings">
                     <Route path="/" component={SettingsPage} />
                     <Route path="/storage" component={SettingStoragePage} />
+                    <Route path="/offline" component={SettingOfflinePage} />
                 </Route>
                 <Route path="/feedlists">
                     <Route path="/default" component={DefaultFeedListPage} />

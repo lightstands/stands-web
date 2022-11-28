@@ -32,6 +32,7 @@ import {
     requestPersistentStorage,
     usePersistentStoragePermission,
 } from "../common/storage";
+import { useRegisterSW } from "virtual:pwa-register/solid";
 
 const SetPasswordDlg = lazy(() => import("./SetPasswordDlg"));
 
@@ -40,6 +41,10 @@ const SettingsPage: Component = () => {
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
     const storagePermission = usePersistentStoragePermission();
+    const {
+        updateServiceWorker,
+        needRefresh: [needRefresh],
+    } = useRegisterSW();
     const [openSetPassword, setOpenSetPassword] = createSignal(false);
     const [userPrivateInfo] = createResource(
         (): [ClientConfig, { session: Session } | undefined] => [
@@ -91,6 +96,18 @@ const SettingsPage: Component = () => {
             >
                 <style>{SettingListInject}</style>
                 <List class="SettingList">
+                    <Show when={needRefresh()}>
+                        <ListSubheader>
+                            <Typography>New version available</Typography>
+                        </ListSubheader>
+                        <Paper>
+                            <ListItemButton
+                                onClick={() => updateServiceWorker()}
+                            >
+                                <ListItemText primary="Refresh to upgrade" />
+                            </ListItemButton>
+                        </Paper>
+                    </Show>
                     <ListSubheader>
                         <Typography>Account & Security</Typography>
                     </ListSubheader>
@@ -165,6 +182,17 @@ const SettingsPage: Component = () => {
                                 </select>
                             </ListItemSecondaryAction>
                         </ListItem>
+                    </Paper>
+                    <ListSubheader>
+                        <Typography>Accessibility</Typography>
+                    </ListSubheader>
+                    <Paper>
+                        <ListItemButton
+                            divider
+                            onClick={() => navigate("/settings/offline")}
+                        >
+                            <ListItemText primary="Offline Experience" />
+                        </ListItemButton>
                     </Paper>
                     <Paper>
                         <Show when={storagePermission() === "prompt"}>
