@@ -128,6 +128,7 @@ const AddFeedDlg: Component<AddFeedDlgProps> = (props) => {
                             label="URI"
                             value={feedUri()}
                             onChange={(ev) => setFeedUri(ev.target.value)}
+                            autoFocus
                         />
                         <Typography variant="caption" sx={{ marginY: "8px" }}>
                             The feed must use Atom or RSS standard.
