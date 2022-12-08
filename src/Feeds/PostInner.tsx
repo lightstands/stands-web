@@ -209,7 +209,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
                 </Box>
             </Toolbar>
             <Box
-                sx={{ overflow: "auto" }}
+                sx={{ overflow: "auto", overscrollBehavior: "contain" }}
                 onScroll={(ev) => setScrolled(ev.currentTarget.scrollTop !== 0)}
             >
                 <Typography
