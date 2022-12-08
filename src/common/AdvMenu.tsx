@@ -67,7 +67,14 @@ const AdvMenu: Component<AdvMenuProps> = (props) => {
                             vertical: "top",
                             horizontal: "right",
                         }}
-                        PaperProps={{ sx: { borderRadius: "2px" } }}
+                        PaperProps={{
+                            sx: {
+                                borderRadius: "2px",
+                                overscrollBehavior: "contain",
+                                maxHeight: "calc(100vh - 32px)",
+                                overflowY: "auto",
+                            },
+                        }}
                         onClose={() => setShowMore(false)}
                     >
                         <List disablePadding sx={{ minWidth: "160px" }}>
