@@ -86,10 +86,6 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
                     height: "100%",
                     overflowY: "hidden",
                 }}
-                onTouchStart={
-                    (e) => e.preventDefault()
-                    /* Block swipe to back gesture on iOS 13.4+, per https://pqina.nl/blog/blocking-navigation-gestures-on-ios-13-4/ */
-                }
             >
                 <Drawer
                     sx={{
@@ -99,6 +95,7 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
                             width: "240px",
                             boxSizing: "border-box",
                         },
+                        overscrollBehavior: "contain",
                     }}
                     anchor="left"
                     variant={state.drawerType}
