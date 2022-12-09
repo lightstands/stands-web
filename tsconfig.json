@@ -13,6 +13,11 @@
             "vite-plugin-pwa/client"
         ],
         "noEmit": true,
-        "isolatedModules": true
-    }
+        "isolatedModules": true,
+        "lib": [
+            "ESNext",
+            "DOM",
+            "WebWorker"
+        ]
+    },
 }

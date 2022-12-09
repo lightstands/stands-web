@@ -22,6 +22,9 @@ export default defineConfig({
         buildTimePlugin,
         VitePWA({
             registerType: "prompt",
+            strategies: "injectManifest",
+            srcDir: "src",
+            filename: "sw.ts",
             devOptions: {
                 enabled: true,
             },

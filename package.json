@@ -23,6 +23,7 @@
         "vite-plugin-package-version": "^1.0.2",
         "vite-plugin-pwa": "^0.13.3",
         "vite-plugin-solid": "^2.3.9",
+        "workbox-precaching": "^6.5.4",
         "workbox-window": "^6.5.4"
     },
     "dependencies": {
