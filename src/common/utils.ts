@@ -52,7 +52,7 @@ export function useCurrentTime(updatePeriod: number): Accessor<Date> {
     const [time, setTime] = createSignal<Date>(new Date());
     let timerId: number | undefined;
     onMount(() => {
-        timerId = setInterval(() => setTime(new Date()), updatePeriod);
+        timerId = window.setInterval(() => setTime(new Date()), updatePeriod);
     });
 
     onCleanup(() => {
