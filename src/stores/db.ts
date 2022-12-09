@@ -13,13 +13,26 @@ interface PostTags {
     is_sync: number;
 }
 
+interface FeedList {
+    listid: number;
+    ownerid: number;
+    includes: [string, number][];
+    excludes: number[];
+    tags: string[];
+    name: string;
+}
+
 export class MyDatabase extends Dexie {
     postTags!: Dexie.Table<PostTags, [number, string]>;
+    feedlists!: Dexie.Table<FeedList, number>;
 
     constructor() {
         super("lightstands4web");
         this.version(1).stores({
             postTags: "[post_ref+tag], updated_at, [tag+is_sync]",
+        });
+        this.version(2).stores({
+            feedlists: "listid",
         });
     }
 }

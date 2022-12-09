@@ -5,13 +5,7 @@ import { Component, createResource, createSignal, For, Show } from "solid-js";
 import { useClient } from "../client";
 import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
-import {
-    aeither,
-    aunwrap,
-    getAllFeedLists,
-    getFeedInfo,
-    getFeedList,
-} from "lightstands-js";
+import { aeither, getFeedInfo } from "lightstands-js";
 import { onMount } from "solid-js";
 import { useLocation } from "@solidjs/router";
 import Box from "@suid/material/Box";
@@ -33,32 +27,27 @@ import Style from "../common/Style.module.css";
 import { settingStore } from "../stores/settings";
 import { doSync } from "../common/synmgr";
 import { useNavigate } from "../common/nav";
-import { requestPersistentStorage, usePersistentStoragePermission } from "../common/storage";
+import {
+    requestPersistentStorage,
+    usePersistentStoragePermission,
+} from "../common/storage";
+import { useLiveQuery } from "../common/utils";
+import { getDefaultFeedList } from "../stores/feedlists";
 
 const DefaultFeedListPage: Component = () => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
-    const storagePermission = usePersistentStoragePermission()
+    const storagePermission = usePersistentStoragePermission();
     const settings = useStore(settingStore);
     const loc = useLocation();
     const [showAddFeed, setShowAddFeed] = createSignal(false);
-    const [defaultListMeta] = createResource(session, async (session) => {
-        const lists = await aunwrap(getAllFeedLists(client, session.session));
-        for (const l of lists) {
-            if (l.tags.includes("_default")) {
-                return l;
-            }
-        }
-    });
-    const [listDetail] = createResource(defaultListMeta, (listMeta) => {
-        return aunwrap(getFeedList(client, session()!.session, listMeta.id));
-    });
+    const listDetail = useLiveQuery(() => getDefaultFeedList());
     const feedList = () => {
         const detail = listDetail();
         if (detail) {
-            const result = [...detail.in].filter(
-                (value) => !detail.rm.includes(value.euid)
+            const result = [...detail.includes].filter(
+                ([_feed, id]) => !detail.excludes.includes(id)
             );
             return result;
         } else {
@@ -67,7 +56,7 @@ const DefaultFeedListPage: Component = () => {
     };
     const [listItemDetails] = createResource(feedList, async (listItems) => {
         const result = [];
-        for (const item of listItems) {
+        for (const [feedHash] of listItems) {
             const itemDetail = await aeither(
                 {
                     left(l) {
@@ -77,7 +66,7 @@ const DefaultFeedListPage: Component = () => {
                         return r;
                     },
                 },
-                getFeedInfo(client, item.feedUrlHash)
+                getFeedInfo(client, feedHash)
             );
             result.push(itemDetail.value);
         }
@@ -95,7 +84,7 @@ const DefaultFeedListPage: Component = () => {
     });
 
     const setStoragePermission = async () => {
-        await requestPersistentStorage()
+        await requestPersistentStorage();
     };
     return (
         <>
@@ -104,7 +93,7 @@ const DefaultFeedListPage: Component = () => {
                 onClose={() => setShowAddFeed((prev) => !prev)}
             >
                 <AddFeedDlg
-                    listId={listDetail()!.id}
+                    listId={listDetail()!.listid}
                     onClose={() => setShowAddFeed((prev) => !prev)}
                 />
             </BottomSheet>

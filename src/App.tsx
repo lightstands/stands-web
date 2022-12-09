@@ -20,6 +20,7 @@ const devPages = import.meta.env.DEV
           "/session": lazy(() => import("./_dev/session")),
           "/euid": lazy(() => import("./_dev/EUID")),
           "/tags": lazy(() => import("./_dev/tags")),
+          "/feedlists": lazy(() => import("./_dev/feedlists")),
       }
     : {};
 

@@ -19,6 +19,9 @@ const IndexPage: Component = () => {
                 <li>
                     <Link href="/_dev/tags">Tags</Link>
                 </li>
+                <li>
+                    <Link href="/_dev/feedlists">Feed Lists</Link>
+                </li>
             </ul>
         </>
     );
