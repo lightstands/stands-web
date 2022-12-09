@@ -1,8 +1,8 @@
-import { ClientConfig, Session, SessionAccess } from "lightstands-js";
+import { ClientConfig, Session } from "lightstands-js";
 import { createSignal } from "solid-js";
 import { resetTags, syncTags } from "../stores/tags";
 import { settingStore } from "../stores/settings";
-import { syncAllFeedLists } from "../stores/feedlists";
+import { resetFeedLists, syncAllFeedLists } from "../stores/feedlists";
 
 export type TaskNames = "tags" | "feedlists";
 
@@ -67,15 +67,24 @@ export async function doSync(
     }
 }
 
+async function setupTaskPromise(promise: Promise<unknown>, task: TaskNames) {
+    try {
+        try {
+            return await promise;
+        } catch (e) {
+            return setWorkingError(task, e as Error | undefined);
+        }
+    } finally {
+        return setWorkingTasks((old) => old.filter((v) => v !== task));
+    }
+}
+
 export async function resetData() {
-    setWorkingTasks((old) => [...old, "tags"]);
+    setWorkingTasks((old) => [...old, "tags", "feedlists"]);
     try {
         await Promise.all([
-            resetTags()
-                .catch((e) => setWorkingError("tags", e))
-                .finally(() =>
-                    setWorkingTasks((old) => old.filter((v) => v !== "tags"))
-                ),
+            setupTaskPromise(resetTags(), "tags"),
+            setupTaskPromise(resetFeedLists(), "feedlists"),
         ]);
     } finally {
         settingStore.setKey("lastTimeSync", 0);

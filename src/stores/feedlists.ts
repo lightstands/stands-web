@@ -252,3 +252,8 @@ export async function getFeedListById(listid: number) {
     const db = await openDb();
     return await db.feedlists.get(listid);
 }
+
+export async function resetFeedLists() {
+    const db = await openDb();
+    await db.feedlists.clear();
+}
