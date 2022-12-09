@@ -1,13 +1,9 @@
 // Copyright 2022 Rubicon.
 // SPDX-License-Identifier: 	AGPL-3.0-or-later
 
-import { Component, For, onCleanup, onMount, Show } from "solid-js";
+import { Component, For, Show } from "solid-js";
 import { Outlet, Route, Routes } from "@solidjs/router";
 import { lazy } from "solid-js";
-import { useClient } from "./client";
-import { useStore } from "@nanostores/solid";
-import { currentSessionStore } from "./stores/session";
-import { doSync } from "./common/synmgr";
 
 const OAuth2ConfirmPage = lazy(() => import("./OAuth2/confirm"));
 
@@ -45,24 +41,6 @@ const SettingStoragePage = lazy(() => import("./Settings/storage"));
 const SettingOfflinePage = lazy(() => import("./Settings/offline"));
 
 const App: Component = () => {
-    let syncTimerId: number | undefined;
-    const client = useClient();
-    const session = useStore(currentSessionStore);
-
-    onMount(() => {
-        const sessionObject = session();
-        if (sessionObject) {
-            doSync(client, sessionObject.session);
-            syncTimerId = window.setInterval(
-                () => doSync(client, sessionObject.session),
-                30 * 60 * 1000
-            ); // do this every 30 minutes
-        }
-    });
-
-    onCleanup(() => {
-        clearInterval(syncTimerId);
-    });
     return (
         <Routes>
             <Route path="/oauth2" component={OAuth2ConfirmPage} />

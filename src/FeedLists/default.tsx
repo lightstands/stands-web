@@ -25,7 +25,7 @@ import CardActions from "@suid/material/CardActions";
 import Button from "@suid/material/Button";
 import Style from "../common/Style.module.css";
 import { settingStore } from "../stores/settings";
-import { doSync } from "../common/synmgr";
+import { doSync, triggerSync } from "../common/synmgr";
 import { useNavigate } from "../common/nav";
 import {
     requestPersistentStorage,
@@ -35,6 +35,7 @@ import { useLiveQuery } from "../common/utils";
 import { getDefaultFeedList } from "../stores/feedlists";
 
 const DefaultFeedListPage: Component = () => {
+    triggerSync(["feedlists", "tags"]);
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();

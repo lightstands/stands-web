@@ -57,6 +57,7 @@ import FormControlLabel from "@suid/material/FormControlLabel";
 import { useStore } from "@nanostores/solid";
 import { settingStore } from "../stores/settings";
 import { useNavigate, useSearchParams } from "../common/nav";
+import { triggerSync } from "../common/synmgr";
 
 function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
     const navigate = useNavigate();
@@ -125,6 +126,7 @@ function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
 }
 
 const FeedPage: Component = () => {
+    triggerSync(["tags"]);
     let listEndEl: HTMLDivElement;
     let filterButEl: HTMLButtonElement;
     const data = useParams<{ feed: string; post?: string }>();

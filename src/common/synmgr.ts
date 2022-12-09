@@ -1,8 +1,11 @@
 import { ClientConfig, Session } from "lightstands-js";
-import { createSignal } from "solid-js";
+import { createSignal, onCleanup, onMount } from "solid-js";
 import { resetTags, syncTags } from "../stores/tags";
 import { settingStore } from "../stores/settings";
 import { resetFeedLists, syncAllFeedLists } from "../stores/feedlists";
+import { useClient } from "../client";
+import { useStore } from "@nanostores/solid";
+import { currentSessionStore } from "../stores/session";
 
 export type TaskNames = "tags" | "feedlists";
 
@@ -89,4 +92,40 @@ export async function resetData() {
     } finally {
         settingStore.setKey("lastTimeSync", 0);
     }
+}
+
+/** Trigger synchroization if possible.
+ *
+ * Condition:
+ * - have been 5 minutes from last sync;
+ * - or have been stop 10 minutes on this page.
+ *
+ * @param tasks task names
+ */
+export function triggerSync(tasks: TaskNames[]) {
+    const client = useClient();
+    const session = useStore(currentSessionStore);
+    let timerId: number | undefined = undefined;
+
+    const handler = () => {
+        for (const task of tasks) {
+            doSync(client, session()!.session, task);
+        }
+    };
+
+    onMount(() => {
+        if (session()) {
+            if (
+                new Date().getTime() - settingStore.get().lastTimeSync >
+                1000 * 60 * 5
+            ) {
+                handler();
+            }
+            timerId = window.setInterval(handler, 1000 * 60 * 10);
+        }
+    });
+
+    onCleanup(() => {
+        window.clearInterval(timerId);
+    });
 }
