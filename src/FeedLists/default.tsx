@@ -1,15 +1,24 @@
 // Copyright 2022 The LightStands Web Contributors.
 // SPDX-License-Identifier: 	AGPL-3.0-or-later
 
-import { Component, createResource, createSignal, For, Show } from "solid-js";
+import {
+    batch,
+    Component,
+    createEffect,
+    createResource,
+    createSignal,
+    For,
+    onCleanup,
+    Show,
+} from "solid-js";
 import { useClient } from "../client";
 import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
-import { aeither, getFeedInfo } from "lightstands-js";
+import { aeither, getFeedInfo, PublicFeed } from "lightstands-js";
 import { onMount } from "solid-js";
 import { useLocation } from "@solidjs/router";
 import Box from "@suid/material/Box";
-import { Add as AddIcon } from "@suid/icons-material";
+import { Add as AddIcon, Feed } from "@suid/icons-material";
 import Fab from "@suid/material/Fab";
 import BottomSheet from "../common/BottomSheet";
 import AddFeedDlg from "./AddFeedDlg";
@@ -32,7 +41,10 @@ import {
     usePersistentStoragePermission,
 } from "../common/storage";
 import { useLiveQuery } from "../common/utils";
-import { getDefaultFeedList } from "../stores/feedlists";
+import { getDefaultFeedList, removeFeedFromList } from "../stores/feedlists";
+import { ListItemIcon, ListSubheader, Popover } from "@suid/material";
+
+import { Delete as DeleteIcon } from "@suid/icons-material";
 
 const DefaultFeedListPage: Component = () => {
     triggerSync(["feedlists", "tags"]);
@@ -55,6 +67,7 @@ const DefaultFeedListPage: Component = () => {
             return [];
         }
     };
+
     const [listItemDetails] = createResource(feedList, async (listItems) => {
         const result = [];
         for (const [feedHash] of listItems) {
@@ -73,6 +86,18 @@ const DefaultFeedListPage: Component = () => {
         }
         return result;
     });
+
+    // false: closed
+    // null: no target
+    // PublicFeed: target
+    const [menuTarget, setMenuTarget] = createSignal<false | null | PublicFeed>(
+        false
+    );
+    const [menuPosition, setMenuPosition] = createSignal<{
+        top: number;
+        left: number;
+    }>();
+
     onMount(() => {
         if (!session()) {
             navigate(`/sign-in?back=${encodeURIComponent(loc.pathname)}`);
@@ -87,6 +112,48 @@ const DefaultFeedListPage: Component = () => {
     const setStoragePermission = async () => {
         await requestPersistentStorage();
     };
+
+    const onItemMouseDown = (feed: PublicFeed | null, ev: MouseEvent) => {
+        if (ev.button === 2 && menuTarget() === false) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            batch(() => {
+                setMenuPosition({ top: ev.pageY, left: ev.pageX });
+                setMenuTarget(feed);
+            });
+        }
+    };
+
+    const onBodyContextMenu = (ev: MouseEvent) => {
+        ev.preventDefault();
+        return false;
+    };
+
+    createEffect(() => {
+        if (!showAddFeed()) {
+            document.addEventListener("contextmenu", onBodyContextMenu);
+        } else {
+            document.removeEventListener("contextmenu", onBodyContextMenu);
+        }
+    });
+
+    onCleanup(() => {
+        document.removeEventListener("contextmenu", onBodyContextMenu);
+    });
+
+    const onRemoveFeed = async (feed: PublicFeed) => {
+        const [hash, euid] = feedList().filter(
+            ([hash]) => hash === feed.urlBlake3
+        )[0];
+        await removeFeedFromList(
+            client,
+            session()!.session,
+            listDetail()!.listid,
+            euid
+        );
+        setMenuTarget(false);
+    };
+
     return (
         <>
             <BottomSheet
@@ -98,6 +165,39 @@ const DefaultFeedListPage: Component = () => {
                     onClose={() => setShowAddFeed((prev) => !prev)}
                 />
             </BottomSheet>
+            <Popover
+                open={menuTarget() !== false}
+                anchorReference="anchorPosition"
+                anchorPosition={menuPosition()}
+                onClose={() => setMenuTarget(false)}
+            >
+                <List disablePadding sx={{ minWidth: "160px" }}>
+                    <Show when={menuTarget() !== null}>
+                        <ListSubheader>
+                            <Typography>
+                                {(menuTarget() as PublicFeed).title || "Feed"}
+                            </Typography>
+                        </ListSubheader>
+                        <ListItemButton
+                            divider
+                            onClick={[onRemoveFeed, menuTarget() as PublicFeed]}
+                        >
+                            <ListItemIcon>
+                                <DeleteIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Delete" />
+                        </ListItemButton>
+                    </Show>
+                    <ListItemButton
+                        onClick={() => {
+                            setShowAddFeed(true);
+                            setMenuTarget(false);
+                        }}
+                    >
+                        <ListItemText primary="Add a feed" />
+                    </ListItemButton>
+                </List>
+            </Popover>
             <Box
                 sx={{
                     position: "absolute",
@@ -165,10 +265,12 @@ const DefaultFeedListPage: Component = () => {
                                     <ListItemButton
                                         data-index={index()}
                                         divider
-                                        onClick={() =>
-                                            navigate(
-                                                `/feeds/${item.urlBlake3}/`
-                                            )
+                                        onClick={[
+                                            navigate,
+                                            `/feeds/${item.urlBlake3}/`,
+                                        ]}
+                                        onMouseDown={(ev) =>
+                                            onItemMouseDown(item, ev)
                                         }
                                     >
                                         <ListItemText primary={item.title} />

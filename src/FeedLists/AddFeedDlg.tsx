@@ -6,17 +6,11 @@ import ToolbarTitle from "../common/ToolbarTitle";
 import Box from "@suid/material/Box";
 import TextField from "@suid/material/TextField";
 import Typography from "@suid/material/Typography";
-import {
-    isRight,
-    patchFeedList,
-    PublicFeed,
-    resolveFeed,
-    unbox,
-} from "lightstands-js";
+import { isRight, PublicFeed, resolveFeed, unbox } from "lightstands-js";
 import { useClient } from "../client";
 import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
-import { randeuid } from "../common/euid";
+import { addFeedToList } from "../stores/feedlists";
 
 interface AddFeedDlgProps {
     listId: number;
@@ -31,24 +25,15 @@ const AddFeedDlg: Component<AddFeedDlgProps> = (props) => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const [feed, setFeed] = createSignal<PublicFeed>();
-    const [euid, setEUId] = createSignal<number>();
 
     const addToList = async () => {
-        const id = randeuid();
-        setEUId(id);
-        const result = await patchFeedList(
+        await addFeedToList(
             client,
             session()!.session,
             props.listId,
-            {
-                in: [{ feedUrlHash: feed()!.urlBlake3, euid: id }],
-            }
+            feed()!.urlBlake3
         );
-        if (isRight(result)) {
-            setCurrentState(3);
-        } else {
-            setCurrentState(0);
-        }
+        setCurrentState(3);
     };
 
     const resolveUrl = async () => {

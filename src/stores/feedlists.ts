@@ -15,6 +15,7 @@ import {
     aunwrap,
     patchFeedList,
     FeedListMetadata,
+    randeuid,
 } from "lightstands-js";
 import { MyDatabase, openDb } from "./db";
 
@@ -256,4 +257,50 @@ export async function getFeedListById(listid: number) {
 export async function resetFeedLists() {
     const db = await openDb();
     await db.feedlists.clear();
+}
+
+export async function removeFeedFromList(
+    client: ClientConfig,
+    session: SessionAccess,
+    listid: number,
+    euid: number
+): Promise<boolean> {
+    const db = await openDb();
+    await db.transaction("rw", db.feedlists, async () => {
+        const list = await db.feedlists.get(listid);
+        if (list) {
+            list.includes = list.includes.filter(([_feed, id]) => id !== euid);
+            list.excludes.push(euid);
+            await db.feedlists.put(list);
+        }
+    });
+    try {
+        await aunwrap(
+            // Beat-effort patching
+            patchFeedList(client, session, listid, {
+                rm: [euid],
+            })
+        );
+    } catch {
+        return false;
+    }
+    return true;
+}
+
+export async function addFeedToList(
+    client: ClientConfig,
+    session: SessionAccess,
+    listid: number,
+    feedUrlBlake3Base64: string
+) {
+    const pair: [string, number] = [feedUrlBlake3Base64, randeuid()];
+    updateLocalFeedList(listid, [pair]);
+    try {
+        await aunwrap(
+            patchFeedList(client, session, listid, {
+                in: [{ feedUrlHash: pair[0], euid: pair[1] }],
+            })
+        );
+    } catch {}
+    return pair;
 }
