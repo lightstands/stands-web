@@ -33,6 +33,7 @@ import {
     usePersistentStoragePermission,
 } from "../common/storage";
 import { useRegisterSW } from "virtual:pwa-register/solid";
+import { useScaffold } from "../common/Scaffold";
 
 const SetPasswordDlg = lazy(() => import("./SetPasswordDlg"));
 
@@ -45,6 +46,7 @@ const SettingsPage: Component = () => {
         updateServiceWorker,
         needRefresh: [needRefresh],
     } = useRegisterSW();
+    const scaffoldCx = useScaffold();
     const [openSetPassword, setOpenSetPassword] = createSignal(false);
     const [userPrivateInfo] = createResource(
         (): [ClientConfig, { session: Session } | undefined] => [
@@ -70,7 +72,11 @@ const SettingsPage: Component = () => {
     const settings = useStore(settingStore);
     return (
         <>
-            <SharedAppBar title="Settings">
+            <SharedAppBar
+                title="Settings"
+                position="sticky"
+                hide={scaffoldCx.state.scrollingDown}
+            >
                 <AdvMenu
                     totalIconNumber={1}
                     expanded={[]}

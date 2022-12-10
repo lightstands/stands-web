@@ -45,6 +45,7 @@ import { getDefaultFeedList, removeFeedFromList } from "../stores/feedlists";
 import { ListItemIcon, ListSubheader, Popover } from "@suid/material";
 
 import { Delete as DeleteIcon } from "@suid/icons-material";
+import { useScaffold } from "../common/Scaffold";
 
 const DefaultFeedListPage: Component = () => {
     triggerSync(["feedlists", "tags"]);
@@ -54,6 +55,7 @@ const DefaultFeedListPage: Component = () => {
     const storagePermission = usePersistentStoragePermission();
     const settings = useStore(settingStore);
     const loc = useLocation();
+    const scaffoldCx = useScaffold();
     const [showAddFeed, setShowAddFeed] = createSignal(false);
     const listDetail = useLiveQuery(async () => {
         return await getDefaultFeedList();
@@ -225,7 +227,12 @@ const DefaultFeedListPage: Component = () => {
                     <AddIcon />
                 </Fab>
             </Box>
-            <SharedAppBar title="Subscribed" forceLeftIcon="drawer" />
+            <SharedAppBar
+                position="sticky"
+                title="Subscribed"
+                forceLeftIcon="drawer"
+                hide={scaffoldCx.state.scrollingDown}
+            />
             <Box>
                 <Show
                     when={

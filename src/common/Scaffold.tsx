@@ -1,4 +1,4 @@
-/* @refresh granular */
+/* @refresh reload */
 import { createElementSize } from "@solid-primitives/resize-observer";
 import Box from "@suid/material/Box";
 import Drawer from "@suid/material/Drawer";
@@ -20,6 +20,7 @@ type ScaffoldState = {
     width: number | null;
     height: number | null;
     suggestExpandableMenuWidth: number | null;
+    scrollingDown: boolean;
 };
 
 type ScaffoldContext = {
@@ -33,6 +34,7 @@ const Cx = createContext<ScaffoldContext>();
 - Block swipe to back gesture on iOS 13.4+, by preventDefault on touchstart event.
 */
 const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
+    let lastScrollTop = 0;
     const [el, setEl] = createSignal<HTMLDivElement>();
     const [drawerOpen, setDrawerOpen] = createSignal(false);
     const size = createElementSize(el);
@@ -42,6 +44,7 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
         width: size.width,
         height: size.height,
         suggestExpandableMenuWidth: null,
+        scrollingDown: false,
     });
     const showPermanentDrawer = () => !!(size.width && size.width > 772);
     const cx: ScaffoldContext = {
@@ -110,7 +113,19 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
                         }
                     />
                 </Drawer>
-                <Box sx={{ height: "100%", flexGrow: 1 }}>{props.children}</Box>
+                <Box
+                    sx={{ height: "100vh", flexGrow: 1, overflowY: "auto" }}
+                    onScroll={(ev) => {
+                        const currentScrollTop = ev.currentTarget.scrollTop;
+                        setState(
+                            "scrollingDown",
+                            currentScrollTop > lastScrollTop
+                        );
+                        lastScrollTop = currentScrollTop;
+                    }}
+                >
+                    {props.children}
+                </Box>
             </Box>
         </Cx.Provider>
     );

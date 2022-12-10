@@ -13,6 +13,8 @@ import { getPreviousLocation, useNavigate } from "./nav";
 interface SharedAppBarProps {
     title?: string;
     forceLeftIcon?: "drawer";
+    position?: "static" | "sticky";
+    hide?: boolean;
 }
 
 /** Common static AppBar used across the application.
@@ -23,7 +25,13 @@ const SharedAppBar: ParentComponent<SharedAppBarProps> = (props) => {
     const hasPrevLoc = () => !!getPreviousLocation();
     const navigate = useNavigate();
     return (
-        <AppBar position="static">
+        <AppBar
+            position={props.position || "static"}
+            sx={{
+                transform: props.hide ? "translateY(-100%)" : undefined,
+                transition: "transform 220ms ease-in-out",
+            }}
+        >
             <Toolbar>
                 <Switch>
                     <Match

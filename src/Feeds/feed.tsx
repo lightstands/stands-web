@@ -277,7 +277,10 @@ const FeedPage: Component = () => {
     return (
         <>
             <Outlet /> {/* For post dialog */}
-            <SharedAppBar>
+            <SharedAppBar
+                position="sticky"
+                hide={scaffoldCx.state.scrollingDown}
+            >
                 <Show
                     when={feedMetadata.state == "ready"}
                     fallback={
