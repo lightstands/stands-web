@@ -116,7 +116,10 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
                 <Box
                     sx={{ height: "100vh", flexGrow: 1, overflowY: "auto" }}
                     onScroll={(ev) => {
-                        const currentScrollTop = ev.currentTarget.scrollTop;
+                        const currentScrollTop = Math.max(
+                            ev.currentTarget.scrollTop,
+                            0
+                        ); // Safari for iOS may give negative number, forced to 0
                         setState(
                             "scrollingDown",
                             currentScrollTop > lastScrollTop
