@@ -18,7 +18,7 @@ import { aeither, getFeedInfo, PublicFeed } from "lightstands-js";
 import { onMount } from "solid-js";
 import { useLocation } from "@solidjs/router";
 import Box from "@suid/material/Box";
-import { Add as AddIcon, Feed } from "@suid/icons-material";
+import { Add as AddIcon } from "@suid/icons-material";
 import Fab from "@suid/material/Fab";
 import BottomSheet from "../common/BottomSheet";
 import AddFeedDlg from "./AddFeedDlg";
@@ -55,7 +55,9 @@ const DefaultFeedListPage: Component = () => {
     const settings = useStore(settingStore);
     const loc = useLocation();
     const [showAddFeed, setShowAddFeed] = createSignal(false);
-    const listDetail = useLiveQuery(() => getDefaultFeedList());
+    const listDetail = useLiveQuery(async () => {
+        return await getDefaultFeedList();
+    });
     const feedList = () => {
         const detail = listDetail();
         if (detail) {
