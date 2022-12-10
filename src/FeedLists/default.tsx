@@ -127,8 +127,18 @@ const DefaultFeedListPage: Component = () => {
     };
 
     const onBodyContextMenu = (ev: MouseEvent) => {
-        ev.preventDefault();
-        return false;
+        const menuTargetObject = menuTarget();
+        if (menuTargetObject !== false && menuTargetObject !== null) {
+            ev.preventDefault();
+            return false;
+        } else if (menuTargetObject === false) {
+            ev.preventDefault();
+            batch(() => {
+                setMenuTarget(null);
+                setMenuPosition({ top: ev.pageY, left: ev.pageX });
+            });
+            return false;
+        }
     };
 
     createEffect(() => {
