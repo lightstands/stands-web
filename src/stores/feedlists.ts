@@ -27,7 +27,7 @@ async function updateLocalFeedList(
     name?: Iterable<string>
 ) {
     const db = await openDb();
-    db.transaction("rw", db.feedlists, async () => {
+    await db.transaction("rw", db.feedlists, async () => {
         const oldListObject = await db.feedlists.get(listid);
         if (!oldListObject) {
             throw new Error("updating removed feed lists");
@@ -133,9 +133,12 @@ async function syncSingleList(
             (item) => !el.excludes.includes(item)
         );
 
-        const localUpdatedIncludes = el.includes.filter(
-            ([_feed, id]) => !remoteIncludeIdSet.has(id)
-        );
+        const localUpdatedIncludes = el.includes
+            .filter(([_feed, id]) => !remoteIncludeIdSet.has(id))
+            .map(([hash, id]) => ({
+                feedUrlHash: hash,
+                euid: id,
+            }));
 
         const localUpdatedExcludes = el.excludes.filter(
             (id) => !remoteList.rm.includes(id)
@@ -166,15 +169,17 @@ async function syncSingleList(
                 remote.tags
             );
         }
-        await aunwrap(
-            patchFeedList(client, session, el.listid, {
-                in: localUpdatedIncludes.map(([hash, id]) => ({
-                    feedUrlHash: hash,
-                    euid: id,
-                })),
-                rm: localUpdatedExcludes,
-            })
-        );
+        if (
+            localUpdatedIncludes.length > 0 ||
+            localUpdatedExcludes.length > 0
+        ) {
+            await aunwrap(
+                patchFeedList(client, session, el.listid, {
+                    in: localUpdatedIncludes,
+                    rm: localUpdatedExcludes,
+                })
+            );
+        }
     }
 }
 
@@ -206,21 +211,10 @@ export async function syncAllFeedLists(
             ""
         );
     }
-    // Apply new tags
-    for (const el of localLists) {
-        const remote = remoteListIdMap.get(el.listid);
-        if (remote && !arrayEql(remote.tags, el.tags)) {
-            await updateLocalFeedList(
-                el.listid,
-                undefined,
-                undefined,
-                remote.tags
-            );
-        }
-    }
     // Update list content
+    const newAllLocalLists = await getAllLocalFeedLists(db); // use new added lists
     await Promise.all(
-        localLists.map((el) =>
+        newAllLocalLists.map((el) =>
             syncSingleList(client, session, remoteListIdMap, el).then(
                 () => ({
                     status: "success",
