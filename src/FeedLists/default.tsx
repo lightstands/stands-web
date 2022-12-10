@@ -8,6 +8,7 @@ import {
     createResource,
     createSignal,
     For,
+    JSX,
     onCleanup,
     Show,
 } from "solid-js";
@@ -42,10 +43,20 @@ import {
 } from "../common/storage";
 import { useLiveQuery } from "../common/utils";
 import { getDefaultFeedList, removeFeedFromList } from "../stores/feedlists";
-import { ListItemIcon, ListSubheader, Popover } from "@suid/material";
+import {
+    AppBar,
+    IconButton,
+    ListItemIcon,
+    ListSubheader,
+    Popover,
+    Toolbar,
+} from "@suid/material";
 
-import { Delete as DeleteIcon } from "@suid/icons-material";
+import { Delete as DeleteIcon, Close as CloseIcon } from "@suid/icons-material";
 import { useScaffold } from "../common/Scaffold";
+import ToolbarTitle from "../common/ToolbarTitle";
+import ToolbarIcon from "../common/ToolbarIcon";
+import AdvMenu from "../common/AdvMenu";
 
 const DefaultFeedListPage: Component = () => {
     triggerSync(["feedlists", "tags"]);
@@ -57,6 +68,26 @@ const DefaultFeedListPage: Component = () => {
     const loc = useLocation();
     const scaffoldCx = useScaffold();
     const [showAddFeed, setShowAddFeed] = createSignal(false);
+    const [selectedItems, setSelectedItems] = createSignal<
+        PublicFeed[] | undefined
+    >(undefined, {
+        equals: (v0, v1) => {
+            if (typeof v0 === "undefined" || typeof v1 === "undefined") {
+                return v0 === v1;
+            }
+            if (v0.length === v1.length) {
+                for (let i = 0; i < v0.length; i++) {
+                    if (v0[i] !== v1[i]) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
+        },
+    });
+    const [menuExpandedIconNumber, setMenuExpandedIconNumber] = createSignal(0);
     const listDetail = useLiveQuery(async () => {
         return await getDefaultFeedList();
     });
@@ -168,6 +199,107 @@ const DefaultFeedListPage: Component = () => {
         setMenuTarget(false);
     };
 
+    const isItemSelectionMode = () => typeof selectedItems() !== "undefined";
+
+    const enterItemSelectionMode = () => {
+        if (!isItemSelectionMode()) {
+            setSelectedItems([]);
+        }
+    };
+
+    const exitItemSelectionMode = () => {
+        return setSelectedItems(undefined);
+    };
+
+    const addSelectedItem = (feed: PublicFeed) => {
+        setSelectedItems((old) =>
+            typeof old !== "undefined" ? [...old, feed] : [feed]
+        );
+        setMenuTarget(false);
+    };
+
+    const rmSelectedItem = (feed: PublicFeed) => {
+        setSelectedItems((old) =>
+            typeof old !== "undefined" ? old.filter((v) => v !== feed) : old
+        );
+        setMenuTarget(false);
+    };
+
+    const isItemSelected = (feed: PublicFeed) => {
+        return selectedItems()?.includes(feed);
+    };
+
+    const toggleItemSelected = (feed: PublicFeed) => {
+        if (!isItemSelected(feed)) {
+            addSelectedItem(feed);
+        } else {
+            rmSelectedItem(feed);
+        }
+    };
+
+    const onItemClick = (feed: PublicFeed) => {
+        if (isItemSelectionMode()) {
+            toggleItemSelected(feed);
+        } else {
+            navigate(`/feeds/${feed.urlBlake3}`);
+        }
+    };
+
+    const onRemoveSelectedFeeds = async () => {
+        const feeds = selectedItems() || [];
+        exitItemSelectionMode();
+        for (const feed of feeds) {
+            await onRemoveFeed(feed);
+        }
+    };
+
+    const selectedBarIconNumber = () => {
+        const itemNumber = selectedItems()?.length || 0;
+        if (itemNumber > 0) {
+            return 1;
+        }
+        return 0;
+    };
+
+    const selectedBarMenuExpanded = () => {
+        const n = menuExpandedIconNumber();
+        const result: JSX.Element[] = [];
+        const itemNumber = selectedItems()?.length || 0;
+        if (n > 0 && itemNumber > 0) {
+            result.push(
+                <IconButton
+                    size="large"
+                    color="inherit"
+                    onClick={onRemoveSelectedFeeds}
+                >
+                    <DeleteIcon />
+                </IconButton>
+            );
+        }
+        return result;
+    };
+
+    const selectedBarMenuHidden = () => {
+        const n = menuExpandedIconNumber();
+        const result: JSX.Element[] = [];
+        const itemNumber = selectedItems()?.length || 0;
+        if (n < 1 && itemNumber > 0) {
+            result.push(
+                <ListItemButton onClick={onRemoveSelectedFeeds}>
+                    <ListItemIcon>
+                        <DeleteIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary={`Delete ${itemNumber} ${
+                            itemNumber > 1 ? "items" : "item"
+                        }`}
+                    />
+                </ListItemButton>
+            );
+        }
+        return result;
+    };
+
     return (
         <>
             <BottomSheet
@@ -190,6 +322,22 @@ const DefaultFeedListPage: Component = () => {
                         <ListSubheader>
                             {(menuTarget() as PublicFeed).title || "Feed"}
                         </ListSubheader>
+                        <ListItemButton
+                            onClick={[
+                                toggleItemSelected,
+                                menuTarget() as PublicFeed,
+                            ]}
+                        >
+                            {isItemSelected(menuTarget() as PublicFeed) ? (
+                                <>
+                                    <ListItemText primary="Unselect" />
+                                </>
+                            ) : (
+                                <>
+                                    <ListItemText primary="Select" />
+                                </>
+                            )}
+                        </ListItemButton>
                         <ListItemButton
                             divider
                             onClick={[onRemoveFeed, menuTarget() as PublicFeed]}
@@ -216,6 +364,11 @@ const DefaultFeedListPage: Component = () => {
                     width: "fit-content",
                     right: "40px",
                     bottom: "50px",
+                    transition: "transform 220ms ease-in-out",
+                    transform: isItemSelectionMode()
+                        ? "translateX(100%) translateX(40px)"
+                        : undefined,
+                    zIndex: 1,
                 }}
             >
                 <Fab
@@ -227,12 +380,61 @@ const DefaultFeedListPage: Component = () => {
                     <AddIcon />
                 </Fab>
             </Box>
-            <SharedAppBar
-                position="sticky"
-                title="Subscribed"
-                forceLeftIcon="drawer"
-                hide={scaffoldCx.state.scrollingDown}
-            />
+            <Show
+                when={isItemSelectionMode()}
+                fallback={
+                    <SharedAppBar
+                        position="sticky"
+                        title="Subscribed"
+                        forceLeftIcon="drawer"
+                        hide={scaffoldCx.state.scrollingDown}
+                    >
+                        <AdvMenu
+                            totalIconNumber={1}
+                            suggestWidth={
+                                scaffoldCx.state.suggestExpandableMenuWidth
+                            }
+                            onExpandedIconNumberChanged={
+                                setMenuExpandedIconNumber
+                            }
+                            expanded={[]}
+                            hidden={[
+                                <ListItemButton
+                                    onClick={enterItemSelectionMode}
+                                >
+                                    <ListItemText primary="Select..." />
+                                </ListItemButton>,
+                            ]}
+                        />
+                    </SharedAppBar>
+                }
+            >
+                <AppBar position="sticky" color="default">
+                    <Toolbar>
+                        <ToolbarIcon onClick={exitItemSelectionMode}>
+                            <CloseIcon />
+                        </ToolbarIcon>
+                        <ToolbarTitle
+                            primary={`${
+                                selectedItems()?.length?.toString() || "0"
+                            } selected`}
+                            color="primary"
+                        />
+                        <AdvMenu
+                            suggestWidth={
+                                scaffoldCx.state.suggestExpandableMenuWidth
+                            }
+                            totalIconNumber={selectedBarIconNumber()}
+                            onExpandedIconNumberChanged={
+                                setMenuExpandedIconNumber
+                            }
+                            expanded={selectedBarMenuExpanded()}
+                            hidden={selectedBarMenuHidden()}
+                        />
+                    </Toolbar>
+                </AppBar>
+            </Show>
+
             <Box>
                 <Show
                     when={
@@ -282,10 +484,10 @@ const DefaultFeedListPage: Component = () => {
                                     <ListItemButton
                                         data-index={index()}
                                         divider
-                                        onClick={[
-                                            navigate,
-                                            `/feeds/${item.urlBlake3}/`,
-                                        ]}
+                                        selected={selectedItems()?.includes(
+                                            item
+                                        )}
+                                        onClick={[onItemClick, item]}
                                         onMouseDown={(ev) =>
                                             onItemMouseDown(item, ev)
                                         }

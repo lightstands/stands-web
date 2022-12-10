@@ -15,7 +15,7 @@ import Popover from "@suid/material/Popover";
 import List from "@suid/material/List";
 
 interface AdvMenuProps {
-    suggestWidth?: number;
+    suggestWidth?: number | null;
     totalIconNumber: number;
     expanded: JSX.Element[];
     onExpandedIconNumberChanged: (iconNumber: number) => void;
@@ -49,7 +49,7 @@ const AdvMenu: Component<AdvMenuProps> = (props) => {
         <>
             <Box class={Style.FlexboxRow}>
                 <For each={props.expanded}>{(item) => item}</For>
-                <Show when={!!props.hidden}>
+                <Show when={props.hidden.length > 0}>
                     <IconButton
                         size="large"
                         color="inherit"

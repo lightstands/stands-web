@@ -1,7 +1,9 @@
 import Typography from "@suid/material/Typography";
 import { Component } from "solid-js";
 
-const ToolbarTitle: Component<{ primary: string }> = (props) => {
+const ToolbarTitle: Component<{ primary: string; color?: string }> = (
+    props
+) => {
     return (
         <Typography
             variant="h6"
@@ -10,6 +12,7 @@ const ToolbarTitle: Component<{ primary: string }> = (props) => {
                 flexGrow: 1,
                 textOverflow: "ellipsis",
                 width: "160px",
+                color: props.color,
             }}
         >
             {props.primary}
