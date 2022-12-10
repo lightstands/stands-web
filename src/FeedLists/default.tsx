@@ -183,12 +183,10 @@ const DefaultFeedListPage: Component = () => {
                 anchorPosition={menuPosition()}
                 onClose={() => setMenuTarget(false)}
             >
-                <List disablePadding sx={{ minWidth: "160px" }}>
+                <List disablePadding sx={{ minWidth: "160px" }} dense>
                     <Show when={menuTarget() !== null}>
                         <ListSubheader>
-                            <Typography>
-                                {(menuTarget() as PublicFeed).title || "Feed"}
-                            </Typography>
+                            {(menuTarget() as PublicFeed).title || "Feed"}
                         </ListSubheader>
                         <ListItemButton
                             divider
