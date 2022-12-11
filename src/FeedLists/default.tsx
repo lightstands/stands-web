@@ -219,10 +219,15 @@ const DefaultFeedListPage: Component = () => {
     };
 
     const rmSelectedItem = (feed: PublicFeed) => {
-        setSelectedItems((old) =>
-            typeof old !== "undefined" ? old.filter((v) => v !== feed) : old
-        );
-        setMenuTarget(false);
+        batch(() => {
+            setSelectedItems((old) =>
+                typeof old !== "undefined" ? old.filter((v) => v !== feed) : old
+            );
+            setMenuTarget(false);
+            if ((selectedItems()?.length || 0) === 0) {
+                exitItemSelectionMode();
+            }
+        });
     };
 
     const isItemSelected = (feed: PublicFeed) => {
@@ -366,9 +371,13 @@ const DefaultFeedListPage: Component = () => {
                     bottom: "50px",
                     transition: "transform 220ms ease-in-out",
                     transform: isItemSelectionMode()
-                        ? "translateX(100%) translateX(40px)"
+                        ? "translateX(100%) translateX(58px)"
                         : undefined,
                     zIndex: 1,
+                    display:
+                        selectedItems() && selectedItems()!.length > 0
+                            ? "none"
+                            : "block", // fix overflow on iOS
                 }}
             >
                 <Fab
