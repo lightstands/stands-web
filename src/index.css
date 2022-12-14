@@ -5,6 +5,7 @@
 
 html {
     overflow-x: hidden;
+    position: relative;
 }
 
 body {
@@ -16,6 +17,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior-block: none;
     overflow-x: hidden;
+    position: relative;
 }
 
 code {
