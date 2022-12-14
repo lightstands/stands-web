@@ -113,7 +113,7 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
                     />
                 </Drawer>
                 <Box
-                    sx={{ height: "100vh", flexGrow: 1 }}
+                    sx={{ height: "100vh", flexGrow: 1, overflowY: "auto" }}
                     onScroll={(ev) => {
                         const currentScrollTop = Math.max(
                             ev.currentTarget.scrollTop,
