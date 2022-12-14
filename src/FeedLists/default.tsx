@@ -371,13 +371,9 @@ const DefaultFeedListPage: Component = () => {
                     bottom: "50px",
                     transition: "transform 220ms ease-in-out",
                     transform: isItemSelectionMode()
-                        ? "translateX(100%) translateX(58px)"
+                        ? "translateX(100%) translateX(58px) rotate(360deg)"
                         : undefined,
                     zIndex: 1,
-                    display:
-                        selectedItems() && selectedItems()!.length > 0
-                            ? "none"
-                            : "block", // fix overflow on iOS
                 }}
             >
                 <Fab

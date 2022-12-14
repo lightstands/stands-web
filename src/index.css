@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: 	AGPL-3.0-or-later
  */
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
