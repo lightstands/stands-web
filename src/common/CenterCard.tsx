@@ -19,7 +19,7 @@ const CenterCard: ParentComponent<CenterCardProps> = (props) => {
                     {props.children}
                 </Card>
             </Box>
-            <style>{`#root { overflow-y: hidden; }`}</style>
+            <style>{`#root { overflow-y: hidden; height: 100vh; }`}</style>
         </>
     );
 };
