@@ -6,6 +6,7 @@ import { resetFeedLists, syncAllFeedLists } from "../stores/feedlists";
 import { useClient } from "../client";
 import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
+import { resetFeedMetas } from "../stores/feedmeta";
 
 export type TaskNames = "tags" | "feedlists";
 
@@ -88,6 +89,7 @@ export async function resetData() {
         await Promise.all([
             setupTaskPromise(resetTags(), "tags"),
             setupTaskPromise(resetFeedLists(), "feedlists"),
+            resetFeedMetas(),
         ]);
     } finally {
         settingStore.setKey("lastTimeSync", 0);
