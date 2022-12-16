@@ -15,7 +15,7 @@ import {
 import { useClient } from "../client";
 import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
-import { aeither, getFeedInfo, PublicFeed } from "lightstands-js";
+import { aeither, PublicFeed } from "lightstands-js";
 import { onMount } from "solid-js";
 import { useLocation } from "@solidjs/router";
 import Box from "@suid/material/Box";
@@ -51,6 +51,7 @@ import {
     Popover,
     Toolbar,
 } from "@suid/material";
+import { getFeedInfo } from "../stores/feedmeta";
 
 import { Delete as DeleteIcon, Close as CloseIcon } from "@suid/icons-material";
 import { useScaffold } from "../common/Scaffold";
