@@ -21,7 +21,6 @@ import ToolbarTitle from "../common/ToolbarTitle";
 import {
     aeither,
     aunwrap,
-    getFeedInfo,
     getFeedPosts,
     PublicPost,
 } from "lightstands-js";
@@ -58,6 +57,8 @@ import { useStore } from "@nanostores/solid";
 import { settingStore } from "../stores/settings";
 import { useNavigate, useSearchParams } from "../common/nav";
 import { triggerSync } from "../common/synmgr";
+import { getFeedInfo } from "../stores/feedmeta";
+import { useLiveQuery } from "../common/utils";
 
 function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
     const navigate = useNavigate();
@@ -125,6 +126,12 @@ function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
     );
 }
 
+function isLiveQueryReady<T>(
+    accessor: () => T | undefined
+): accessor is () => T {
+    return typeof accessor() !== "undefined";
+}
+
 const FeedPage: Component = () => {
     triggerSync(["tags"]);
     let listEndEl: HTMLDivElement;
@@ -158,8 +165,8 @@ const FeedPage: Component = () => {
             return undefined;
         }
     };
-    const [feedMetadata] = createResource(data.feed, (feedUrlBak3) => {
-        return aunwrap(getFeedInfo(client, feedUrlBak3));
+    const feedMetadata = useLiveQuery(async () => {
+        return await aunwrap(getFeedInfo(client, data.feed));
     });
     let shouldLoadMorePosts = false;
     const scaffoldCx = useScaffold();
@@ -282,7 +289,7 @@ const FeedPage: Component = () => {
                 hide={scaffoldCx.state.scrollingDown}
             >
                 <Show
-                    when={feedMetadata.state == "ready"}
+                    when={isLiveQueryReady(feedMetadata)}
                     fallback={
                         <Box sx={{ flex: "1", display: "flex" }}>
                             <CircularProgress color="inherit" size={20} />
@@ -308,7 +315,7 @@ const FeedPage: Component = () => {
                         hidden={[
                             <ListItemButton
                                 disabled={
-                                    feedMetadata.state !== "ready" ||
+                                    !isLiveQueryReady(feedMetadata) ||
                                     typeof feedMetadata()?.link === "undefined"
                                 }
                                 onClick={() =>
@@ -480,7 +487,7 @@ const FeedPage: Component = () => {
                 </Show>
                 <Typography>
                     Updated{" "}
-                    {feedMetadata.state == "ready"
+                    {isLiveQueryReady(feedMetadata)
                         ? formatDistance(
                               new Date(feedMetadata().lastFetchedAt * 1000),
                               new Date(),
@@ -490,7 +497,7 @@ const FeedPage: Component = () => {
                 </Typography>
                 <Show
                     when={
-                        feedMetadata.state == "ready" &&
+                        isLiveQueryReady(feedMetadata) &&
                         typeof feedMetadata().link !== "undefined"
                     }
                 >
