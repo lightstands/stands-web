@@ -159,16 +159,9 @@ async function syncSingleList(
         await updateLocalFeedList(
             el.listid,
             remoteUpdatedIncludes,
-            remoteUpdatedExcludes
+            remoteUpdatedExcludes,
+            arrayEql(remote.tags, el.tags) ? undefined : remote.tags
         );
-        if (!arrayEql(remote.tags, el.tags)) {
-            await updateLocalFeedList(
-                el.listid,
-                undefined,
-                undefined,
-                remote.tags
-            );
-        }
         if (
             localUpdatedIncludes.length > 0 ||
             localUpdatedExcludes.length > 0

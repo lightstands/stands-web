@@ -22,9 +22,22 @@ interface FeedList {
     name: string;
 }
 
+interface FeedMeta {
+    ref: number;
+    url: string;
+    urlBlake3: string;
+    title?: string;
+    link?: string;
+    description?: string;
+    updatedAt: number;
+    lastFetchedAt: number;
+    lastUsedAt: number; // Note: limit the write into day-basis
+}
+
 export class MyDatabase extends Dexie {
     postTags!: Dexie.Table<PostTags, [number, string]>;
     feedlists!: Dexie.Table<FeedList, number>;
+    feedmetas!: Dexie.Table<FeedMeta, number>;
 
     constructor() {
         super("lightstands4web");
@@ -33,6 +46,9 @@ export class MyDatabase extends Dexie {
         });
         this.version(2).stores({
             feedlists: "listid",
+        });
+        this.version(3).stores({
+            feedmetas: "ref, urlBlake3",
         });
     }
 }
