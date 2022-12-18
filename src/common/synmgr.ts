@@ -55,14 +55,16 @@ export async function doSync(
     session: Session,
     name?: TaskNames
 ) {
-    if (name === "tags" && !isSyncTaskWorking("tags")) {
+    if (name === "tags") {
+        if (isSyncTaskWorking("tags")) return;
         setWorkingTasks((old) => [...old, "tags"]);
         try {
             await runTagSync(client, session);
         } finally {
             settingStore.setKey("lastTimeSync", new Date().getTime());
         }
-    } else if (name === "feedlists" && !isSyncTaskWorking("feedlists")) {
+    } else if (name === "feedlists") {
+        if (isSyncTaskWorking("feedlists")) return;
         setWorkingTasks((old) => [...old, "feedlists"]);
         try {
             await runFeedListSync(client, session);
