@@ -46,28 +46,35 @@ async function runFeedListSync(client: ClientConfig, session: Session) {
         );
 }
 
+function isSyncTaskWorking(name: TaskNames) {
+    return getWorkingTasks().includes(name);
+}
+
 export async function doSync(
     client: ClientConfig,
     session: Session,
     name?: TaskNames
 ) {
-    const tasks = [];
-    if (name === "tags") {
+    if (name === "tags" && !isSyncTaskWorking("tags")) {
         setWorkingTasks((old) => [...old, "tags"]);
-        tasks.push(runTagSync(client, session));
-    } else if (name === "feedlists") {
+        try {
+            await runTagSync(client, session);
+        } finally {
+            settingStore.setKey("lastTimeSync", new Date().getTime());
+        }
+    } else if (name === "feedlists" && !isSyncTaskWorking("feedlists")) {
         setWorkingTasks((old) => [...old, "feedlists"]);
-        tasks.push(runFeedListSync(client, session));
+        try {
+            await runFeedListSync(client, session);
+        } finally {
+            settingStore.setKey("lastTimeSync", new Date().getTime());
+        }
     } else {
-        setWorkingTasks((old) => [...old, "tags", "feedlists"]);
-        tasks.push(runTagSync(client, session));
-        tasks.push(runFeedListSync(client, session));
-    }
-
-    try {
-        await Promise.all(tasks);
-    } finally {
-        settingStore.setKey("lastTimeSync", new Date().getTime());
+        await Promise.all(
+            (<TaskNames[]>["feedlists", "tags"]).map((name) =>
+                doSync(client, session, name)
+            )
+        );
     }
 }
 

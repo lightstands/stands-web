@@ -21,6 +21,7 @@ specifiers:
   eslint: ^8.29.0
   lightstands-js: ^1.3.2
   nanostores: ^0.7.1
+  navigator.locks: ^0.8.6
   pino: ^8.8.0
   prettier: ^2.8.1
   solid-hcaptcha: ^0.2.5
@@ -49,6 +50,7 @@ dependencies:
   dexie: 3.2.2
   lightstands-js: 1.3.2
   nanostores: 0.7.1
+  navigator.locks: 0.8.6
   pino: 8.8.0
   solid-hcaptcha: 0.2.5_solid-js@1.6.4
   solid-js: 1.6.4
@@ -3249,6 +3251,10 @@ packages:
   /natural-compare/1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
+
+  /navigator.locks/0.8.6:
+    resolution: {integrity: sha512-3ykNHTGTGS2xgFlSUqc7fPGnrwpBiuNbYBdW3i3aSwu05nvYdk3D6qEidLxMqufxpLJ3VRnt4TBzNigNL6hcYA==}
+    dev: false
 
   /node-releases/2.0.6:
     resolution: {integrity: sha512-PiVXnNuFm5+iYkLBNeq5211hvO38y63T0i2KKh2KnUs3RpzJ+JtODFjkD8yjLwnDkTYF1eKXheUwdssR+NRZdg==}

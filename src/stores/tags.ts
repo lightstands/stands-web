@@ -6,6 +6,7 @@ import {
     aunwrap,
     SessionAccess,
 } from "lightstands-js";
+import { synchronised } from "../common/locks";
 import { MyDatabase, openDb } from "./db";
 
 interface Tag {
@@ -127,7 +128,7 @@ async function getReadTagChanges(db: MyDatabase) {
         .toArray();
 }
 
-async function syncReadTags(
+async function syncReadTagsInternal(
     client: ClientConfig,
     session: Session,
     db: MyDatabase,
@@ -203,6 +204,17 @@ async function syncReadTags(
             }
         }
     }
+}
+
+async function syncReadTags(
+    client: ClientConfig,
+    session: Session,
+    db: MyDatabase,
+    userId: number
+) {
+    await synchronised("syn-tags-read", () =>
+        syncReadTagsInternal(client, session, db, userId)
+    );
 }
 
 /** Synchronise tags between local database and remote

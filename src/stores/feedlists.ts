@@ -17,6 +17,7 @@ import {
     FeedListMetadata,
     randeuid,
 } from "lightstands-js";
+import { synchronised } from "../common/locks";
 import { MyDatabase, openDb } from "./db";
 
 async function updateLocalFeedList(
@@ -176,7 +177,7 @@ async function syncSingleList(
     }
 }
 
-export async function syncAllFeedLists(
+async function syncAllFeedListsInternal(
     client: ClientConfig,
     session: SessionAccess
 ) {
@@ -222,6 +223,13 @@ export async function syncAllFeedLists(
             )
         )
     );
+}
+
+export async function syncAllFeedLists(
+    client: ClientConfig,
+    session: SessionAccess
+) {
+    return synchronised("syn-all-feed-lists", () => syncAllFeedListsInternal(client, session))
 }
 
 export async function getDefaultFeedList() {
