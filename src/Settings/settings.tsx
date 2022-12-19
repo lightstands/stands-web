@@ -32,7 +32,7 @@ import {
     requestPersistentStorage,
     usePersistentStoragePermission,
 } from "../common/storage";
-import { useRegisterSW } from "virtual:pwa-register/solid";
+import { useServiceWorker } from "../common/swbridge";
 import { useScaffold } from "../common/Scaffold";
 
 const SetPasswordDlg = lazy(() => import("./SetPasswordDlg"));
@@ -45,7 +45,7 @@ const SettingsPage: Component = () => {
     const {
         updateServiceWorker,
         needRefresh: [needRefresh],
-    } = useRegisterSW();
+    } = useServiceWorker();
     const scaffoldCx = useScaffold();
     const [openSetPassword, setOpenSetPassword] = createSignal(false);
     const [userPrivateInfo] = createResource(

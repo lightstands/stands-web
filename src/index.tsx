@@ -27,3 +27,7 @@ render(
     ),
     document.getElementById("root") as HTMLElement
 );
+
+import("./common/swbridge").then((mod) => {
+    mod.useServiceWorker();
+});
