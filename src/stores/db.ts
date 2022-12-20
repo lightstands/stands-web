@@ -63,3 +63,13 @@ export async function openDb(): Promise<MyDatabase> {
         return gDbRef;
     }
 }
+
+window.addEventListener("pagehide", (ev) => {
+    if (ev.persisted) {
+        const db = gDbRef;
+        if (db !== null) {
+            gDbRef = null;
+            db.close();
+        }
+    }
+});
