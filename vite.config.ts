@@ -27,6 +27,7 @@ export default defineConfig({
             filename: "sw.ts",
             devOptions: {
                 enabled: true,
+                type: "module",
             },
             manifest: {
                 name: "LightStands for Web",
