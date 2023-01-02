@@ -15,7 +15,7 @@ import {
 import { Component, createSignal, For } from "solid-js";
 import ToolbarTitle from "../common/ToolbarTitle";
 import CommonStyle from "../common/Style.module.css";
-import { doSync, getWorkingTasks } from "../common/synmgr";
+import { getWorkingTasks, runFeedListSync } from "../common/synmgr";
 import { useLiveQuery } from "../common/utils";
 import { openDb } from "../stores/db";
 import { inspectDate } from "lightstands-js";
@@ -74,6 +74,10 @@ const FeedListsDevPage: Component = () => {
         return undefined;
     };
 
+    const triggerFeedListSync = () => {
+        runFeedListSync(client, session()!.session);
+    };
+
     return (
         <>
             <AppBar position="static" sx={{ marginBlockEnd: "16px" }}>
@@ -97,13 +101,7 @@ const FeedListsDevPage: Component = () => {
                             ? "Working"
                             : "Idle"}
                     </Typography>
-                    <Button
-                        onClick={() =>
-                            doSync(client, session()!.session, "feedlists")
-                        }
-                    >
-                        Trigger Sync
-                    </Button>
+                    <Button onClick={triggerFeedListSync}>Trigger Sync</Button>
                 </Paper>
                 <Paper sx={{ padding: "12px 6px 0 6px" }}>
                     <Typography variant="h6">

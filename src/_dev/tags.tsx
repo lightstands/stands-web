@@ -13,7 +13,11 @@ import Table from "@suid/material/Table";
 import TableCell from "@suid/material/TableCell";
 import TableRow from "@suid/material/TableRow";
 import Button from "@suid/material/Button";
-import { getWorkingTasks, getWorkingErrors, doSync } from "../common/synmgr";
+import {
+    getWorkingTasks,
+    getWorkingErrors,
+    runTagSync,
+} from "../common/synmgr";
 import { tagPost, untagPost } from "../stores/tags";
 import { from } from "solid-js";
 import { liveQuery } from "dexie";
@@ -44,6 +48,10 @@ const TagsDevPage: Component = () => {
     });
 
     const isTagSyncWorking = () => getWorkingTasks().some((v) => v === "tags");
+
+    const triggerTagSync = () => {
+        runTagSync(client, session()!.session);
+    };
     return (
         <>
             <Box>
@@ -156,11 +164,9 @@ const TagsDevPage: Component = () => {
                                 variant="contained"
                                 disableElevation
                                 disabled={isTagSyncWorking() || !session()}
-                                onClick={() =>
-                                    doSync(client, session()!.session)
-                                }
+                                onClick={triggerTagSync}
                             >
-                                Trigger Full Sync
+                                Trigger Tag Sync
                             </Button>
                         </Box>
                     </Paper>

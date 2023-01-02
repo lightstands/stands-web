@@ -52,18 +52,18 @@ async function setupTaskPromise<T>(promise: Promise<T>, task: TaskNames) {
     }
 }
 
-async function runTagSync(client: ClientConfig, session: Session) {
+export async function runTagSync(client: ClientConfig, session: Session) {
     return await setupTaskPromise(syncTags(client, session), "tags");
 }
 
-async function runFeedListSync(client: ClientConfig, session: Session) {
+export async function runFeedListSync(client: ClientConfig, session: Session) {
     return await setupTaskPromise(
         syncAllFeedLists(client, session),
         "feedlists"
     );
 }
 
-async function runPostMetaSync(client: ClientConfig, session: Session) {
+export async function runPostMetaSync(client: ClientConfig, session: Session) {
     return await setupTaskPromise(syncAllPostMeta(client), "postmeta");
 }
 
