@@ -50,8 +50,8 @@ export class MyDatabase extends Dexie {
         this.version(3).stores({
             feedmetas: "ref, urlBlake3",
         });
-        this.version(4).stores({
-            postmetas: "ref, [feedRef+idBlake3]",
+        this.version(5).stores({
+            postmetas: "ref, [feedRef+idBlake3], publishedAt",
         });
     }
 }

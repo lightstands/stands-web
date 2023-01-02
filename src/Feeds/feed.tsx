@@ -50,81 +50,13 @@ import RadioGroup from "@suid/material/RadioGroup";
 import FormControlLabel from "@suid/material/FormControlLabel";
 import { useStore } from "@nanostores/solid";
 import { settingStore } from "../stores/settings";
-import { useNavigate, useSearchParams } from "../common/nav";
+import { useSearchParams } from "../common/nav";
 import { useSync } from "../common/synmgr";
 import { getFeedInfo, getLocalFeedMetaByBlake3 } from "../stores/feedmeta";
 import { useLiveQuery } from "../common/utils";
-import {
-    fetchNewPostsOf,
-    fetchOldPostsOf,
-    getAllPostsOf,
-} from "../stores/postmeta";
+import { fetchOldPostsOf, getAllPostsOf } from "../stores/postmeta";
 
-function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
-    const navigate = useNavigate();
-    const hasContent = () => props.metadata.contentTypes.length > 0;
-    const hasLink = () => typeof props.metadata.link !== "undefined";
-    return (
-        <Switch>
-            <Match when={!hasContent() && hasLink()}>
-                <ListItem
-                    sx={{ cursor: "pointer" }}
-                    data-index={props.metadata.ref}
-                    onClick={() => {
-                        if (
-                            window.confirm(
-                                `Open this link?\n\n${props.metadata.link}`
-                            )
-                        ) {
-                            window.open(props.metadata.link, "_blank");
-                        }
-                    }}
-                >
-                    <ListItemText
-                        primary={
-                            <div class={Style["post-list-item-primary-title"]}>
-                                <Typography>{props.metadata.title}</Typography>
-
-                                <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                >
-                                    ({new URL(props.metadata.link!).hostname})
-                                    <OpenInNewIcon fontSize="inherit" />
-                                </Typography>
-                            </div>
-                        }
-                        secondary={props.metadata.summary}
-                    />
-                </ListItem>
-            </Match>
-            <Match when={hasContent()}>
-                <ListItem
-                    sx={{ cursor: "pointer" }}
-                    data-index={props.metadata.ref}
-                    onClick={() =>
-                        navigate(
-                            `/feeds/${props.feedUrlBlake3}/posts/${props.metadata.idBlake3}`
-                        )
-                    }
-                >
-                    <ListItemText
-                        primary={props.metadata.title}
-                        secondary={props.metadata.summary}
-                    />
-                </ListItem>
-            </Match>
-            <Match when={true}>
-                <ListItem data-index={props.metadata.ref}>
-                    <ListItemText
-                        primary={props.metadata.title}
-                        secondary={props.metadata.summary}
-                    />
-                </ListItem>
-            </Match>
-        </Switch>
-    );
-}
+import PostListItem from "../common/PostListItem";
 
 function isLiveQueryReady<T>(
     accessor: () => T | undefined

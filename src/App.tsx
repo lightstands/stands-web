@@ -32,6 +32,8 @@ const PostPage = lazy(() => import("./Feeds/post"));
 
 const DefaultFeedListPage = lazy(() => import("./FeedLists/default"));
 
+const TimelinePage = lazy(() => import("./FeedLists/timeline"))
+
 const SignUpEmailFlow0 = lazy(() => import("./UsrCreation/EmailFlowStage0"));
 const SignUpEmailFlow1 = lazy(() => import("./UsrCreation/EmailFlowStage1"));
 const SignUpSetPassword = lazy(() => import("./UsrCreation/SetPassword"));
@@ -62,7 +64,7 @@ const App: Component = () => {
                     </Scaffold>
                 )}
             >
-                <Route path="/" component={DefaultFeedListPage} />
+                <Route path="/" component={TimelinePage} />
                 <Route path="/settings">
                     <Route path="/" component={SettingsPage} />
                     <Route path="/storage" component={SettingStoragePage} />

@@ -65,6 +65,15 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
             <List sx={{ width: "100%", height: "100%" }} disablePadding>
                 <Show when={!!currentSession()}>
                     <ListItemButton
+                        selected={pathname() === "/"}
+                        onClick={() => {
+                            navigate("/");
+                            props.afterItemClicked({});
+                        }}
+                    >
+                        <ListItemText primary="Timeline" />
+                    </ListItemButton>
+                    <ListItemButton
                         selected={pathname() === "/feedlists/default"}
                         onClick={() => {
                             navigate("/feedlists/default");
