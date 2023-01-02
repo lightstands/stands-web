@@ -1,7 +1,7 @@
 import { Outlet, useParams } from "@solidjs/router";
 import {
-    batch,
     Component,
+    createEffect,
     createResource,
     createSignal,
     createUniqueId,
@@ -18,12 +18,7 @@ import {
     FilterListOff as FilterListOffIcon,
 } from "@suid/icons-material";
 import ToolbarTitle from "../common/ToolbarTitle";
-import {
-    aeither,
-    aunwrap,
-    getFeedPosts,
-    PublicPost,
-} from "lightstands-js";
+import { aunwrap, PublicPost } from "lightstands-js";
 import { useClient } from "../client";
 import CircularProgress from "@suid/material/CircularProgress";
 import Typography from "@suid/material/Typography";
@@ -56,9 +51,14 @@ import FormControlLabel from "@suid/material/FormControlLabel";
 import { useStore } from "@nanostores/solid";
 import { settingStore } from "../stores/settings";
 import { useNavigate, useSearchParams } from "../common/nav";
-import { triggerSync } from "../common/synmgr";
-import { getFeedInfo } from "../stores/feedmeta";
+import { useSync } from "../common/synmgr";
+import { getFeedInfo, getLocalFeedMetaByBlake3 } from "../stores/feedmeta";
 import { useLiveQuery } from "../common/utils";
+import {
+    fetchNewPostsOf,
+    fetchOldPostsOf,
+    getAllPostsOf,
+} from "../stores/postmeta";
 
 function PostListItem(props: { metadata: PublicPost; feedUrlBlake3: string }) {
     const navigate = useNavigate();
@@ -133,40 +133,28 @@ function isLiveQueryReady<T>(
 }
 
 const FeedPage: Component = () => {
-    triggerSync(["tags"]);
+    useSync();
     let listEndEl: HTMLDivElement;
     let filterButEl: HTMLButtonElement;
     const data = useParams<{ feed: string; post?: string }>();
     const [searchParams, setSearchParams] = useSearchParams<{
         parent_id: string;
         filter_tag: string;
-        limit: string;
     }>();
     const client = useClient();
     const [fetchStat, setFetchStat] = createSignal<
         "initial" | "fetching" | "error" | "ready"
     >("initial");
-    const [postBuffer, setPostBuffer] = createSignal<readonly PublicPost[]>(
-        [],
-        {
-            equals: (prev, next) => {
-                return (
-                    prev.length === next.length &&
-                    prev.every((v, i) => v === next[i])
-                );
-            },
-        }
-    );
     const [isListEnded, setIsListEnded] = createSignal(false);
-    const limit = () => {
-        if (searchParams.limit) {
-            return Number(searchParams.limit);
-        } else {
-            return undefined;
-        }
-    };
     const feedMetadata = useLiveQuery(async () => {
         return await aunwrap(getFeedInfo(client, data.feed));
+    });
+    const allPosts = useLiveQuery(async () => {
+        const feed = await getLocalFeedMetaByBlake3(data.feed);
+        if (!feed) {
+            return [];
+        }
+        return await getAllPostsOf(feed.ref, { pubOrder: "desc" });
     });
     let shouldLoadMorePosts = false;
     const scaffoldCx = useScaffold();
@@ -188,46 +176,34 @@ const FeedPage: Component = () => {
         return true;
     };
 
+    const [filteredPosts] = createResource(
+        (): [PublicPost[] | undefined, string | undefined] => [
+            allPosts(),
+            searchParams.filter_tag,
+        ],
+        async ([posts, filterTag]) => {
+            if (posts) {
+                const result = [];
+                for (const post of posts) {
+                    if (await applyFilter(post)) {
+                        result.push(post);
+                    }
+                }
+                return result;
+            } else {
+                return [];
+            }
+        }
+    );
+
     const loadMorePosts = async () => {
         if (isListEnded()) return;
-        const maxPubTime =
-            postBuffer().length > 0
-                ? Math.min.apply(
-                      undefined,
-                      postBuffer().map((p) => p.publishedAt)
-                  )
-                : undefined;
-        setFetchStat("fetching");
-        await aeither(
-            {
-                left(l) {
-                    setFetchStat("error");
-                },
-                async right(r) {
-                    const posts: PublicPost[] = [];
-                    for (const p of r.posts) {
-                        if (await applyFilter(p)) {
-                            posts.push(p);
-                        }
-                    }
-                    const oldRefs = new Set(postBuffer().map((v) => v.ref));
-                    setPostBuffer((prev) => {
-                        return [
-                            ...prev,
-                            ...posts.filter((v) => !oldRefs.has(v.ref)),
-                        ];
-                    });
-                    setFetchStat("ready");
-                    if (r.posts.length === 0) {
-                        setIsListEnded(true);
-                    }
-                },
-            },
-            getFeedPosts(client, data!.feed, {
-                pubBefore: maxPubTime,
-                limit: limit(),
-            })
-        );
+        const feedRef = feedMetadata()?.ref;
+        if (typeof feedRef !== "undefined") {
+            if ((await fetchOldPostsOf(client, feedRef)) === 0) {
+                setIsListEnded(true);
+            }
+        }
     };
 
     const loadMorePostsIfPossible = () => {
@@ -244,21 +220,12 @@ const FeedPage: Component = () => {
         }
     });
 
-    const reloadWholeList = () => {
-        batch(() => {
-            setPostBuffer([]);
-            setIsListEnded(false);
-        });
-        loadMorePosts();
-    };
-
     const hasFilter = () => !!searchParams.filter_tag;
 
     const unsetFilterTag = () => {
         setSearchParams({
             filter_tag: null,
         });
-        reloadWholeList();
     };
 
     const setFilterTag = async (filterTag: string, replace?: boolean) => {
@@ -268,13 +235,20 @@ const FeedPage: Component = () => {
             },
             { replace: replace }
         );
-        reloadWholeList();
     };
 
     onMount(() => {
         listEndInsetOb.observe(listEndEl);
+
         if (!searchParams.filter_tag && settings().feedDefaultFilterTag) {
             setFilterTag(settings().feedDefaultFilterTag, true);
+        }
+    });
+
+    createEffect(() => {
+        const meta = feedMetadata();
+        if (meta) {
+            loadMorePosts();
         }
     });
 
@@ -450,7 +424,7 @@ const FeedPage: Component = () => {
                 </Box>
                 <Card>
                     <List class="post-list">
-                        <For each={postBuffer()}>
+                        <For each={filteredPosts()}>
                             {(item, index) => {
                                 return (
                                     <>

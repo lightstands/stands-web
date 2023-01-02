@@ -19,10 +19,11 @@ import ListItemButton from "@suid/material/ListItemButton";
 import ListItemIcon from "@suid/material/ListItemIcon";
 import { Sync as SyncIcon } from "@suid/icons-material";
 import SettingListInject from "./setting-list-inject.css?inline";
-import { doSync, getWorkingTasks } from "../common/synmgr";
+import { forcedFullSync, getWorkingTasks } from "../common/synmgr";
 import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
 import { supportsPersistentStorage } from "../common/storage";
+import { ListItemSecondaryAction } from "@suid/material";
 
 const SIZE_UNITS = ["byte", "kilobyte", "megabyte", "gigabyte", "petabyte"];
 
@@ -41,6 +42,10 @@ function isOverviewSupported() {
     return !!(navigator.storage && navigator.storage.estimate);
 }
 
+function countableWord(n: number | undefined, word: string, suffix?: string) {
+    return `${word}${n && n > 1 ? (suffix ? suffix : "s") : ""}`;
+}
+
 const StoragePage: Component = () => {
     const settings = useStore(settingStore);
     const client = useClient();
@@ -55,6 +60,11 @@ const StoragePage: Component = () => {
     const tagCount = useLiveQuery(async () => {
         const db = await openDb();
         return await db.postTags.count();
+    });
+
+    const postMetaCount = useLiveQuery(async () => {
+        const db = await openDb();
+        return await db.postmetas.count();
     });
 
     const getOverviewString = () => {
@@ -99,14 +109,18 @@ const StoragePage: Component = () => {
 
     const getUpdatedAtExplain = (lastTimeSync: number) => {
         if (lastTimeSync === 0) {
-            return "Never updated with LightStands";
+            return "Never updated with LightStands.";
         } else {
             return `Updated ${formatDistance(
                 settings().lastTimeSync,
                 currentTime(),
                 { addSuffix: true }
-            )}`;
+            )}.`;
         }
+    };
+
+    const triggerFullSync = () => {
+        forcedFullSync(client, session()!.session);
     };
     return (
         <Box>
@@ -119,9 +133,7 @@ const StoragePage: Component = () => {
             >
                 <List class="SettingList">
                     <Show when={isOverviewSupported()}>
-                        <ListSubheader>
-                            <Typography>Overview</Typography>
-                        </ListSubheader>
+                        <ListSubheader>Overview</ListSubheader>
                         <Paper>
                             <ListItem divider>
                                 <ListItemText primary={getOverviewString()} />
@@ -137,32 +149,39 @@ const StoragePage: Component = () => {
                         </Typography>
                     </Show>
 
-                    <ListSubheader>
-                        <Typography>Tags</Typography>
-                    </ListSubheader>
+                    <ListSubheader>Usage</ListSubheader>
                     <Paper>
                         <ListItem divider>
                             <ListItemText
-                                primary={`${tagCount()} tag${
-                                    tagCount() && tagCount()! > 1 ? "s" : ""
-                                } stored on this device`}
+                                primary={`${tagCount()} ${countableWord(
+                                    tagCount(),
+                                    "tag"
+                                )}`}
+                            />
+                        </ListItem>
+                        <ListItem divider>
+                            <ListItemText
+                                primary={`${postMetaCount()} ${countableWord(
+                                    postMetaCount(),
+                                    "post"
+                                )}`}
                             />
                         </ListItem>
                     </Paper>
 
+                    <ListSubheader>Automatic Download</ListSubheader>
                     <Paper>
                         <ListItem divider>
-                            <ListItemText>
-                                {getUpdatedAtExplain(settings().lastTimeSync)}
-                            </ListItemText>
+                            <ListItemText primary="Metadata" />
+                            <ListItemSecondaryAction>
+                                <Typography>Every 30 minutes in app</Typography>
+                            </ListItemSecondaryAction>
                         </ListItem>
                         <Show when={!!session()}>
                             <ListItemButton
                                 disabled={getWorkingTasks().length > 0}
                                 divider
-                                onClick={() =>
-                                    doSync(client, session()!.session)
-                                }
+                                onClick={triggerFullSync}
                             >
                                 <ListItemIcon>
                                     <SyncIcon />
@@ -179,8 +198,7 @@ const StoragePage: Component = () => {
                     </Paper>
                     <Typography>
                         LightStands for Web can automatically keep the data up
-                        to date. You may trigger synchronisation manually when
-                        you believe something went wrong.
+                        to date. {getUpdatedAtExplain(settings().lastTimeSync)}
                     </Typography>
                     <Show when={!supportsPersistentStorage()}>
                         <Typography>

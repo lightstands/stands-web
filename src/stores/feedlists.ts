@@ -229,7 +229,9 @@ export async function syncAllFeedLists(
     client: ClientConfig,
     session: SessionAccess
 ) {
-    return synchronised("syn-all-feed-lists", () => syncAllFeedListsInternal(client, session))
+    return synchronised("syn-all-feed-lists", () =>
+        syncAllFeedListsInternal(client, session)
+    );
 }
 
 export async function getDefaultFeedList() {
@@ -298,4 +300,14 @@ export async function addFeedToList(
         );
     } catch {}
     return pair;
+}
+
+export function mergeFeedListParts(l: FeedList) {
+    return l.includes.filter(([_feed, id]) => !l.excludes.includes(id));
+}
+
+export async function getAllIncludedFeedsBlake3() {
+    const db = await openDb();
+    const allLists = await getAllLocalFeedLists(db);
+    return new Set(allLists.flatMap(mergeFeedListParts).map((v) => v[0]));
 }

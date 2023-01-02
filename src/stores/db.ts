@@ -1,4 +1,7 @@
+/* @refresh reload */
 import Dexie from "dexie";
+import { PublicFeed, PublicPost } from "lightstands-js";
+import { synchronised } from "../common/locks";
 
 interface PostTags {
     post_ref: number;
@@ -22,22 +25,19 @@ interface FeedList {
     name: string;
 }
 
-interface FeedMeta {
-    ref: number;
-    url: string;
-    urlBlake3: string;
-    title?: string;
-    link?: string;
-    description?: string;
-    updatedAt: number;
-    lastFetchedAt: number;
+type FeedMeta = PublicFeed & {
     lastUsedAt: number; // Note: limit the write into day-basis
-}
+};
+
+type PostMeta = PublicPost & {
+    fetchedAt: number;
+};
 
 export class MyDatabase extends Dexie {
     postTags!: Dexie.Table<PostTags, [number, string]>;
     feedlists!: Dexie.Table<FeedList, number>;
     feedmetas!: Dexie.Table<FeedMeta, number>;
+    postmetas!: Dexie.Table<PostMeta, number>;
 
     constructor() {
         super("lightstands4web");
@@ -50,6 +50,9 @@ export class MyDatabase extends Dexie {
         this.version(3).stores({
             feedmetas: "ref, urlBlake3",
         });
+        this.version(4).stores({
+            postmetas: "ref, [feedRef+idBlake3]",
+        });
     }
 }
 
@@ -59,8 +62,12 @@ export async function openDb(): Promise<MyDatabase> {
     if (gDbRef !== null) {
         return gDbRef;
     } else {
-        gDbRef = (await new MyDatabase().open()) as MyDatabase;
-        return gDbRef;
+        await synchronised("open-db", async () => {
+            if (gDbRef === null) {
+                gDbRef = (await new MyDatabase().open()) as MyDatabase;
+            }
+        });
+        return gDbRef as unknown as MyDatabase;
     }
 }
 

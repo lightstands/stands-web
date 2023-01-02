@@ -7,18 +7,19 @@ import { useClient } from "../client";
 import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
 import { resetFeedMetas } from "../stores/feedmeta";
+import { resetPostMeta, syncAllPostMeta } from "../stores/postmeta";
+import { isMeetSynTime } from "../stores/lastsyn";
 
-export type TaskNames = "tags" | "feedlists";
+export type TaskNames = "tags" | "feedlists" | "postmeta";
 
 const workingTasksSig = createSignal<TaskNames[]>([]);
 
 export const getWorkingTasks = workingTasksSig[0];
 const setWorkingTasks = workingTasksSig[1];
 
-const workingErrorsSig = createSignal<Record<TaskNames, Error | undefined>>({
-    tags: undefined,
-    feedlists: undefined,
-});
+const workingErrorsSig = createSignal<
+    Partial<Record<TaskNames, Error | undefined>>
+>({});
 export const getWorkingErrors = workingErrorsSig[0];
 const setWorkingErrors = workingErrorsSig[1];
 
@@ -30,75 +31,87 @@ function setWorkingError(task: TaskNames, err?: Error) {
     });
 }
 
+function setTaskWorking(tag: TaskNames) {
+    setWorkingTasks((prev) => [...prev, tag]);
+}
+
+function rmTaskWorking(tag: TaskNames) {
+    setWorkingTasks((prev) => prev.filter((name) => name !== tag));
+}
+
+async function setupTaskPromise<T>(promise: Promise<T>, task: TaskNames) {
+    setTaskWorking(task);
+    try {
+        try {
+            return await promise;
+        } catch (e) {
+            setWorkingError(task, e as Error | undefined);
+        }
+    } finally {
+        rmTaskWorking(task);
+    }
+}
+
 async function runTagSync(client: ClientConfig, session: Session) {
-    await syncTags(client, session)
-        .catch((e) => setWorkingError("tags", e))
-        .finally(() =>
-            setWorkingTasks((old) => old.filter((v) => v !== "tags"))
-        );
+    return await setupTaskPromise(syncTags(client, session), "tags");
 }
 
 async function runFeedListSync(client: ClientConfig, session: Session) {
-    await syncAllFeedLists(client, session)
-        .catch((e) => setWorkingError("feedlists", e))
-        .finally(() =>
-            setWorkingTasks((old) => old.filter((v) => v !== "feedlists"))
-        );
+    return await setupTaskPromise(
+        syncAllFeedLists(client, session),
+        "feedlists"
+    );
+}
+
+async function runPostMetaSync(client: ClientConfig, session: Session) {
+    return await setupTaskPromise(syncAllPostMeta(client), "postmeta");
 }
 
 function isSyncTaskWorking(name: TaskNames) {
     return getWorkingTasks().includes(name);
 }
 
-export async function doSync(
-    client: ClientConfig,
-    session: Session,
-    name?: TaskNames
-) {
-    if (name === "tags") {
-        if (isSyncTaskWorking("tags")) return;
-        setWorkingTasks((old) => [...old, "tags"]);
-        try {
-            await runTagSync(client, session);
-        } finally {
-            settingStore.setKey("lastTimeSync", new Date().getTime());
-        }
-    } else if (name === "feedlists") {
-        if (isSyncTaskWorking("feedlists")) return;
-        setWorkingTasks((old) => [...old, "feedlists"]);
-        try {
-            await runFeedListSync(client, session);
-        } finally {
-            settingStore.setKey("lastTimeSync", new Date().getTime());
-        }
-    } else {
-        await Promise.all(
-            (<TaskNames[]>["feedlists", "tags"]).map((name) =>
-                doSync(client, session, name)
-            )
-        );
-    }
+export function shouldRunTagSync() {
+    return isMeetSynTime("tags", 30 * 60);
 }
 
-async function setupTaskPromise(promise: Promise<unknown>, task: TaskNames) {
+export function shouldRunFeedListSync() {
+    return isMeetSynTime("feedlists", 30 * 60);
+}
+
+export function shouldRunPostMetaSync() {
+    return isMeetSynTime("postmeta", 30 * 60);
+}
+
+export async function forcedFullSync(client: ClientConfig, session: Session) {
+    let updatedItems = 0;
     try {
-        try {
-            return await promise;
-        } catch (e) {
-            return setWorkingError(task, e as Error | undefined);
+        if (!isSyncTaskWorking("tags")) {
+            await runTagSync(client, session);
+            updatedItems += 1;
+        }
+        if (!isSyncTaskWorking("feedlists")) {
+            await runFeedListSync(client, session);
+            updatedItems += 1;
+        }
+        if (!isSyncTaskWorking("postmeta")) {
+            await runPostMetaSync(client, session);
+            updatedItems += 1;
         }
     } finally {
-        return setWorkingTasks((old) => old.filter((v) => v !== task));
+        if (updatedItems === 3) {
+            settingStore.setKey("lastTimeSync", new Date().getTime());
+        }
     }
 }
 
 export async function resetData() {
-    setWorkingTasks((old) => [...old, "tags", "feedlists"]);
     try {
         await Promise.all([
             setupTaskPromise(resetTags(), "tags"),
             setupTaskPromise(resetFeedLists(), "feedlists"),
             resetFeedMetas(),
+            setupTaskPromise(resetPostMeta(), "postmeta"),
         ]);
     } finally {
         settingStore.setKey("lastTimeSync", 0);
@@ -113,14 +126,31 @@ export async function resetData() {
  *
  * @param tasks task names
  */
-export function triggerSync(tasks: TaskNames[]) {
+export function useSync() {
     const client = useClient();
     const session = useStore(currentSessionStore);
     let timerId: number | undefined = undefined;
 
     const handler = () => {
-        for (const task of tasks) {
-            doSync(client, session()!.session, task);
+        const sessionObject = session()!.session;
+        let updatedItems = 0;
+        try {
+            if (!isSyncTaskWorking("tags") && shouldRunTagSync()) {
+                runTagSync(client, sessionObject);
+                updatedItems += 1;
+            }
+            if (!isSyncTaskWorking("feedlists") && shouldRunFeedListSync()) {
+                runFeedListSync(client, sessionObject);
+                updatedItems += 1;
+            }
+            if (!isSyncTaskWorking("postmeta") && shouldRunPostMetaSync()) {
+                runPostMetaSync(client, sessionObject);
+                updatedItems += 1;
+            }
+        } finally {
+            if (updatedItems === 3) {
+                settingStore.setKey("lastTimeSync", new Date().getTime());
+            }
         }
     };
 

@@ -116,3 +116,8 @@ export async function resetFeedMetas() {
     const db = await openDb();
     await db.feedmetas.clear();
 }
+
+export async function getLocalFeedMetaByBlake3(urlBlake3: string) {
+    const db = await openDb();
+    return await db.feedmetas.where({ urlBlake3 }).first();
+}

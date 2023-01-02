@@ -35,7 +35,7 @@ import CardActions from "@suid/material/CardActions";
 import Button from "@suid/material/Button";
 import Style from "../common/Style.module.css";
 import { settingStore } from "../stores/settings";
-import { doSync, triggerSync } from "../common/synmgr";
+import { useSync } from "../common/synmgr";
 import { useNavigate } from "../common/nav";
 import {
     requestPersistentStorage,
@@ -60,7 +60,7 @@ import ToolbarIcon from "../common/ToolbarIcon";
 import AdvMenu from "../common/AdvMenu";
 
 const DefaultFeedListPage: Component = () => {
-    triggerSync(["feedlists", "tags"]);
+    useSync();
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
@@ -137,11 +137,6 @@ const DefaultFeedListPage: Component = () => {
     onMount(() => {
         if (!session()) {
             navigate(`/sign-in?back=${encodeURIComponent(loc.pathname)}`);
-        } else {
-            if (settings().lastTimeSync === 0) {
-                // Sync data when first-time sign in
-                doSync(client, session()!.session);
-            }
         }
     });
 
