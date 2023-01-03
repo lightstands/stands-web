@@ -11,6 +11,7 @@ import {
     TimelineSeprator,
 } from "../stores/timeline";
 import CommonStyle from "../common/Style.module.css";
+import { useSync } from "../common/synmgr";
 
 async function getTimelineArray() {
     const result: TimelineEntry[][] = [];
@@ -34,6 +35,7 @@ function formatDay(day: Date, today: Date) {
 }
 
 const TimelinePage: Component = () => {
+    useSync();
     const timeline = useLiveQuery(getTimelineArray);
     const currentTime = useCurrentTime(60 * 60 * 1000);
     return (
