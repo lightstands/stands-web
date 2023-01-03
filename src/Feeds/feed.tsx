@@ -116,7 +116,7 @@ const FeedPage: Component = () => {
         async ([posts, filterTag]) => {
             if (posts) {
                 const result = [];
-                for (const post of posts) {
+                for (const post of (posts as PublicPost[])) {
                     if (await applyFilter(post)) {
                         result.push(post);
                     }
@@ -314,7 +314,7 @@ const FeedPage: Component = () => {
                                         name="filter-tag"
                                         value={searchParams.filter_tag || ""}
                                         onChange={async (ev, value) => {
-                                            await setFilterTag(value);
+                                            await setFilterTag(value, true);
                                             setFilterPopOpen(false);
                                         }}
                                     >
