@@ -15,33 +15,29 @@ import Popover from "@suid/material/Popover";
 import List from "@suid/material/List";
 
 interface AdvMenuProps {
-    suggestWidth?: number | null;
-    totalIconNumber: number;
     expanded: JSX.Element[];
-    onExpandedIconNumberChanged: (iconNumber: number) => void;
     hidden: JSX.Element[];
+}
+
+export function getExpandableIconNumber(
+    suggestWidth: number | undefined | null,
+    iconNumber: number
+) {
+    if (suggestWidth) {
+        const n = Math.floor(suggestWidth / 48);
+        if (n >= iconNumber) {
+            return n;
+        } else {
+            return n - 1;
+        }
+    } else {
+        return 0;
+    }
 }
 
 const AdvMenu: Component<AdvMenuProps> = (props) => {
     let buttonEl;
     const [showMore, setShowMore] = createSignal(false);
-    const expandedIconNumber = () => {
-        if (props.suggestWidth) {
-            const n = Math.floor(props.suggestWidth / 48);
-            if (n === props.totalIconNumber) {
-                return n;
-            } else {
-                return n - 1; // left one item space for the more button
-            }
-        } else {
-            return 0;
-        }
-    };
-
-    createEffect(() => {
-        const n = expandedIconNumber();
-        props.onExpandedIconNumberChanged(n);
-    });
 
     const poperId = createUniqueId();
 

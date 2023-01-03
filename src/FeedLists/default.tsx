@@ -57,7 +57,7 @@ import { Delete as DeleteIcon, Close as CloseIcon } from "@suid/icons-material";
 import { useScaffold } from "../common/Scaffold";
 import ToolbarTitle from "../common/ToolbarTitle";
 import ToolbarIcon from "../common/ToolbarIcon";
-import AdvMenu from "../common/AdvMenu";
+import AdvMenu, { getExpandableIconNumber } from "../common/AdvMenu";
 
 const DefaultFeedListPage: Component = () => {
     useSync();
@@ -88,7 +88,6 @@ const DefaultFeedListPage: Component = () => {
             }
         },
     });
-    const [menuExpandedIconNumber, setMenuExpandedIconNumber] = createSignal(0);
     const listDetail = useLiveQuery(async () => {
         return await getDefaultFeedList();
     });
@@ -262,8 +261,17 @@ const DefaultFeedListPage: Component = () => {
         return 0;
     };
 
+    const selectedMenuExpandedIconNumber = () => {
+        const width = scaffoldCx.state.suggestExpandableMenuWidth
+        if (width ){
+            return getExpandableIconNumber(width, 1)
+        } else {
+            return 0
+        }
+    }
+
     const selectedBarMenuExpanded = () => {
-        const n = menuExpandedIconNumber();
+        const n = selectedMenuExpandedIconNumber();
         const result: JSX.Element[] = [];
         const itemNumber = selectedItems()?.length || 0;
         if (n > 0 && itemNumber > 0) {
@@ -281,7 +289,7 @@ const DefaultFeedListPage: Component = () => {
     };
 
     const selectedBarMenuHidden = () => {
-        const n = menuExpandedIconNumber();
+        const n = selectedMenuExpandedIconNumber();
         const result: JSX.Element[] = [];
         const itemNumber = selectedItems()?.length || 0;
         if (n < 1 && itemNumber > 0) {
@@ -391,13 +399,6 @@ const DefaultFeedListPage: Component = () => {
                         hide={scaffoldCx.state.scrollingDown}
                     >
                         <AdvMenu
-                            totalIconNumber={1}
-                            suggestWidth={
-                                scaffoldCx.state.suggestExpandableMenuWidth
-                            }
-                            onExpandedIconNumberChanged={
-                                setMenuExpandedIconNumber
-                            }
                             expanded={[]}
                             hidden={[
                                 <ListItemButton
@@ -422,13 +423,6 @@ const DefaultFeedListPage: Component = () => {
                             color="primary"
                         />
                         <AdvMenu
-                            suggestWidth={
-                                scaffoldCx.state.suggestExpandableMenuWidth
-                            }
-                            totalIconNumber={selectedBarIconNumber()}
-                            onExpandedIconNumberChanged={
-                                setMenuExpandedIconNumber
-                            }
                             expanded={selectedBarMenuExpanded()}
                             hidden={selectedBarMenuHidden()}
                         />

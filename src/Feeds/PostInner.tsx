@@ -18,7 +18,7 @@ import Style from "../common/Style.module.css";
 import { isPostTagged, tagPostAndSync, untagPostAndSync } from "../stores/tags";
 import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
-import AdvMenu from "../common/AdvMenu";
+import AdvMenu, { getExpandableIconNumber } from "../common/AdvMenu";
 import ListItemButton from "@suid/material/ListItemButton";
 import ListItemText from "@suid/material/ListItemText";
 
@@ -31,7 +31,6 @@ const PostInner: Component<PostInnerProps> = (props) => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const scaffoldCx = useScaffold();
-    const [expandedMenuIconNumber, setExpandedMenuIconNumber] = createSignal(0);
     const [webViewHeight, setWebViewHeight] = createSignal<number | string>(
         scaffoldCx.state.height || "100vh"
     );
@@ -109,10 +108,18 @@ const PostInner: Component<PostInnerProps> = (props) => {
         isPostReadCtl.refetch();
     };
 
+    const expandedMenuIconNumber = () => {
+        return getExpandableIconNumber(
+            scaffoldCx.state.suggestExpandableMenuWidth,
+            2
+        );
+    };
+
     const expandedMenuItems = () => {
         const n = expandedMenuIconNumber();
-        if (n > 1 && session()) {
-            return [
+        const items = [];
+        if (n - items.length > 0 && session()) {
+            items.push(
                 isPostRead() ? (
                     <IconButton
                         size="large"
@@ -135,10 +142,8 @@ const PostInner: Component<PostInnerProps> = (props) => {
                     >
                         <DoneAllIcon />
                     </IconButton>
-                ),
-            ];
-        } else {
-            return [];
+                )
+            );
         }
     };
 
@@ -197,14 +202,8 @@ const PostInner: Component<PostInnerProps> = (props) => {
                 </Box>
                 <Box class={Style.FlexboxRow} sx={{ justifyContent: "end" }}>
                     <AdvMenu
-                        suggestWidth={
-                            scaffoldCx.state.suggestExpandableMenuWidth ||
-                            undefined
-                        }
                         hidden={hiddenMenuItems()}
                         expanded={expandedMenuItems()}
-                        totalIconNumber={2}
-                        onExpandedIconNumberChanged={setExpandedMenuIconNumber}
                     />
                 </Box>
             </Toolbar>

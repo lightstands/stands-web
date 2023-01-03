@@ -211,13 +211,7 @@ const FeedPage: Component = () => {
                     sx={{ justifyContent: "end" }}
                 >
                     <AdvMenu
-                        suggestWidth={
-                            scaffoldCx.state.suggestExpandableMenuWidth ||
-                            undefined
-                        }
                         expanded={[]}
-                        onExpandedIconNumberChanged={() => {}}
-                        totalIconNumber={1}
                         hidden={[
                             <ListItemButton
                                 disabled={
