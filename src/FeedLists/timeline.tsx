@@ -1,4 +1,11 @@
-import { List, ListSubheader, Paper } from "@suid/material";
+import {
+    List,
+    ListItemButton,
+    ListItemSecondaryAction,
+    ListItemText,
+    ListSubheader,
+    Paper,
+} from "@suid/material";
 import { intlFormat, isSameDay, subDays } from "date-fns";
 import { Component, For } from "solid-js";
 import PostListItem from "../common/PostListItem";
@@ -12,6 +19,8 @@ import {
 } from "../stores/timeline";
 import CommonStyle from "../common/Style.module.css";
 import { useSync } from "../common/synmgr";
+import { ChevronRight as ChevronRightIcon } from "@suid/icons-material";
+import { useNavigate } from "../common/nav";
 
 async function getTimelineArray() {
     const result: TimelineEntry[][] = [];
@@ -38,9 +47,10 @@ const TimelinePage: Component = () => {
     useSync();
     const timeline = useLiveQuery(getTimelineArray);
     const currentTime = useCurrentTime(60 * 60 * 1000);
+    const navigate = useNavigate();
     return (
         <>
-            <SharedAppBar title="Timeline" />
+            <SharedAppBar title="Timeline" forceLeftIcon="drawer" />
             <List
                 class={`${CommonStyle.SmartBodyWidth} ${CommonStyle.FixedCenterX}`}
             >
@@ -70,6 +80,16 @@ const TimelinePage: Component = () => {
                         );
                     }}
                 </For>
+                <div style={{ height: "20px" }} />
+                <ListItemButton onClick={() => navigate("/feedlists/default")}>
+                    <ListItemText
+                        primary={`Visit list "Subscribed"`}
+                        primaryTypographyProps={{ color: "primary" }}
+                    />
+                    <ListItemSecondaryAction>
+                        <ChevronRightIcon color="primary" />
+                    </ListItemSecondaryAction>
+                </ListItemButton>
             </List>
         </>
     );
