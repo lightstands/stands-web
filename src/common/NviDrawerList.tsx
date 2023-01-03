@@ -6,6 +6,7 @@ import { Component, createResource, Show } from "solid-js";
 import {
     List as ListIcon,
     Settings as SettingsIcon,
+    Timeline as TimelineIcon,
 } from "@suid/icons-material";
 import ListItemText from "@suid/material/ListItemText";
 import { aunwrap, getFeedInfo, PublicFeed } from "lightstands-js";
@@ -71,6 +72,9 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
                             props.afterItemClicked({});
                         }}
                     >
+                        <ListItemIcon>
+                            <TimelineIcon />
+                        </ListItemIcon>
                         <ListItemText primary="Timeline" />
                     </ListItemButton>
                     <ListItemButton
