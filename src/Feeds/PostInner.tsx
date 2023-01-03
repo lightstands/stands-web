@@ -8,6 +8,7 @@ import {
     Close as CloseIcon,
     DoneAll as DoneAllIcon,
     RemoveDone as RemoveDoneIcon,
+    Share as ShareIcon,
 } from "@suid/icons-material";
 import { useClient } from "../client";
 import { aunwrap, fetchContent, getPost } from "lightstands-js";
@@ -108,6 +109,33 @@ const PostInner: Component<PostInnerProps> = (props) => {
         isPostReadCtl.refetch();
     };
 
+    const sharePostLink = async () => {
+        const postMeta = postMetadata();
+        if (postMeta) {
+            if (postMeta.link) {
+                await navigator.share({
+                    title: postMeta.title,
+                    url: postMeta.link,
+                });
+            }
+        }
+    };
+
+    const canSharePostLink = () => {
+        const postMeta = postMetadata();
+        if (postMeta?.link) {
+            if (typeof navigator.canShare !== "undefined") {
+                return navigator.canShare({
+                    title: postMeta.title,
+                    url: postMeta.link,
+                });
+            } else {
+                return true;
+            }
+        }
+        return false;
+    };
+
     const expandedMenuIconNumber = () => {
         return getExpandableIconNumber(
             scaffoldCx.state.suggestExpandableMenuWidth,
@@ -145,6 +173,21 @@ const PostInner: Component<PostInnerProps> = (props) => {
                 )
             );
         }
+        if (n - items.length > 0 && typeof navigator.share !== "undefined") {
+            items.push(
+                <IconButton
+                    size="large"
+                    color="inherit"
+                    class="tooltip"
+                    aria-description="Share"
+                    disabled={!canSharePostLink()}
+                    onClick={sharePostLink}
+                >
+                    <ShareIcon />
+                </IconButton>
+            );
+        }
+        return items;
     };
 
     const hiddenMenuItems = () => {
@@ -158,7 +201,17 @@ const PostInner: Component<PostInnerProps> = (props) => {
                 <ListItemText primary="Open link..." />
             </ListItemButton>,
         ];
-        if (n < 1 && session()) {
+        if (n - items.length < 0 && typeof navigator.share !== "undefined") {
+            items.unshift(
+                <ListItemButton
+                    disabled={!canSharePostLink()}
+                    onClick={sharePostLink}
+                >
+                    <ListItemText primary="Share..." />
+                </ListItemButton>
+            );
+        }
+        if (n - items.length < 0 && session()) {
             items.unshift(
                 <ListItemButton disabled={!postMetadata()} onClick={markAsRead}>
                     <ListItemText primary="Mark as read" />
