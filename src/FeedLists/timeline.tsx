@@ -21,6 +21,7 @@ import CommonStyle from "../common/Style.module.css";
 import { useSync } from "../common/synmgr";
 import { ChevronRight as ChevronRightIcon } from "@suid/icons-material";
 import { useNavigate } from "../common/nav";
+import { useScaffold } from "../common/Scaffold";
 
 async function getTimelineArray() {
     const result: TimelineEntry[][] = [];
@@ -48,12 +49,19 @@ const TimelinePage: Component = () => {
     const timeline = useLiveQuery(getTimelineArray);
     const currentTime = useCurrentTime(60 * 60 * 1000);
     const navigate = useNavigate();
+    const scaffoldCx = useScaffold();
     return (
         <>
-            <SharedAppBar title="Timeline" forceLeftIcon="drawer" />
+            <SharedAppBar
+                title="Timeline"
+                forceLeftIcon="drawer"
+                hide={scaffoldCx.state.scrollingDown}
+            />
             <style>{`.timeline-list .MuiPaper-root { border-radius: 2px }`}</style>
             <List
-                class={/* @once */`${CommonStyle.SmartBodyWidth} ${CommonStyle.FixedCenterX} timeline-list`}
+                class={
+                    /* @once */ `${CommonStyle.SmartBodyWidth} ${CommonStyle.FixedCenterX} timeline-list`
+                }
             >
                 <For each={timeline()}>
                     {(section) => {
