@@ -78,9 +78,7 @@ const SettingsPage: Component = () => {
                 hide={scaffoldCx.state.scrollingDown}
             >
                 <AdvMenu
-                    totalIconNumber={1}
                     expanded={[]}
-                    onExpandedIconNumberChanged={() => {}}
                     hidden={[
                         <ListItemButton onClick={() => navigate("/sign-out")}>
                             <ListItemIcon>
@@ -103,9 +101,7 @@ const SettingsPage: Component = () => {
                 <style>{SettingListInject}</style>
                 <List class="SettingList">
                     <Show when={needRefresh()}>
-                        <ListSubheader>
-                            <Typography>New version available</Typography>
-                        </ListSubheader>
+                        <ListSubheader>New version available</ListSubheader>
                         <Paper>
                             <ListItemButton
                                 onClick={() => updateServiceWorker()}
@@ -114,9 +110,7 @@ const SettingsPage: Component = () => {
                             </ListItemButton>
                         </Paper>
                     </Show>
-                    <ListSubheader>
-                        <Typography>Account & Security</Typography>
-                    </ListSubheader>
+                    <ListSubheader>Account & Security</ListSubheader>
                     <Paper>
                         <ListItemButton
                             disabled={
@@ -160,9 +154,7 @@ const SettingsPage: Component = () => {
                             </ListItemButton>
                         </Show>
                     </Paper>
-                    <ListSubheader>
-                        <Typography>Feeds</Typography>
-                    </ListSubheader>
+                    <ListSubheader>Feeds</ListSubheader>
                     <Paper>
                         <ListItem>
                             <ListItemText
@@ -189,9 +181,7 @@ const SettingsPage: Component = () => {
                             </ListItemSecondaryAction>
                         </ListItem>
                     </Paper>
-                    <ListSubheader>
-                        <Typography>Accessibility</Typography>
-                    </ListSubheader>
+                    <ListSubheader>Accessibility</ListSubheader>
                     <Paper>
                         <ListItemButton
                             divider
@@ -217,9 +207,7 @@ const SettingsPage: Component = () => {
                             <ListItemText primary="Storage" />
                         </ListItemButton>
                     </Paper>
-                    <ListSubheader>
-                        <Typography>About</Typography>
-                    </ListSubheader>
+                    <ListSubheader>About</ListSubheader>
                     <Paper>
                         <ListItem divider>
                             <ListItemText
