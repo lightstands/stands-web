@@ -12,7 +12,7 @@ import { Component, createEffect, createSignal } from "solid-js";
 import ArrowDownThick from "../assets/ArrowDownThick";
 import ArrowUpThick from "../assets/ArrowUpThick";
 import CommonStyle from "./common.module.css";
-import { randeuid, inspectTimestamp, TS_OFFSET } from "../common/euid";
+import { randeuid, inspectTimestamp, TS_OFFSET } from "lightstands-js";
 import { default as ClockIcon } from "../assets/Clock";
 
 const EUIDPage: Component = () => {
