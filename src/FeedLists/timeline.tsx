@@ -51,8 +51,9 @@ const TimelinePage: Component = () => {
     return (
         <>
             <SharedAppBar title="Timeline" forceLeftIcon="drawer" />
+            <style>{`.timeline-list .MuiPaper-root { border-radius: 2px }`}</style>
             <List
-                class={`${CommonStyle.SmartBodyWidth} ${CommonStyle.FixedCenterX}`}
+                class={/* @once */`${CommonStyle.SmartBodyWidth} ${CommonStyle.FixedCenterX} timeline-list`}
             >
                 <For each={timeline()}>
                     {(section) => {
