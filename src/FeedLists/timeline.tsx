@@ -22,6 +22,7 @@ import { useSync } from "../common/synmgr";
 import { ChevronRight as ChevronRightIcon } from "@suid/icons-material";
 import { useNavigate } from "../common/nav";
 import { useScaffold } from "../common/Scaffold";
+import guardSignIn from "../common/guardSignIn";
 
 async function getTimelineArray() {
     const result: TimelineEntry[][] = [];
@@ -46,6 +47,7 @@ function formatDay(day: Date, today: Date) {
 
 const TimelinePage: Component = () => {
     useSync();
+    guardSignIn();
     const timeline = useLiveQuery(getTimelineArray);
     const currentTime = useCurrentTime(60 * 60 * 1000);
     const navigate = useNavigate();

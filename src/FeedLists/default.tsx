@@ -58,9 +58,11 @@ import { useScaffold } from "../common/Scaffold";
 import ToolbarTitle from "../common/ToolbarTitle";
 import ToolbarIcon from "../common/ToolbarIcon";
 import AdvMenu, { getExpandableIconNumber } from "../common/AdvMenu";
+import guardSignIn from "../common/guardSignIn";
 
 const DefaultFeedListPage: Component = () => {
     useSync();
+    guardSignIn();
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
@@ -132,12 +134,6 @@ const DefaultFeedListPage: Component = () => {
         top: number;
         left: number;
     }>();
-
-    onMount(() => {
-        if (!session()) {
-            navigate(`/sign-in?back=${encodeURIComponent(loc.pathname)}`);
-        }
-    });
 
     const setStoragePermission = async () => {
         await requestPersistentStorage();
@@ -253,22 +249,14 @@ const DefaultFeedListPage: Component = () => {
         }
     };
 
-    const selectedBarIconNumber = () => {
-        const itemNumber = selectedItems()?.length || 0;
-        if (itemNumber > 0) {
-            return 1;
-        }
-        return 0;
-    };
-
     const selectedMenuExpandedIconNumber = () => {
-        const width = scaffoldCx.state.suggestExpandableMenuWidth
-        if (width ){
-            return getExpandableIconNumber(width, 1)
+        const width = scaffoldCx.state.suggestExpandableMenuWidth;
+        if (width) {
+            return getExpandableIconNumber(width, 1);
         } else {
-            return 0
+            return 0;
         }
-    }
+    };
 
     const selectedBarMenuExpanded = () => {
         const n = selectedMenuExpandedIconNumber();

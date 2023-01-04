@@ -16,6 +16,7 @@ import {
     aunwrap,
 } from "lightstands-js";
 import { resetData } from "../common/synmgr";
+import { useStore } from "@nanostores/solid";
 
 interface SessionStore {
     account?: PublicUser;
@@ -104,7 +105,11 @@ export const revokeSession = action(
         if (session) {
             await aunwrap(revokeRemoteSession(client, session.session));
             store.set(undefined);
-            await resetData()
+            await resetData();
         }
     }
 );
+
+export const useSession = () => {
+    return useStore(currentSessionStore);
+};

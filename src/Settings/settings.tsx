@@ -34,10 +34,12 @@ import {
 } from "../common/storage";
 import { useServiceWorker } from "../common/swbridge";
 import { useScaffold } from "../common/Scaffold";
+import guardSignIn from "../common/guardSignIn";
 
 const SetPasswordDlg = lazy(() => import("./SetPasswordDlg"));
 
 const SettingsPage: Component = () => {
+    guardSignIn();
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
