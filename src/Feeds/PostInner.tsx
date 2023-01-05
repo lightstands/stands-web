@@ -275,6 +275,8 @@ const PostInner: Component<PostInnerProps> = (props) => {
                     onScroll={onContainerScroll}
                 >
                     <Toolbar
+                        role="toolbar"
+                        aria-hidden={scrolling() ? "true" : "false"}
                         sx={{
                             position: "sticky",
                             backgroundColor: "background.paper",
@@ -304,37 +306,43 @@ const PostInner: Component<PostInnerProps> = (props) => {
                             />
                         </Box>
                     </Toolbar>
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            marginX: "36px",
-                            paddingBottom: "24px",
-                        }}
-                    >
-                        {postMetadata()?.title}
-                    </Typography>
-                    <Show
-                        when={content.state === "ready"}
-                        fallback={
-                            <Delayed timeout={1000}>
-                                <Typography
-                                    sx={{ width: "100%", textAlign: "center" }}
-                                >
-                                    Waiting for traffic...
-                                </Typography>
-                            </Delayed>
-                        }
-                    >
-                        <SafeDocView
-                            width="100%"
-                            height={webViewHeight()}
-                            srcdoc={content()}
-                            title={postMetadata()?.title}
-                            onDocumentResize={({ height }) => {
-                                setWebViewHeight(height);
+                    <article>
+                        <Typography
+                            component="h5"
+                            variant="h5"
+                            sx={{
+                                marginX: "36px",
+                                paddingBottom: "24px",
                             }}
-                        />
-                    </Show>
+                        >
+                            {postMetadata()?.title}
+                        </Typography>
+                        <Show
+                            when={content.state === "ready"}
+                            fallback={
+                                <Delayed timeout={1000}>
+                                    <Typography
+                                        sx={{
+                                            width: "100%",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        Waiting for traffic...
+                                    </Typography>
+                                </Delayed>
+                            }
+                        >
+                            <SafeDocView
+                                width="100%"
+                                height={webViewHeight()}
+                                srcdoc={content()}
+                                title={postMetadata()?.title}
+                                onDocumentResize={({ height }) => {
+                                    setWebViewHeight(height);
+                                }}
+                            />
+                        </Show>
+                    </article>
                 </Box>
             </Paper>
         </>

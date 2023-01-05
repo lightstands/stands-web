@@ -23,6 +23,7 @@ import { ChevronRight as ChevronRightIcon } from "@suid/icons-material";
 import { useNavigate } from "../common/nav";
 import { useScaffold } from "../common/Scaffold";
 import guardSignIn from "../common/guardSignIn";
+import "../common/patchs/mui-list.css";
 
 async function getTimelineArray() {
     const result: TimelineEntry[][] = [];
@@ -45,6 +46,8 @@ function formatDay(day: Date, today: Date) {
     }
 }
 
+const LIST_TABINDEX_BASE = 1;
+
 const TimelinePage: Component = () => {
     useSync();
     guardSignIn();
@@ -60,48 +63,69 @@ const TimelinePage: Component = () => {
                 hide={scaffoldCx.state.scrollingDown}
             />
             <style>{`.timeline-list .MuiPaper-root { border-radius: 2px }`}</style>
-            <List
-                class={
-                    /* @once */ `${CommonStyle.SmartBodyWidth} ${CommonStyle.FixedCenterX} timeline-list`
-                }
-            >
-                <For each={timeline()}>
-                    {(section) => {
-                        const headerData = section[0] as TimelineSeprator;
-                        const posts = section.slice(1) as TimelinePost[];
-                        return (
-                            <>
-                                <ListSubheader>
-                                    {formatDay(headerData.day, currentTime())}
-                                </ListSubheader>
-                                <Paper>
-                                    <For each={posts}>
-                                        {(entry) => (
-                                            <PostListItem
-                                                feedUrlBlake3={
-                                                    entry.feedUrlBlake3
-                                                }
-                                                metadata={entry.post}
-                                                divider
-                                            />
+            <main>
+                <List
+                    role="feed"
+                    aria-busy={timeline() ? "false" : "true"}
+                    class={
+                        /* @once */ `${CommonStyle.SmartBodyWidth} ${CommonStyle.FixedCenterX} timeline-list`
+                    }
+                    aria-label="Timeline"
+                >
+                    <For each={timeline()}>
+                        {(section, index) => {
+                            const headerData = section[0] as TimelineSeprator;
+                            const posts = section.slice(1) as TimelinePost[];
+                            const preSectionCount = timeline()!
+                                .slice(undefined, index() + 1)
+                                .map((e) => e.length - 1) // exclude the header data
+                                .reduce((p, c) => p + c);
+                            return (
+                                <>
+                                    <ListSubheader>
+                                        {formatDay(
+                                            headerData.day,
+                                            currentTime()
                                         )}
-                                    </For>
-                                </Paper>
-                            </>
-                        );
-                    }}
-                </For>
-                <div style={{ height: "20px" }} />
-                <ListItemButton onClick={() => navigate("/feedlists/default")}>
-                    <ListItemText
-                        primary={`Visit list "Subscribed"`}
-                        primaryTypographyProps={{ color: "primary" }}
-                    />
-                    <ListItemSecondaryAction>
-                        <ChevronRightIcon color="primary" />
-                    </ListItemSecondaryAction>
-                </ListItemButton>
-            </List>
+                                    </ListSubheader>
+                                    <Paper>
+                                        <For each={posts}>
+                                            {(entry, entryIndex) => {
+                                                const currentIndex =
+                                                    preSectionCount +
+                                                    entryIndex();
+                                                return (
+                                                    <PostListItem
+                                                        feedUrlBlake3={
+                                                            entry.feedUrlBlake3
+                                                        }
+                                                        metadata={entry.post}
+                                                        divider
+                                                        aria-posinset={currentIndex.toString()}
+                                                        aria-setsize={timeline()!.length.toString()}
+                                                    />
+                                                );
+                                            }}
+                                        </For>
+                                    </Paper>
+                                </>
+                            );
+                        }}
+                    </For>
+                    <div style={{ height: "20px" }} />
+                    <ListItemButton
+                        onClick={() => navigate("/feedlists/default")}
+                    >
+                        <ListItemText
+                            primary={`Visit list "Subscribed"`}
+                            primaryTypographyProps={{ color: "primary" }}
+                        />
+                        <ListItemSecondaryAction>
+                            <ChevronRightIcon color="primary" />
+                        </ListItemSecondaryAction>
+                    </ListItemButton>
+                </List>
+            </main>
         </>
     );
 };

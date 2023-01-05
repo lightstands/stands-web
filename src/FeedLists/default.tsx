@@ -59,6 +59,7 @@ import ToolbarTitle from "../common/ToolbarTitle";
 import ToolbarIcon from "../common/ToolbarIcon";
 import AdvMenu, { getExpandableIconNumber } from "../common/AdvMenu";
 import guardSignIn from "../common/guardSignIn";
+import "../common/patchs/mui-list.css";
 
 const DefaultFeedListPage: Component = () => {
     useSync();
@@ -355,28 +356,7 @@ const DefaultFeedListPage: Component = () => {
                     </ListItemButton>
                 </List>
             </Popover>
-            <Box
-                sx={{
-                    position: "absolute",
-                    width: "fit-content",
-                    right: "40px",
-                    bottom: "50px",
-                    transition: "transform 220ms ease-in-out",
-                    transform: isItemSelectionMode()
-                        ? "translateX(100%) translateX(58px) rotate(360deg)"
-                        : undefined,
-                    zIndex: 1,
-                }}
-            >
-                <Fab
-                    color="primary"
-                    aria-label="add"
-                    onClick={() => setShowAddFeed(true)}
-                    disabled={!listDetail()}
-                >
-                    <AddIcon />
-                </Fab>
-            </Box>
+
             <Show
                 when={isItemSelectionMode()}
                 fallback={
@@ -459,36 +439,65 @@ const DefaultFeedListPage: Component = () => {
                         </CardActions>
                     </Card>
                 </Show>
-                <List>
-                    <For each={listItemDetails()}>
-                        {(item, index) => {
-                            if (item) {
-                                return (
-                                    <ListItemButton
-                                        data-index={index()}
-                                        divider
-                                        selected={selectedItems()?.includes(
-                                            item
-                                        )}
-                                        onClick={[onItemClick, item]}
-                                        onMouseDown={(ev) =>
-                                            onItemMouseDown(item, ev)
-                                        }
-                                    >
-                                        <ListItemText primary={item.title} />
-                                    </ListItemButton>
-                                );
-                            } else {
-                                return (
-                                    <ListItem
-                                        data-index={index()}
-                                        divider
-                                    ></ListItem>
-                                );
-                            }
+                <main>
+                    <List aria-label={'All feeds in the "Subscribed" list'}>
+                        <For each={listItemDetails()}>
+                            {(item, index) => {
+                                if (item) {
+                                    return (
+                                        <ListItemButton
+                                            data-index={index()}
+                                            tabIndex={0}
+                                            divider
+                                            selected={selectedItems()?.includes(
+                                                item
+                                            )}
+                                            onClick={[onItemClick, item]}
+                                            onMouseDown={(ev) =>
+                                                onItemMouseDown(item, ev)
+                                            }
+                                        >
+                                            <ListItemText
+                                                primary={item.title}
+                                            />
+                                        </ListItemButton>
+                                    );
+                                } else {
+                                    return (
+                                        <ListItem
+                                            data-index={index()}
+                                            divider
+                                            tabIndex={0}
+                                        ></ListItem>
+                                    );
+                                }
+                            }}
+                        </For>
+                    </List>
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            width: "fit-content",
+                            right: "40px",
+                            bottom: "50px",
+                            transition: "transform 220ms ease-in-out",
+                            transform: isItemSelectionMode()
+                                ? "translateX(100%) translateX(58px) rotate(360deg)"
+                                : undefined,
+                            zIndex: 1,
                         }}
-                    </For>
-                </List>
+                    >
+                        <Fab
+                            color="primary"
+                            aria-label="Add a feed"
+                            onClick={() => setShowAddFeed(true)}
+                            disabled={!listDetail()}
+                            tabIndex={0}
+                        >
+                            <AddIcon />
+                        </Fab>
+                    </Box>
+                </main>
             </Box>
         </>
     );

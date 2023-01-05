@@ -51,6 +51,7 @@ const AdvMenu: Component<AdvMenuProps> = (props) => {
                         color="inherit"
                         onClick={() => setShowMore(true)}
                         class="tooltip"
+                        aria-label="Open menu"
                         aria-description="More items"
                     >
                         <MoreVertIcon />

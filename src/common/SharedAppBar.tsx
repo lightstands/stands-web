@@ -43,6 +43,7 @@ const SharedAppBar: ParentComponent<SharedAppBarProps> = (props) => {
                             color="inherit"
                             sx={{ mr: 2 }}
                             onClick={() => navigate(-1)}
+                            aria-label="Back"
                         >
                             <ArrowBackIcon />
                         </IconButton>
@@ -58,6 +59,7 @@ const SharedAppBar: ParentComponent<SharedAppBarProps> = (props) => {
                                     !scaffoldCx.state.drawerOpen
                                 )
                             }
+                            aria-label="Open drawer"
                         >
                             <MenuIcon />
                         </IconButton>

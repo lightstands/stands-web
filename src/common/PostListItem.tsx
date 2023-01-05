@@ -1,6 +1,6 @@
 import { ListItem, ListItemText, Typography } from "@suid/material";
 import { PublicPost } from "lightstands-js";
-import { Switch, Match, Component } from "solid-js";
+import { Switch, Match, Component, splitProps } from "solid-js";
 import Style from "./PostListItem.module.css";
 import { useNavigate } from "./nav";
 
@@ -10,6 +10,9 @@ interface PostListItemProps {
     metadata: PublicPost;
     feedUrlBlake3: string;
     divider?: boolean;
+
+    "aria-posinset"?: string;
+    "aria-setsize"?: string;
 }
 
 const PostListItem: Component<PostListItemProps> = (props) => {
@@ -20,6 +23,10 @@ const PostListItem: Component<PostListItemProps> = (props) => {
         <Switch>
             <Match when={!hasContent() && hasLink()}>
                 <ListItem
+                    aria-posinset={props["aria-posinset"]}
+                    aria-setsize={props["aria-setsize"]}
+                    tabIndex={0}
+                    component="article"
                     divider={props.divider}
                     sx={{ cursor: "pointer" }}
                     data-index={props.metadata.ref}
@@ -53,6 +60,10 @@ const PostListItem: Component<PostListItemProps> = (props) => {
             </Match>
             <Match when={hasContent()}>
                 <ListItem
+                    aria-posinset={props["aria-posinset"]}
+                    aria-setsize={props["aria-setsize"]}
+                    tabIndex={0}
+                    component="article"
                     sx={{ cursor: "pointer" }}
                     data-index={props.metadata.ref}
                     divider={props.divider}
@@ -70,6 +81,10 @@ const PostListItem: Component<PostListItemProps> = (props) => {
             </Match>
             <Match when={true}>
                 <ListItem
+                    aria-posinset={props["aria-posinset"]}
+                    aria-setsise={props["aria-setsize"]}
+                    tabIndex={0}
+                    component="article"
                     data-index={props.metadata.ref}
                     divider={props.divider}
                 >
