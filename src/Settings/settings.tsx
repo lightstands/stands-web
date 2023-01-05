@@ -1,32 +1,38 @@
-import Box from "@suid/material/Box";
-import List from "@suid/material/List";
-import ListItemButton from "@suid/material/ListItemButton";
-import ListItemText from "@suid/material/ListItemText";
-import ListSubheader from "@suid/material/ListSubheader";
-import Paper from "@suid/material/Paper";
-import Typography from "@suid/material/Typography";
+import {
+    Box,
+    List,
+    ListItemButton,
+    ListItemText,
+    ListSubheader,
+    Paper,
+    Typography,
+    ListItem,
+    ListItemIcon,
+    ListItemSecondaryAction,
+} from "@suid/material";
 import { Component, createResource, createSignal, lazy, Show } from "solid-js";
-import SharedAppBar from "../common/SharedAppBar";
-import CommonStyle from "../common/Style.module.css";
 import {
     aunwrap,
     ClientConfig,
     getUserPrivateInfo,
     Session,
 } from "lightstands-js";
-import { useClient } from "../client";
-import { currentSessionStore } from "../stores/session";
 import { useStore } from "@nanostores/solid";
-import ListItem from "@suid/material/ListItem";
+import { formatDistanceToNow } from "date-fns";
+
 import {
     OpenInNew as OpenInNewIcon,
     Logout as LogoutIcon,
 } from "@suid/icons-material";
+
+import SharedAppBar from "../common/SharedAppBar";
+import CommonStyle from "../common/Style.module.css";
+import { useClient } from "../client";
+import { currentSessionStore } from "../stores/session";
 import { useNavigate } from "../common/nav";
-import { formatDistanceToNow } from "date-fns";
+
 import SettingListInject from "./setting-list-inject.css?inline";
 import AdvMenu from "../common/AdvMenu";
-import { ListItemIcon, ListItemSecondaryAction } from "@suid/material";
 import { settingStore } from "../stores/settings";
 import {
     requestPersistentStorage,

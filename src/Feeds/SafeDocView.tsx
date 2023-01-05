@@ -8,8 +8,9 @@ import {
     onMount,
 } from "solid-js";
 import { untrack } from "solid-js/web";
-import innerDocStyle from "./inner-doc.css?inline";
 import { UAParser } from "ua-parser-js";
+
+import innerDocStyle from "./inner-doc.css?inline";
 
 interface SafeDocViewProps {
     srcdoc?: string;

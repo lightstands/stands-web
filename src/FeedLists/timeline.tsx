@@ -8,6 +8,9 @@ import {
 } from "@suid/material";
 import { intlFormat, isSameDay, subDays } from "date-fns";
 import { Component, For } from "solid-js";
+
+import { ChevronRight as ChevronRightIcon } from "@suid/icons-material";
+
 import PostListItem from "../common/PostListItem";
 import SharedAppBar from "../common/SharedAppBar";
 import { useCurrentTime, useLiveQuery } from "../common/utils";
@@ -19,10 +22,10 @@ import {
 } from "../stores/timeline";
 import CommonStyle from "../common/Style.module.css";
 import { useSync } from "../common/synmgr";
-import { ChevronRight as ChevronRightIcon } from "@suid/icons-material";
 import { useNavigate } from "../common/nav";
 import { useScaffold } from "../common/Scaffold";
 import guardSignIn from "../common/guardSignIn";
+
 import "../common/patchs/mui-list.css";
 
 async function getTimelineArray() {

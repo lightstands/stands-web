@@ -1,13 +1,14 @@
 import { Box, ButtonBase, Toolbar, Typography } from "@suid/material";
 import { Component, createUniqueId, JSX, Show } from "solid-js";
-import BottomSheet from "../common/BottomSheet";
-import ToolbarIcon from "../common/ToolbarIcon";
 
 import {
     Close as CloseIcon,
     ContentCopy as ContentCopyIcon,
 } from "@suid/icons-material";
+
 import ToolbarTitle from "../common/ToolbarTitle";
+import BottomSheet from "../common/BottomSheet";
+import ToolbarIcon from "../common/ToolbarIcon";
 
 import "./AltShare.css";
 

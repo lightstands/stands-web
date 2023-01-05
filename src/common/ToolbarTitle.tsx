@@ -1,4 +1,4 @@
-import Typography from "@suid/material/Typography";
+import { Typography } from "@suid/material";
 import { Component } from "solid-js";
 
 const ToolbarTitle: Component<{ primary: string; color?: string }> = (

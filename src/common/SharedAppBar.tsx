@@ -1,13 +1,13 @@
-import AppBar from "@suid/material/AppBar";
-import IconButton from "@suid/material/IconButton";
-import Toolbar from "@suid/material/Toolbar";
+import { AppBar, IconButton, Toolbar } from "@suid/material";
 import { Match, ParentComponent, Show, Switch } from "solid-js";
-import { useScaffold } from "./Scaffold";
-import ToolbarTitle from "./ToolbarTitle";
+
 import {
     Menu as MenuIcon,
     ArrowBack as ArrowBackIcon,
 } from "@suid/icons-material";
+
+import { useScaffold } from "./Scaffold";
+import ToolbarTitle from "./ToolbarTitle";
 import { getPreviousLocation, useNavigate } from "./nav";
 
 interface SharedAppBarProps {

@@ -3,11 +3,12 @@
 // SPDX-License-Identifier: 	AGPL-3.0-or-later
 import { render } from "solid-js/web";
 import { Router } from "@solidjs/router";
+import type { ClientConfig } from "lightstands-js";
 
-import "./index.css";
 import App from "./App";
 import { ClientProvider } from "./client";
-import type { ClientConfig } from "lightstands-js";
+
+import "./index.css";
 
 const clientConfig: ClientConfig = {
     endpointBase: import.meta.env.VITE_LIGHTSTANDS_ENDPOINT_BASE,

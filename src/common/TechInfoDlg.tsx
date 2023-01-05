@@ -2,13 +2,16 @@
 // SPDX-License-Identifier: 	AGPL-3.0-or-later
 
 import { Component, Show } from "solid-js";
-import Modal from "@suid/material/Modal";
-import Card from "@suid/material/Card";
-import CardContent from "@suid/material/CardContent";
-import IconButton from "@suid/material/IconButton";
-import CloseIcon from "@suid/icons-material/Close";
-import Toolbar from "@suid/material/Toolbar";
-import Typography from "@suid/material/Typography";
+import {
+    Modal,
+    Card,
+    CardContent,
+    IconButton,
+    Toolbar,
+    Typography,
+} from "@suid/material";
+import { Close as CloseIcon } from "@suid/icons-material";
+
 import Style from "./TechInfoDlg.module.css";
 
 interface TechInfoDialogProps {

@@ -6,55 +6,55 @@ import {
     createSignal,
     createUniqueId,
     For,
-    Match,
     onCleanup,
     onMount,
     Show,
-    Switch,
 } from "solid-js";
 import {
     OpenInNew as OpenInNewIcon,
     FilterList as FilterListIcon,
     FilterListOff as FilterListOffIcon,
 } from "@suid/icons-material";
-import ToolbarTitle from "../common/ToolbarTitle";
 import { aunwrap, PublicPost } from "lightstands-js";
-import { useClient } from "../client";
-import CircularProgress from "@suid/material/CircularProgress";
-import Typography from "@suid/material/Typography";
-import Box from "@suid/material/Box";
-import Link from "@suid/material/Link";
+
+import {
+    CircularProgress,
+    Typography,
+    Box,
+    Link,
+    ListItemButton,
+    Card,
+    ListItemText,
+    Divider,
+    LinearProgress,
+    List,
+    ListItemIcon,
+    Chip,
+    Button,
+    Popover,
+    ListSubheader,
+    Radio,
+    FormControl,
+    RadioGroup,
+    FormControlLabel,
+} from "@suid/material";
 import { formatDistance } from "date-fns";
-import List from "@suid/material/List";
-import Card from "@suid/material/Card";
-import ListItem from "@suid/material/ListItem";
-import Style from "./feed.module.css";
-import ListItemText from "@suid/material/ListItemText";
-import Divider from "@suid/material/Divider";
-import LinearProgress from "@suid/material/LinearProgress";
-import SharedAppBar from "../common/SharedAppBar";
-import CommonStyle from "../common/Style.module.css";
-import { useScaffold } from "../common/Scaffold";
-import "./feed.css";
-import { isPostTagged } from "../stores/tags";
-import AdvMenu from "../common/AdvMenu";
-import ListItemButton from "@suid/material/ListItemButton";
-import ListItemIcon from "@suid/material/ListItemIcon";
-import Chip from "@suid/material/Chip";
-import Button from "@suid/material/Button";
-import Popover from "@suid/material/Popover";
-import ListSubheader from "@suid/material/ListSubheader";
-import Radio from "@suid/material/Radio";
-import FormControl from "@suid/material/FormControl";
-import RadioGroup from "@suid/material/RadioGroup";
-import FormControlLabel from "@suid/material/FormControlLabel";
 import { useStore } from "@nanostores/solid";
+
 import { settingStore } from "../stores/settings";
 import { useSearchParams } from "../common/nav";
 import { useSync } from "../common/synmgr";
 import { getFeedInfo, getLocalFeedMetaByBlake3 } from "../stores/feedmeta";
 import { useLiveQuery } from "../common/utils";
 import { fetchOldPostsOf, getAllPostsOf } from "../stores/postmeta";
+import SharedAppBar from "../common/SharedAppBar";
+import CommonStyle from "../common/Style.module.css";
+import { useScaffold } from "../common/Scaffold";
+import "./feed.css";
+import { isPostTagged } from "../stores/tags";
+import AdvMenu from "../common/AdvMenu";
+import { useClient } from "../client";
+import ToolbarTitle from "../common/ToolbarTitle";
 
 import PostListItem from "../common/PostListItem";
 
@@ -116,7 +116,7 @@ const FeedPage: Component = () => {
         async ([posts, filterTag]) => {
             if (posts) {
                 const result = [];
-                for (const post of (posts as PublicPost[])) {
+                for (const post of posts as PublicPost[]) {
                     if (await applyFilter(post)) {
                         result.push(post);
                     }

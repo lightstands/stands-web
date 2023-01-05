@@ -9,6 +9,7 @@ import {
     Typography,
 } from "@suid/material";
 import { Component, Show } from "solid-js";
+
 import SharedAppBar from "../common/SharedAppBar";
 import SettingListInject from "./setting-list-inject.css?inline";
 import CommonStyle from "../common/Style.module.css";

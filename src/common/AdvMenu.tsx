@@ -1,18 +1,16 @@
-import Box from "@suid/material/Box";
+import { Box, IconButton, Popover, List } from "@suid/material";
 import {
     Component,
-    createEffect,
     createSignal,
     createUniqueId,
     For,
     JSX,
     Show,
 } from "solid-js";
-import Style from "./Style.module.css";
+
 import { MoreVert as MoreVertIcon } from "@suid/icons-material";
-import IconButton from "@suid/material/IconButton";
-import Popover from "@suid/material/Popover";
-import List from "@suid/material/List";
+
+import Style from "./Style.module.css";
 
 interface AdvMenuProps {
     expanded: JSX.Element[];

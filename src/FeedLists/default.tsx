@@ -12,27 +12,43 @@ import {
     onCleanup,
     Show,
 } from "solid-js";
-import { useClient } from "../client";
 import { useStore } from "@nanostores/solid";
-import { currentSessionStore } from "../stores/session";
 import { aeither, PublicFeed } from "lightstands-js";
-import { onMount } from "solid-js";
-import { useLocation } from "@solidjs/router";
-import Box from "@suid/material/Box";
-import { Add as AddIcon } from "@suid/icons-material";
-import Fab from "@suid/material/Fab";
-import BottomSheet from "../common/BottomSheet";
-import AddFeedDlg from "./AddFeedDlg";
-import List from "@suid/material/List";
-import ListItem from "@suid/material/ListItem";
-import ListItemText from "@suid/material/ListItemText";
-import ListItemButton from "@suid/material/ListItemButton";
+import {
+    Fab,
+    Box,
+    List,
+    ListItemText,
+    ListItemButton,
+    Card,
+    CardContent,
+    Typography,
+    CardActions,
+    Button,
+    ListItem,
+} from "@suid/material";
+import {
+    AppBar,
+    IconButton,
+    ListItemIcon,
+    ListSubheader,
+    Popover,
+    Toolbar,
+} from "@suid/material";
+
+import {
+    Add as AddIcon,
+    Delete as DeleteIcon,
+    Close as CloseIcon,
+} from "@suid/icons-material";
+
+import { getFeedInfo } from "../stores/feedmeta";
+import { useScaffold } from "../common/Scaffold";
+import ToolbarTitle from "../common/ToolbarTitle";
+import ToolbarIcon from "../common/ToolbarIcon";
+import AdvMenu, { getExpandableIconNumber } from "../common/AdvMenu";
+import guardSignIn from "../common/guardSignIn";
 import SharedAppBar from "../common/SharedAppBar";
-import Card from "@suid/material/Card";
-import CardContent from "@suid/material/CardContent";
-import Typography from "@suid/material/Typography";
-import CardActions from "@suid/material/CardActions";
-import Button from "@suid/material/Button";
 import Style from "../common/Style.module.css";
 import { settingStore } from "../stores/settings";
 import { useSync } from "../common/synmgr";
@@ -43,22 +59,11 @@ import {
 } from "../common/storage";
 import { useLiveQuery } from "../common/utils";
 import { getDefaultFeedList, removeFeedFromList } from "../stores/feedlists";
-import {
-    AppBar,
-    IconButton,
-    ListItemIcon,
-    ListSubheader,
-    Popover,
-    Toolbar,
-} from "@suid/material";
-import { getFeedInfo } from "../stores/feedmeta";
+import { currentSessionStore } from "../stores/session";
+import { useClient } from "../client";
+import BottomSheet from "../common/BottomSheet";
+import AddFeedDlg from "./AddFeedDlg";
 
-import { Delete as DeleteIcon, Close as CloseIcon } from "@suid/icons-material";
-import { useScaffold } from "../common/Scaffold";
-import ToolbarTitle from "../common/ToolbarTitle";
-import ToolbarIcon from "../common/ToolbarIcon";
-import AdvMenu, { getExpandableIconNumber } from "../common/AdvMenu";
-import guardSignIn from "../common/guardSignIn";
 import "../common/patchs/mui-list.css";
 
 const DefaultFeedListPage: Component = () => {
@@ -69,7 +74,6 @@ const DefaultFeedListPage: Component = () => {
     const navigate = useNavigate();
     const storagePermission = usePersistentStoragePermission();
     const settings = useStore(settingStore);
-    const loc = useLocation();
     const scaffoldCx = useScaffold();
     const [showAddFeed, setShowAddFeed] = createSignal(false);
     const [selectedItems, setSelectedItems] = createSignal<

@@ -1,17 +1,23 @@
-import Box from "@suid/material/Box";
-import { batch, Component, createResource, createSignal, Show } from "solid-js";
-import Paper from "@suid/material/Paper";
-import Toolbar from "@suid/material/Toolbar";
-import Typography from "@suid/material/Typography";
-import IconButton from "@suid/material/IconButton";
+import { Component, createResource, createSignal, Show } from "solid-js";
+import {
+    Paper,
+    Toolbar,
+    Typography,
+    IconButton,
+    ListItemText,
+    ListItemButton,
+    Box,
+} from "@suid/material";
+import { aunwrap, fetchContent, getPost } from "lightstands-js";
+
 import {
     Close as CloseIcon,
     DoneAll as DoneAllIcon,
     RemoveDone as RemoveDoneIcon,
     Share as ShareIcon,
 } from "@suid/icons-material";
+
 import { useClient } from "../client";
-import { aunwrap, fetchContent, getPost } from "lightstands-js";
 import SafeDocView from "./SafeDocView";
 import { useScaffold } from "../common/Scaffold";
 import Delayed from "./Delayed";
@@ -20,10 +26,9 @@ import { isPostTagged, tagPostAndSync, untagPostAndSync } from "../stores/tags";
 import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
 import AdvMenu, { getExpandableIconNumber } from "../common/AdvMenu";
-import ListItemButton from "@suid/material/ListItemButton";
-import ListItemText from "@suid/material/ListItemText";
 import AltShare, { AltSharingObject } from "./AltShare";
 import { useAppSettings } from "../stores/settings";
+
 import "./PostInner.css";
 
 interface PostInnerProps {

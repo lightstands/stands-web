@@ -1,18 +1,22 @@
 import { useLocation } from "@solidjs/router";
-import List from "@suid/material/List";
-import ListItemButton from "@suid/material/ListItemButton";
-import ListItemIcon from "@suid/material/ListItemIcon";
+import {
+    List,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Divider,
+} from "@suid/material";
 import { Component, createResource, Show } from "solid-js";
+import { aunwrap, getFeedInfo, PublicFeed } from "lightstands-js";
+import { useStore } from "@nanostores/solid";
+
 import {
     List as ListIcon,
     Settings as SettingsIcon,
     Timeline as TimelineIcon,
 } from "@suid/icons-material";
-import ListItemText from "@suid/material/ListItemText";
-import { aunwrap, getFeedInfo, PublicFeed } from "lightstands-js";
+
 import { useClient } from "../client";
-import Divider from "@suid/material/Divider";
-import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
 import { useNavigate } from "./nav";
 

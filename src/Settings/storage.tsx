@@ -1,29 +1,33 @@
-import Box from "@suid/material/Box";
-import List from "@suid/material/List";
-import ListItem from "@suid/material/ListItem";
-import ListItemText from "@suid/material/ListItemText";
-import ListSubheader from "@suid/material/ListSubheader";
-import Paper from "@suid/material/Paper";
-import Typography from "@suid/material/Typography";
+import {
+    Box,
+    ListItemText,
+    ListItem,
+    ListSubheader,
+    Paper,
+    Typography,
+    Link,
+    ListItemButton,
+    ListItemIcon,
+    List,
+    ListItemSecondaryAction,
+} from "@suid/material";
 import { Component, createResource, Show } from "solid-js";
+import { useStore } from "@nanostores/solid";
+import { formatDistance } from "date-fns";
+
+import { Sync as SyncIcon } from "@suid/icons-material";
+
 import SharedAppBar from "../common/SharedAppBar";
 import ToolbarTitle from "../common/ToolbarTitle";
 import CommonStyle from "../common/Style.module.css";
-import Link from "@suid/material/Link";
 import { useCurrentTime, useLiveQuery } from "../common/utils";
 import { openDb } from "../stores/db";
-import { useStore } from "@nanostores/solid";
 import { settingStore } from "../stores/settings";
-import { formatDistance } from "date-fns";
-import ListItemButton from "@suid/material/ListItemButton";
-import ListItemIcon from "@suid/material/ListItemIcon";
-import { Sync as SyncIcon } from "@suid/icons-material";
 import SettingListInject from "./setting-list-inject.css?inline";
 import { forcedFullSync, getWorkingTasks } from "../common/synmgr";
 import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
 import { supportsPersistentStorage } from "../common/storage";
-import { ListItemSecondaryAction } from "@suid/material";
 
 const SIZE_UNITS = ["byte", "kilobyte", "megabyte", "gigabyte", "petabyte"];
 

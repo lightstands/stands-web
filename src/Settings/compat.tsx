@@ -9,6 +9,7 @@ import {
     Switch,
 } from "@suid/material";
 import { Component } from "solid-js";
+
 import SharedAppBar from "../common/SharedAppBar";
 import SettingListInject from "./setting-list-inject.css?inline";
 import CommonStyle from "../common/Style.module.css";

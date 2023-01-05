@@ -1,16 +1,15 @@
-import Box from "@suid/material/Box";
-import TextField from "@suid/material/TextField";
-import Toolbar from "@suid/material/Toolbar";
+import { Box, TextField, Toolbar, Typography } from "@suid/material";
 import { Component, createEffect, createSignal } from "solid-js";
+import { useStore } from "@nanostores/solid";
+import { aeither, setUserPassword } from "lightstands-js";
+
+import { Close as CloseIcon, Check as CheckIcon } from "@suid/icons-material";
+
 import BottomSheet from "../common/BottomSheet";
 import ToolbarIcon from "../common/ToolbarIcon";
 import ToolbarTitle from "../common/ToolbarTitle";
-import { Close as CloseIcon, Check as CheckIcon } from "@suid/icons-material";
 import { PASS_REGEX } from "../common/regex";
-import Typography from "@suid/material/Typography";
-import { aeither, setUserPassword } from "lightstands-js";
 import { useClient } from "../client";
-import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
 
 interface SetPasswordDlgProps {

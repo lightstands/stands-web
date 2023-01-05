@@ -1,14 +1,17 @@
-import IconButton from "@suid/material/IconButton";
-import Toolbar from "@suid/material/Toolbar";
+import {
+    IconButton,
+    Toolbar,
+    TextField,
+    Typography,
+    Box,
+} from "@suid/material";
 import { Component, createSignal, Match, Switch } from "solid-js";
 import { Close as CloseIcon, Check as CheckIcon } from "@suid/icons-material";
-import ToolbarTitle from "../common/ToolbarTitle";
-import Box from "@suid/material/Box";
-import TextField from "@suid/material/TextField";
-import Typography from "@suid/material/Typography";
 import { isRight, PublicFeed, resolveFeed, unbox } from "lightstands-js";
-import { useClient } from "../client";
 import { useStore } from "@nanostores/solid";
+
+import ToolbarTitle from "../common/ToolbarTitle";
+import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
 import { addFeedToList } from "../stores/feedlists";
 

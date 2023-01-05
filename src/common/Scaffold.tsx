@@ -1,7 +1,6 @@
 /* @refresh reload */
 import { createElementSize } from "@solid-primitives/resize-observer";
-import Box from "@suid/material/Box";
-import Drawer from "@suid/material/Drawer";
+import { Box, Drawer } from "@suid/material";
 import {
     createEffect,
     createSignal,
@@ -10,6 +9,7 @@ import {
     useContext,
 } from "solid-js";
 import { createStore, Store } from "solid-js/store";
+
 import NviDrawerList from "./NviDrawerList";
 
 interface ScaffoldProps {}

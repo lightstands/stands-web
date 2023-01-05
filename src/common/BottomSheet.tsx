@@ -1,8 +1,6 @@
-import Box from "@suid/material/Box";
-import Drawer from "@suid/material/Drawer";
-import Modal from "@suid/material/Modal";
-import Paper from "@suid/material/Paper";
+import { Box, Drawer, Modal, Paper } from "@suid/material";
 import { ParentComponent, Show } from "solid-js";
+
 import { useScaffold } from "./Scaffold";
 import CommonStyle from "./Style.module.css";
 

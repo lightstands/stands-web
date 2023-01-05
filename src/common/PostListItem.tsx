@@ -1,10 +1,11 @@
 import { ListItem, ListItemText, Typography } from "@suid/material";
 import { PublicPost } from "lightstands-js";
-import { Switch, Match, Component, splitProps } from "solid-js";
-import Style from "./PostListItem.module.css";
-import { useNavigate } from "./nav";
+import { Switch, Match, Component } from "solid-js";
 
 import { OpenInNew as OpenInNewIcon } from "@suid/icons-material";
+
+import Style from "./PostListItem.module.css";
+import { useNavigate } from "./nav";
 
 interface PostListItemProps {
     metadata: PublicPost;
