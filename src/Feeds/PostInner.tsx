@@ -1,5 +1,5 @@
 import Box from "@suid/material/Box";
-import { Component, createResource, createSignal, Show } from "solid-js";
+import { batch, Component, createResource, createSignal, Show } from "solid-js";
 import Paper from "@suid/material/Paper";
 import Toolbar from "@suid/material/Toolbar";
 import Typography from "@suid/material/Typography";
@@ -24,6 +24,7 @@ import ListItemButton from "@suid/material/ListItemButton";
 import ListItemText from "@suid/material/ListItemText";
 import AltShare, { AltSharingObject } from "./AltShare";
 import { useAppSettings } from "../stores/settings";
+import "./PostInner.css";
 
 interface PostInnerProps {
     feedUrlBlake3: string;
@@ -31,6 +32,8 @@ interface PostInnerProps {
 }
 
 const PostInner: Component<PostInnerProps> = (props) => {
+    let lastScrollTop = 0;
+
     const appSettings = useAppSettings();
     const client = useClient();
     const session = useStore(currentSessionStore);
@@ -56,17 +59,10 @@ const PostInner: Component<PostInnerProps> = (props) => {
         }
     );
     const [scrolled, setScrolled] = createSignal(false);
+    const [scrolling, setScrolling] = createSignal(false);
     const isPermanentDrawerOpen = () =>
         scaffoldCx.state.drawerOpen &&
         scaffoldCx.state.drawerType == "permanent";
-    const toolbarShadowSx = () =>
-        scrolled()
-            ? {
-                  boxShadow:
-                      "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
-              }
-            : {};
-    // TODO: Sync the read status with local database
     const [isPostRead, isPostReadCtl] = createResource(
         () => [postMetadata()],
         async ([postMeta]) => {
@@ -240,6 +236,20 @@ const PostInner: Component<PostInnerProps> = (props) => {
         }
         return items;
     };
+
+    const onContainerScroll = (
+        ev: UIEvent & { currentTarget: HTMLDivElement; target: Element }
+    ) => {
+        setScrolled(ev.currentTarget.scrollTop !== 0);
+        const scrollTop = Math.max(0, ev.target.scrollTop);
+        const maxScrollTop = ev.target.scrollHeight - ev.target.clientHeight;
+        if (scrollTop > lastScrollTop && scrollTop < maxScrollTop) {
+            setScrolling(true);
+        } else {
+            setScrolling(false);
+        }
+        lastScrollTop = scrollTop;
+    };
     return (
         <>
             <Paper
@@ -259,41 +269,41 @@ const PostInner: Component<PostInnerProps> = (props) => {
                     sharing={alterSharingObject()}
                     onClose={() => setAlterSharingObject()}
                 />
-                <Toolbar
-                    sx={{
-                        display: "flex",
-                        transition:
-                            "box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-                        ...toolbarShadowSx(),
-                    }}
-                >
-                    <Box class={Style.FlexboxRow} sx={{ flexGrow: 1 }}>
-                        <IconButton
-                            size="large"
-                            color="inherit"
-                            onClick={() => {
-                                window.history.go(-1);
-                            }}
-                        >
-                            <CloseIcon />
-                        </IconButton>
-                    </Box>
-                    <Box
-                        class={Style.FlexboxRow}
-                        sx={{ justifyContent: "end" }}
-                    >
-                        <AdvMenu
-                            hidden={hiddenMenuItems()}
-                            expanded={expandedMenuItems()}
-                        />
-                    </Box>
-                </Toolbar>
+
                 <Box
                     sx={{ overflow: "auto", overscrollBehavior: "contain" }}
-                    onScroll={(ev) =>
-                        setScrolled(ev.currentTarget.scrollTop !== 0)
-                    }
+                    onScroll={onContainerScroll}
                 >
+                    <Toolbar
+                        sx={{
+                            position: "sticky",
+                            backgroundColor: "background.paper",
+                        }}
+                        class={`PostInnerToolbar${
+                            scrolled() ? " scrolled" : ""
+                        }${scrolling() ? " scrolling" : ""}`}
+                    >
+                        <Box class={Style.FlexboxRow} sx={{ flexGrow: 1 }}>
+                            <IconButton
+                                size="large"
+                                color="inherit"
+                                onClick={() => {
+                                    window.history.go(-1);
+                                }}
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                        </Box>
+                        <Box
+                            class={Style.FlexboxRow}
+                            sx={{ justifyContent: "end" }}
+                        >
+                            <AdvMenu
+                                hidden={hiddenMenuItems()}
+                                expanded={expandedMenuItems()}
+                            />
+                        </Box>
+                    </Toolbar>
                     <Typography
                         variant="h5"
                         sx={{
