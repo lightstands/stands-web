@@ -22,6 +22,8 @@ import { currentSessionStore } from "../stores/session";
 import AdvMenu, { getExpandableIconNumber } from "../common/AdvMenu";
 import ListItemButton from "@suid/material/ListItemButton";
 import ListItemText from "@suid/material/ListItemText";
+import AltShare, { AltSharingObject } from "./AltShare";
+import { useAppSettings } from "../stores/settings";
 
 interface PostInnerProps {
     feedUrlBlake3: string;
@@ -29,6 +31,7 @@ interface PostInnerProps {
 }
 
 const PostInner: Component<PostInnerProps> = (props) => {
+    const appSettings = useAppSettings();
     const client = useClient();
     const session = useStore(currentSessionStore);
     const scaffoldCx = useScaffold();
@@ -75,6 +78,9 @@ const PostInner: Component<PostInnerProps> = (props) => {
         }
     );
 
+    const [alterSharingObject, setAlterSharingObject] =
+        createSignal<AltSharingObject>();
+
     const markAsRead = async () => {
         const currentSession = session();
         const postMeta = postMetadata();
@@ -113,10 +119,20 @@ const PostInner: Component<PostInnerProps> = (props) => {
         const postMeta = postMetadata();
         if (postMeta) {
             if (postMeta.link) {
-                await navigator.share({
-                    title: postMeta.title,
-                    url: postMeta.link,
-                });
+                if (
+                    appSettings().systemSharing === "auto" &&
+                    typeof navigator.share !== "undefined"
+                ) {
+                    await navigator.share({
+                        title: postMeta.title,
+                        url: postMeta.link,
+                    });
+                } else {
+                    setAlterSharingObject({
+                        title: postMeta.title,
+                        url: postMeta.link,
+                    });
+                }
             }
         }
     };
@@ -124,11 +140,15 @@ const PostInner: Component<PostInnerProps> = (props) => {
     const canSharePostLink = () => {
         const postMeta = postMetadata();
         if (postMeta?.link) {
-            if (typeof navigator.canShare !== "undefined") {
-                return navigator.canShare({
-                    title: postMeta.title,
-                    url: postMeta.link,
-                });
+            if (appSettings().systemSharing === "auto") {
+                if (typeof navigator.canShare !== "undefined") {
+                    return navigator.canShare({
+                        title: postMeta.title,
+                        url: postMeta.link,
+                    });
+                } else {
+                    return true;
+                }
             } else {
                 return true;
             }
@@ -173,7 +193,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
                 )
             );
         }
-        if (n - items.length > 0 && typeof navigator.share !== "undefined") {
+        if (n - items.length > 0) {
             items.push(
                 <IconButton
                     size="large"
@@ -201,7 +221,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
                 <ListItemText primary="Open link..." />
             </ListItemButton>,
         ];
-        if (n - items.length < 0 && typeof navigator.share !== "undefined") {
+        if (n - items.length < 0) {
             items.unshift(
                 <ListItemButton
                     disabled={!canSharePostLink()}
@@ -221,82 +241,93 @@ const PostInner: Component<PostInnerProps> = (props) => {
         return items;
     };
     return (
-        <Paper
-            sx={{
-                display: "flex",
-                position: "relative",
-                left: isPermanentDrawerOpen() ? "240px" : undefined,
-                maxWidth: isPermanentDrawerOpen()
-                    ? "calc(100% - 240px)"
-                    : "100%",
-                height: "100%",
-                flexDirection: "column",
-                borderRadius: "1px",
-            }}
-        >
-            <Toolbar
+        <>
+            <Paper
                 sx={{
                     display: "flex",
-                    transition:
-                        "box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-                    ...toolbarShadowSx(),
+                    position: "relative",
+                    left: isPermanentDrawerOpen() ? "240px" : undefined,
+                    maxWidth: isPermanentDrawerOpen()
+                        ? "calc(100% - 240px)"
+                        : "100%",
+                    height: "100%",
+                    flexDirection: "column",
+                    borderRadius: "1px",
                 }}
             >
-                <Box class={Style.FlexboxRow} sx={{ flexGrow: 1 }}>
-                    <IconButton
-                        size="large"
-                        color="inherit"
-                        onClick={() => {
-                            window.history.go(-1);
-                        }}
-                    >
-                        <CloseIcon />
-                    </IconButton>
-                </Box>
-                <Box class={Style.FlexboxRow} sx={{ justifyContent: "end" }}>
-                    <AdvMenu
-                        hidden={hiddenMenuItems()}
-                        expanded={expandedMenuItems()}
-                    />
-                </Box>
-            </Toolbar>
-            <Box
-                sx={{ overflow: "auto", overscrollBehavior: "contain" }}
-                onScroll={(ev) => setScrolled(ev.currentTarget.scrollTop !== 0)}
-            >
-                <Typography
-                    variant="h5"
+                <AltShare
+                    sharing={alterSharingObject()}
+                    onClose={() => setAlterSharingObject()}
+                />
+                <Toolbar
                     sx={{
-                        marginX: "36px",
-                        paddingBottom: "24px",
+                        display: "flex",
+                        transition:
+                            "box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+                        ...toolbarShadowSx(),
                     }}
                 >
-                    {postMetadata()?.title}
-                </Typography>
-                <Show
-                    when={content.state === "ready"}
-                    fallback={
-                        <Delayed timeout={1000}>
-                            <Typography
-                                sx={{ width: "100%", textAlign: "center" }}
-                            >
-                                Waiting for traffic...
-                            </Typography>
-                        </Delayed>
+                    <Box class={Style.FlexboxRow} sx={{ flexGrow: 1 }}>
+                        <IconButton
+                            size="large"
+                            color="inherit"
+                            onClick={() => {
+                                window.history.go(-1);
+                            }}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
+                    <Box
+                        class={Style.FlexboxRow}
+                        sx={{ justifyContent: "end" }}
+                    >
+                        <AdvMenu
+                            hidden={hiddenMenuItems()}
+                            expanded={expandedMenuItems()}
+                        />
+                    </Box>
+                </Toolbar>
+                <Box
+                    sx={{ overflow: "auto", overscrollBehavior: "contain" }}
+                    onScroll={(ev) =>
+                        setScrolled(ev.currentTarget.scrollTop !== 0)
                     }
                 >
-                    <SafeDocView
-                        width="100%"
-                        height={webViewHeight()}
-                        srcdoc={content()}
-                        title={postMetadata()?.title}
-                        onDocumentResize={({ height }) => {
-                            setWebViewHeight(height);
+                    <Typography
+                        variant="h5"
+                        sx={{
+                            marginX: "36px",
+                            paddingBottom: "24px",
                         }}
-                    />
-                </Show>
-            </Box>
-        </Paper>
+                    >
+                        {postMetadata()?.title}
+                    </Typography>
+                    <Show
+                        when={content.state === "ready"}
+                        fallback={
+                            <Delayed timeout={1000}>
+                                <Typography
+                                    sx={{ width: "100%", textAlign: "center" }}
+                                >
+                                    Waiting for traffic...
+                                </Typography>
+                            </Delayed>
+                        }
+                    >
+                        <SafeDocView
+                            width="100%"
+                            height={webViewHeight()}
+                            srcdoc={content()}
+                            title={postMetadata()?.title}
+                            onDocumentResize={({ height }) => {
+                                setWebViewHeight(height);
+                            }}
+                        />
+                    </Show>
+                </Box>
+            </Paper>
+        </>
     );
 };
 

@@ -191,6 +191,12 @@ const SettingsPage: Component = () => {
                         >
                             <ListItemText primary="Offline Experience" />
                         </ListItemButton>
+                        <ListItemButton
+                            divider
+                            onClick={() => navigate("/settings/compatibility")}
+                        >
+                            <ListItemText primary="Compatibility" />
+                        </ListItemButton>
                     </Paper>
                     <Paper>
                         <Show when={storagePermission() === "prompt"}>

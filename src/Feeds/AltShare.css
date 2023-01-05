@@ -1,0 +1,16 @@
+.AltShareIconButton {
+    flex-direction: column;
+    width: 6.4em;
+    height: 6.4em;
+    overflow: hidden;
+    border-radius: 2px;
+}
+
+.AltShareIconButton .IconBackground {
+    display: flex;
+    width: 4em;
+    height: 4em;
+    border-radius: 50% 50%;
+    justify-content: center;
+    align-items: center;
+}

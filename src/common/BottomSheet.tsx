@@ -9,6 +9,7 @@ import CommonStyle from "./Style.module.css";
 interface BottomSheetProps {
     open: boolean;
     onClose?: (ev: {}, reason: "backdropClick" | "escapeKeyDown") => void;
+    zIndex?: number;
 }
 
 const BottomSheet: ParentComponent<BottomSheetProps> = (props) => {
@@ -22,6 +23,7 @@ const BottomSheet: ParentComponent<BottomSheetProps> = (props) => {
                     anchor="bottom"
                     open={props.open}
                     onClose={props.onClose}
+                    sx={{ zIndex: props.zIndex }}
                 >
                     <Box
                         sx={{
@@ -35,7 +37,11 @@ const BottomSheet: ParentComponent<BottomSheetProps> = (props) => {
                 </Drawer>
             }
         >
-            <Modal open={props.open} onClose={props.onClose}>
+            <Modal
+                open={props.open}
+                onClose={props.onClose}
+                style={{ "z-index": props.zIndex }}
+            >
                 <Paper
                     class={CommonStyle.FixedCenter}
                     sx={{

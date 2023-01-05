@@ -1,9 +1,13 @@
 import { persistentMap } from "@nanostores/persistent";
+import { useStore } from "@nanostores/solid";
+import { Settings } from "@suid/icons-material";
+import { Get } from "nanostores/map";
 
 interface Settings {
     ignorePermissionTip: boolean;
     lastTimeSync: number;
     feedDefaultFilterTag: string;
+    systemSharing: "auto" | "never";
 }
 
 export const settingStore = persistentMap<Settings>(
@@ -12,9 +16,21 @@ export const settingStore = persistentMap<Settings>(
         ignorePermissionTip: false,
         lastTimeSync: 0,
         feedDefaultFilterTag: "!_read",
+        systemSharing: "auto",
     },
     {
         encode: JSON.stringify,
         decode: JSON.parse,
     }
 );
+
+export function setAppSetting<K extends keyof Settings>(
+    key: K,
+    value: Get<Settings, K>
+) {
+    settingStore.setKey(key, value);
+}
+
+export function useAppSettings() {
+    return useStore(settingStore);
+}

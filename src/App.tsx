@@ -32,7 +32,7 @@ const PostPage = lazy(() => import("./Feeds/post"));
 
 const DefaultFeedListPage = lazy(() => import("./FeedLists/default"));
 
-const TimelinePage = lazy(() => import("./FeedLists/timeline"))
+const TimelinePage = lazy(() => import("./FeedLists/timeline"));
 
 const SignUpEmailFlow0 = lazy(() => import("./UsrCreation/EmailFlowStage0"));
 const SignUpEmailFlow1 = lazy(() => import("./UsrCreation/EmailFlowStage1"));
@@ -41,6 +41,7 @@ const SignUpSetPassword = lazy(() => import("./UsrCreation/SetPassword"));
 const SettingsPage = lazy(() => import("./Settings/settings"));
 const SettingStoragePage = lazy(() => import("./Settings/storage"));
 const SettingOfflinePage = lazy(() => import("./Settings/offline"));
+const SettingCompatPage = lazy(() => import("./Settings/compat"));
 
 const App: Component = () => {
     return (
@@ -69,6 +70,10 @@ const App: Component = () => {
                     <Route path="/" component={SettingsPage} />
                     <Route path="/storage" component={SettingStoragePage} />
                     <Route path="/offline" component={SettingOfflinePage} />
+                    <Route
+                        path="/compatibility"
+                        component={SettingCompatPage}
+                    />
                 </Route>
                 <Route path="/feedlists">
                     <Route path="/default" component={DefaultFeedListPage} />
