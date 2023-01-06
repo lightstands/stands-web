@@ -1,0 +1,36 @@
+{
+    "$scheme": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "unknownErrorTitle": {
+            "type": "string",
+            "paths": [
+                "src/Errors/unknown.tsx"
+            ]
+        },
+        "unknownErrorNoExplain": {
+            "type": "string",
+            "paths": [
+                "src/Errors/unknown.tsx"
+            ]
+        },
+        "unknownErrorExplainEnd": {
+            "type": "string",
+            "paths": [
+                "src/Errors/unknown.tsx"
+            ]
+        },
+        "unknownError404Part0": {
+            "type": "string",
+            "paths": [
+                "src/Errors/unknown.tsx"
+            ]
+        },
+        "unknownError404Part1": {
+            "type": "string",
+            "paths": [
+                "src/Errors/unknown.tsx"
+            ]
+        }
+    }
+}

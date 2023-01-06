@@ -58,7 +58,14 @@ export default defineConfig({
         port: 3000,
     },
     build: {
-        target: "modules",
+        target: [
+            "chrome63",
+            "edge79",
+            "safari14",
+            "firefox67",
+            "opera50",
+            "ios14",
+        ],
         sourcemap: true,
     },
 });

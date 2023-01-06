@@ -28,8 +28,11 @@
     },
     "dependencies": {
         "@fontsource/roboto": "^4.5.8",
+        "@formatjs/intl-locale": "^3.0.11",
+        "@formatjs/intl-localematcher": "^0.2.32",
         "@nanostores/persistent": "0.7",
         "@nanostores/solid": "^0.3.2",
+        "@solid-primitives/i18n": "^1.1.2",
         "@solid-primitives/media": "^2.0.4",
         "@solid-primitives/resize-observer": "^2.0.7",
         "@solidjs/router": "^0.6.0",

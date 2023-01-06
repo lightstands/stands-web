@@ -1,0 +1,8 @@
+{
+    "$schema": "./scheme.json",
+    "unknownErrorTitle": "That's an error.",
+    "unknownErrorExplainEnd": "That's all we know.",
+    "unknownErrorNoExplain": "This code does not have explain from us.",
+    "unknownError404Part0": "The requested link",
+    "unknownError404Part1": "was not found on this website."
+}

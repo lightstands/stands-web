@@ -4,6 +4,7 @@
 // Copy from https://github.com/TheMagicBoard/Web-project/blob/master/src/pages/ErrorPage/index.tsx
 import { useLocation } from "@solidjs/router";
 import { Component, Match, Switch } from "solid-js";
+import { useI18n } from "../common/i18n-wrapper";
 
 interface ErrorPageProps {
     httpErrCode: number;
@@ -11,6 +12,7 @@ interface ErrorPageProps {
 
 const ErrorPage: Component<ErrorPageProps> = (p) => {
     const location = useLocation();
+    const [t] = useI18n();
 
     return (
         <>
@@ -53,21 +55,22 @@ const ErrorPage: Component<ErrorPageProps> = (p) => {
             <div>
                 <p>
                     <b>{p.httpErrCode}.</b>
-                    <ins>That's an error.</ins>
+                    <ins>{t("unknownErrorTitle", undefined)}</ins>
                 </p>
                 <Switch
                     fallback={
                         <p>
-                            This code does not have explain from us.{" "}
-                            <ins>That's all we know.</ins>
+                            {t("unknownErrorNoExplain")}
+                            <ins>{t("unknownErrorExplainEnd")}</ins>
                         </p>
                     }
                 >
                     <Match when={p.httpErrCode === 404}>
                         <p>
-                            The requested link <code>{location.pathname}</code>{" "}
-                            was not found on this website.
-                            <ins>That's all we know.</ins>
+                            {t("unknownError404Part0")}
+                            <code>{location.pathname}</code>
+                            {t("unknownError404Part1")}
+                            <ins>{t("unknownErrorExplainEnd")}</ins>
                         </p>
                     </Match>
                 </Switch>
