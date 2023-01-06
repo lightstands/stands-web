@@ -43,6 +43,7 @@ Note. 🚫 = Not implemented, 🐛 = Bug (inclduing inconsistence).
 |---------------|-----------|-----------------------------------------------------------------------------------------------------------------------------|
 | BigInt        | No        | https://caniuse.com/bigint Chrome 67+, Firefox 68+, Opera 54+                                                               |
 | BigInt64Array | No        | https://caniuse.com/mdn-javascript_builtins_bigint64array Chrome 67+, Safari 15+, Firefox 68+, Opera 54+, Safari on iOS 15+ |
+| `import()`    | Yes       |                                                                                                                             |
 
 ### CSS Generals
 
