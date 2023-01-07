@@ -11,12 +11,17 @@ if sys.version_info < (3, 10):
 else:
     from collections.abc import Iterable
 
-SLOT_REGEX = re.compile(r"(?<![a-zA-Z0-9])t\(['\"]([a-zA-Z0-9/$%@]+)['\"],?(.*)\)", re.MULTILINE)
+SLOT_REGEX = re.compile(r"(?<![a-zA-Z0-9])t\(\s*(?:\"([a-zA-Z0-9/$%@]+)\"|'([a-zA-Z0-9/$%@]+'))", re.MULTILINE)
 
 SCHEME_TEMPLATE = {
     "$scheme": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
-    "properties": {}
+    "properties": {
+        "regions": {
+            "type": "object",
+            "paths": []
+        }
+    }
 }
 
 class SlotData:

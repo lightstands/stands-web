@@ -2,6 +2,19 @@
     "$scheme": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "properties": {
+        "regions": {
+            "type": "object",
+            "paths": [
+                "src/common/i18n-wrapper.ts",
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "defaultRegion": {
+            "type": "string",
+            "paths": [
+                "src/common/i18n-wrapper.ts"
+            ]
+        },
         "unknownErrorTitle": {
             "type": "string",
             "paths": [
@@ -32,13 +45,151 @@
                 "src/Errors/unknown.tsx"
             ]
         },
+        "settingsTitle": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "signOut": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "upgragdeTipTitle": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "upgradeTipConfirm": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "acctTitle": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "chEmailAddrButText": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "setEmailButText": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "chUsernameButText": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "setPassButText": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
         "general": {
             "type": "string",
             "paths": [
                 "src/Settings/settings.tsx"
             ]
         },
+        "appLangTitle": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
         "langAuto": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "selectRegionText": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "autoRegion": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "feeds": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "feedsDefaultFilter": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "accessibility": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "offlineExpEntry": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "compatOptsEntry": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "storageEntry": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "about": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "versionDescription": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "sourceCode": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "freeSoftwareClaim": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "licenseClaim": {
             "type": "string",
             "paths": [
                 "src/Settings/settings.tsx"

@@ -1,5 +1,9 @@
 {
     "$schema": "./scheme.json",
+    "defaultRegion": "CN",
+    "regions": {
+        "CN": "中国大陆"
+    },
     "unknownErrorTitle": "这是一个错误。",
     "unknownErrorExplainEnd": "我们就知道那么多。",
     "unknownErrorNoExplain": "我们难以向你解释发生了什么。",
@@ -7,5 +11,27 @@
     "unknownError404Part1": "在这个网站上并不存在。",
     "appLangTitle": "应用语言",
     "general": "通用",
-    "langAuto": "自动（{{langName}}）"
+    "langAuto": "自动（{{langName}}）",
+    "selectRegionText": "区域",
+    "autoRegion": "自动（{{regionName}})",
+    "settingsTitle": "设置",
+    "versionDescription": "{{pakVer}} 已更新{{lastUpdTimeDt}}",
+    "storageEntry": "存储空间",
+    "accessibility": "便利",
+    "offlineExpEntry": "离线体验",
+    "compatOptsEntry": "兼容性",
+    "about": "关于",
+    "sourceCode": "源代码",
+    "freeSoftwareClaim": "本软件是自由软件",
+    "licenseClaim": "使用GNU通用公用许可协议，第三版或更新版本授权",
+    "acctTitle": "账户和安全",
+    "feeds": "订阅源",
+    "chEmailAddrButText": "更换电子邮箱地址",
+    "chUsernameButText": "更换用户名",
+    "setEmailButText": "设置电子邮箱地址",
+    "feedsDefaultFilter": "默认过滤器",
+    "setPassButText": "更换密码",
+    "upgragdeTipTitle": "新版本可用",
+    "upgradeTipConfirm": "刷新并更新到新版本",
+    "signOut": "登出……"
 }

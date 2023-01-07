@@ -12,6 +12,7 @@ import {
 } from "@suid/material";
 import {
     Component,
+    createEffect,
     createResource,
     createSignal,
     For,
@@ -53,8 +54,10 @@ import { useServiceWorker } from "../common/swbridge";
 import { useScaffold } from "../common/Scaffold";
 import guardSignIn from "../common/guardSignIn";
 import {
-    autoMatchLocale,
+    autoMatchLangTag,
+    autoMatchRegion,
     SUPPORTED_LANGS,
+    useDateFnLocale,
     useI18n,
 } from "../common/i18n-wrapper";
 
@@ -100,10 +103,12 @@ const SettingsPage: Component = () => {
     );
     const settings = useAppSettings();
     const [t, { locale }] = useI18n();
+    const dateFnLocale = useDateFnLocale();
+
     return (
         <>
             <SharedAppBar
-                title="Settings"
+                title={t("settingsTitle", undefined)}
                 position="sticky"
                 hide={scaffoldCx.state.scrollingDown}
             >
@@ -114,7 +119,7 @@ const SettingsPage: Component = () => {
                             <ListItemIcon>
                                 <LogoutIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Sign out..." />
+                            <ListItemText primary={t("signOut", undefined)} />
                         </ListItemButton>,
                     ]}
                 />
@@ -131,16 +136,20 @@ const SettingsPage: Component = () => {
                 <style>{SettingListInject}</style>
                 <List class="SettingList">
                     <Show when={needRefresh()}>
-                        <ListSubheader>New version available</ListSubheader>
+                        <ListSubheader>
+                            {t("upgragdeTipTitle", undefined)}
+                        </ListSubheader>
                         <Paper>
                             <ListItemButton
                                 onClick={() => updateServiceWorker()}
                             >
-                                <ListItemText primary="Refresh to upgrade" />
+                                <ListItemText
+                                    primary={t("upgradeTipConfirm", undefined)}
+                                />
                             </ListItemButton>
                         </Paper>
                     </Show>
-                    <ListSubheader>Account & Security</ListSubheader>
+                    <ListSubheader>{t("acctTitle", undefined)}</ListSubheader>
                     <Paper>
                         <ListItemButton
                             disabled={
@@ -153,8 +162,8 @@ const SettingsPage: Component = () => {
                             <ListItemText
                                 primary={
                                     userPrivateInfo()?.email
-                                        ? "Use another Email address"
-                                        : "Set an Email Address"
+                                        ? t("chEmailAddrButText", undefined)
+                                        : t("setEmailButText", undefined)
                                 }
                                 secondary={userPrivateInfo()?.email}
                             />
@@ -168,7 +177,7 @@ const SettingsPage: Component = () => {
                             divider
                         >
                             <ListItemText
-                                primary="Use another username"
+                                primary={t("chUsernameButText", undefined)}
                                 secondary={userPrivateInfo()?.username || "..."}
                             />
                         </ListItemButton>
@@ -180,43 +189,36 @@ const SettingsPage: Component = () => {
                             <ListItemButton
                                 onClick={() => setOpenSetPassword(true)}
                             >
-                                <ListItemText primary="Set new password" />
+                                <ListItemText
+                                    primary={t("setPassButText", undefined)}
+                                />
                             </ListItemButton>
                         </Show>
                     </Paper>
-                    <ListSubheader>{t("general", {}, "General")}</ListSubheader>
+                    <ListSubheader>{t("general", {})}</ListSubheader>
                     <Paper>
-                        <ListItem>
-                            <ListItemText
-                                primary={t(
-                                    "appLangTitle",
-                                    {},
-                                    "Application Language"
-                                )}
-                            />
+                        <ListItem divider>
+                            <ListItemText primary={t("appLangTitle", {})} />
                             <ListItemSecondaryAction>
                                 <select
                                     value={settings().appLang}
                                     onChange={(ev) => {
                                         const newValue = ev.currentTarget.value;
+                                        setAppSetting("appRegion", "xauto");
                                         setAppSetting("appLang", newValue);
                                         if (newValue !== "xauto") {
                                             locale(newValue);
                                         } else {
-                                            locale(autoMatchLocale());
+                                            locale(autoMatchLangTag());
                                         }
                                     }}
                                 >
                                     <option value="xauto">
-                                        {t(
-                                            "langAuto",
-                                            {
-                                                langName: LANG_NAMES.get(
-                                                    autoMatchLocale()
-                                                )!,
-                                            },
-                                            "Auto ({{langName}})"
-                                        )}
+                                        {t("langAuto", {
+                                            langName: LANG_NAMES.get(
+                                                autoMatchLangTag()
+                                            )!,
+                                        })}
                                     </option>
                                     <For each={SUPPORTED_LANGS}>
                                         {(tag) => (
@@ -228,12 +230,55 @@ const SettingsPage: Component = () => {
                                 </select>
                             </ListItemSecondaryAction>
                         </ListItem>
+                        <ListItem divider>
+                            <ListItemText
+                                primary={t("selectRegionText", undefined)}
+                            />
+                            <ListItemSecondaryAction>
+                                <select
+                                    value={settings().appRegion}
+                                    onChange={(ev) => {
+                                        setAppSetting(
+                                            "appRegion",
+                                            ev.currentTarget.value
+                                        );
+                                    }}
+                                >
+                                    <option value="xauto">
+                                        {t("autoRegion", {
+                                            regionName: (
+                                                t(
+                                                    "regions",
+                                                    undefined
+                                                ) as Record<string, string>
+                                            )[autoMatchRegion(t)],
+                                        })}
+                                    </option>
+                                    <For
+                                        each={Object.entries(
+                                            t("regions", undefined) as Record<
+                                                string,
+                                                string
+                                            >
+                                        )}
+                                    >
+                                        {([regionCode, name]) => (
+                                            <option value={regionCode}>
+                                                {name}
+                                            </option>
+                                        )}
+                                    </For>
+                                </select>
+                            </ListItemSecondaryAction>
+                        </ListItem>
                     </Paper>
-                    <ListSubheader>Feeds</ListSubheader>
+                    <ListSubheader>
+                        {t("feeds", undefined, "Feeds")}
+                    </ListSubheader>
                     <Paper>
                         <ListItem>
                             <ListItemText
-                                primary="Default filter"
+                                primary={t("feedsDefaultFilter", undefined)}
                                 id="feed-default-filter-tag-label"
                             />
                             <ListItemSecondaryAction>
@@ -256,19 +301,29 @@ const SettingsPage: Component = () => {
                             </ListItemSecondaryAction>
                         </ListItem>
                     </Paper>
-                    <ListSubheader>Accessibility</ListSubheader>
+                    <ListSubheader>
+                        {t("accessibility", undefined)}
+                    </ListSubheader>
                     <Paper>
                         <ListItemButton
                             divider
                             onClick={() => navigate("/settings/offline")}
                         >
-                            <ListItemText primary="Offline Experience" />
+                            <ListItemText
+                                primary={t("offlineExpEntry", undefined)}
+                            />
                         </ListItemButton>
                         <ListItemButton
                             divider
                             onClick={() => navigate("/settings/compatibility")}
                         >
-                            <ListItemText primary="Compatibility" />
+                            <ListItemText
+                                primary={t(
+                                    "compatOptsEntry",
+                                    undefined,
+                                    "Compatibility"
+                                )}
+                            />
                         </ListItemButton>
                     </Paper>
                     <Paper>
@@ -278,6 +333,7 @@ const SettingsPage: Component = () => {
                                 onClick={() => requestPersistentStorage()}
                             >
                                 <ListItemText primary="Grant persistent storage permission" />
+                                {/* Rubicon: No need to translate, to be removed */}
                             </ListItemButton>
                         </Show>
 
@@ -285,10 +341,14 @@ const SettingsPage: Component = () => {
                             divider
                             onClick={() => navigate("/settings/storage")}
                         >
-                            <ListItemText primary="Storage" />
+                            <ListItemText
+                                primary={t("storageEntry", undefined)}
+                            />
                         </ListItemButton>
                     </Paper>
-                    <ListSubheader>About</ListSubheader>
+                    <ListSubheader>
+                        {t("about", undefined, "About")}
+                    </ListSubheader>
                     <Paper>
                         <ListItem divider>
                             <ListItemText
@@ -297,21 +357,15 @@ const SettingsPage: Component = () => {
                                         ? "LightStands for Web"
                                         : "LightStands for Web (dev)"
                                 }
-                                secondary={
-                                    /* @once */ `${
-                                        import.meta.env.PACKAGE_VERSION
-                                    } (updated ${formatDistanceToNow(
-                                        new Date(import.meta.env.BUILD_AT)
-                                    )})`
-                                }
+                                secondary={t("versionDescription", {
+                                    pakVer: import.meta.env.PACKAGE_VERSION,
+                                    lastUpdTimeDt: formatDistanceToNow(
+                                        new Date(import.meta.env.BUILD_AT),
+                                        { locale: dateFnLocale() }
+                                    ),
+                                })}
                             />
                         </ListItem>
-                        <ListItemButton divider disabled>
-                            <ListItemText
-                                primary="Open source licenses"
-                                secondary="Coming soon"
-                            />
-                        </ListItemButton>
                         <ListItemButton
                             divider
                             onClick={() =>
@@ -324,7 +378,7 @@ const SettingsPage: Component = () => {
                             <ListItemText
                                 primary={
                                     <Typography>
-                                        Source code
+                                        {t("sourceCode", undefined)}
                                         <OpenInNewIcon fontSize="inherit" />
                                     </Typography>
                                 }
@@ -342,11 +396,11 @@ const SettingsPage: Component = () => {
                             <ListItemText
                                 primary={
                                     <Typography>
-                                        This software is free software
+                                        {t("freeSoftwareClaim", undefined)}
                                         <OpenInNewIcon fontSize="inherit" />
                                     </Typography>
                                 }
-                                secondary="Licensed by Affero Gernal Public License, version 3 or later"
+                                secondary={t("licenseClaim", undefined)}
                             />
                         </ListItemButton>
                         <Show when={import.meta.env.DEV}>

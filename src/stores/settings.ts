@@ -9,6 +9,7 @@ interface Settings {
     feedDefaultFilterTag: string;
     systemSharing: "auto" | "never";
     appLang: "xauto" | string;
+    appRegion: "xauto" | string;
 }
 
 export const settingStore = persistentMap<Settings>(
@@ -19,6 +20,7 @@ export const settingStore = persistentMap<Settings>(
         feedDefaultFilterTag: "!_read",
         systemSharing: "auto",
         appLang: "xauto",
+        appRegion: "xauto",
     },
     {
         encode: JSON.stringify,
