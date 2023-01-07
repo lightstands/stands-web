@@ -31,6 +31,18 @@
             "paths": [
                 "src/Errors/unknown.tsx"
             ]
+        },
+        "general": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "langAuto": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
         }
     }
 }

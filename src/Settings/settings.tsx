@@ -10,7 +10,14 @@ import {
     ListItemIcon,
     ListItemSecondaryAction,
 } from "@suid/material";
-import { Component, createResource, createSignal, lazy, Show } from "solid-js";
+import {
+    Component,
+    createResource,
+    createSignal,
+    For,
+    lazy,
+    Show,
+} from "solid-js";
 import {
     aunwrap,
     ClientConfig,
@@ -33,7 +40,11 @@ import { useNavigate } from "../common/nav";
 
 import SettingListInject from "./setting-list-inject.css?inline";
 import AdvMenu from "../common/AdvMenu";
-import { settingStore } from "../stores/settings";
+import {
+    setAppSetting,
+    settingStore,
+    useAppSettings,
+} from "../stores/settings";
 import {
     requestPersistentStorage,
     usePersistentStoragePermission,
@@ -41,6 +52,16 @@ import {
 import { useServiceWorker } from "../common/swbridge";
 import { useScaffold } from "../common/Scaffold";
 import guardSignIn from "../common/guardSignIn";
+import {
+    autoMatchLocale,
+    SUPPORTED_LANGS,
+    useI18n,
+} from "../common/i18n-wrapper";
+
+const LANG_NAMES = new Map([
+    ["en", "English"],
+    ["zh-Hans", "简体中文"],
+]);
 
 const SetPasswordDlg = lazy(() => import("./SetPasswordDlg"));
 
@@ -77,7 +98,8 @@ const SettingsPage: Component = () => {
             }
         }
     );
-    const settings = useStore(settingStore);
+    const settings = useAppSettings();
+    const [t, { locale }] = useI18n();
     return (
         <>
             <SharedAppBar
@@ -161,6 +183,51 @@ const SettingsPage: Component = () => {
                                 <ListItemText primary="Set new password" />
                             </ListItemButton>
                         </Show>
+                    </Paper>
+                    <ListSubheader>{t("general", {}, "General")}</ListSubheader>
+                    <Paper>
+                        <ListItem>
+                            <ListItemText
+                                primary={t(
+                                    "appLangTitle",
+                                    {},
+                                    "Application Language"
+                                )}
+                            />
+                            <ListItemSecondaryAction>
+                                <select
+                                    value={settings().appLang}
+                                    onChange={(ev) => {
+                                        const newValue = ev.currentTarget.value;
+                                        setAppSetting("appLang", newValue);
+                                        if (newValue !== "xauto") {
+                                            locale(newValue);
+                                        } else {
+                                            locale(autoMatchLocale());
+                                        }
+                                    }}
+                                >
+                                    <option value="xauto">
+                                        {t(
+                                            "langAuto",
+                                            {
+                                                langName: LANG_NAMES.get(
+                                                    autoMatchLocale()
+                                                )!,
+                                            },
+                                            "Auto ({{langName}})"
+                                        )}
+                                    </option>
+                                    <For each={SUPPORTED_LANGS}>
+                                        {(tag) => (
+                                            <option value={tag}>
+                                                {LANG_NAMES.get(tag)}
+                                            </option>
+                                        )}
+                                    </For>
+                                </select>
+                            </ListItemSecondaryAction>
+                        </ListItem>
                     </Paper>
                     <ListSubheader>Feeds</ListSubheader>
                     <Paper>

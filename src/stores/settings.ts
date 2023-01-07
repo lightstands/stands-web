@@ -8,6 +8,7 @@ interface Settings {
     lastTimeSync: number;
     feedDefaultFilterTag: string;
     systemSharing: "auto" | "never";
+    appLang: "xauto" | string;
 }
 
 export const settingStore = persistentMap<Settings>(
@@ -17,6 +18,7 @@ export const settingStore = persistentMap<Settings>(
         lastTimeSync: 0,
         feedDefaultFilterTag: "!_read",
         systemSharing: "auto",
+        appLang: "xauto",
     },
     {
         encode: JSON.stringify,

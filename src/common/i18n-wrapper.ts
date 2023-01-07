@@ -5,21 +5,32 @@ import {
 import { match } from "@formatjs/intl-localematcher";
 import { default as rootLogger } from "../logger";
 import { createEffect } from "solid-js";
+import { settingStore } from "../stores/settings";
 
 const logger = rootLogger.child({ c: "common/i18n-wrapper" });
 
-const SUPPORTED_LANGS = ["en", "zh-Hans"];
+export const SUPPORTED_LANGS = ["en", "zh-Hans"];
 
 const DEFAULT_LANG = "en";
+
+export function autoMatchLocale() {
+    return match(Array.from(navigator.languages), SUPPORTED_LANGS, DEFAULT_LANG)
+}
 
 export function makeI18nContext(
     init?: Record<string, Record<string, unknown>>
 ) {
     const value = createI18nContext(init, DEFAULT_LANG);
     const locale = value[1].locale;
-    locale(
-        match(Array.from(navigator.languages), SUPPORTED_LANGS, DEFAULT_LANG)
+    const currentSettings = settingStore.get();
+    if (currentSettings.appLang !== "xauto") {
+        locale(currentSettings.appLang)
+    } else {
+        locale(
+        autoMatchLocale()
     );
+    }
+    
     return value;
 }
 

@@ -4,5 +4,8 @@
     "unknownErrorExplainEnd": "我们就知道那么多。",
     "unknownErrorNoExplain": "我们难以向你解释发生了什么。",
     "unknownError404Part0": "你所访问的路径",
-    "unknownError404Part1": "在这个网站上并不存在。"
+    "unknownError404Part1": "在这个网站上并不存在。",
+    "appLangTitle": "应用语言",
+    "general": "通用",
+    "langAuto": "自动（{{langName}}）"
 }
