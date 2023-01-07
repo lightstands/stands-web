@@ -33,5 +33,8 @@
     "setPassButText": "更换密码",
     "upgragdeTipTitle": "新版本可用",
     "upgradeTipConfirm": "刷新并更新到新版本",
-    "signOut": "登出……"
+    "signOut": "登出……",
+    "feedFilterUnset": "无",
+    "postTagRead": "已读",
+    "postTagUnread": "未读"
 }

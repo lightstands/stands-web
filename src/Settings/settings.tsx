@@ -294,9 +294,15 @@ const SettingsPage: Component = () => {
                                         );
                                     }}
                                 >
-                                    <option value={""}>Unset</option>
-                                    <option value={"_read"}>Read</option>
-                                    <option value={"!_read"}>Unread</option>
+                                    <option value={""}>
+                                        {t("feedFilterUnset")}
+                                    </option>
+                                    <option value={"_read"}>
+                                        {t("postTagRead")}
+                                    </option>
+                                    <option value={"!_read"}>
+                                        {t("postTagUnread")}
+                                    </option>
                                 </select>
                             </ListItemSecondaryAction>
                         </ListItem>

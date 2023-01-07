@@ -141,6 +141,24 @@
                 "src/Settings/settings.tsx"
             ]
         },
+        "feedFilterUnset": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "postTagRead": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "postTagUnread": {
+            "type": "string",
+            "paths": [
+                "src/Settings/settings.tsx"
+            ]
+        },
         "accessibility": {
             "type": "string",
             "paths": [

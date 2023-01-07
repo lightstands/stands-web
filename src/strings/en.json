@@ -34,5 +34,8 @@
     "storageEntry": "Storage",
     "upgradeTipConfirm": "Refresh and upgrade",
     "upgragdeTipTitle": "New version available",
-    "versionDescription": "{{pakVer}} (updated {{lastUpdTimeDt}})"
+    "versionDescription": "{{pakVer}} (updated {{lastUpdTimeDt}})",
+    "postTagRead": "Read",
+    "postTagUnread": "Unread",
+    "feedFilterUnset": "Unset"
 }
