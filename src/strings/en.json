@@ -37,5 +37,9 @@
     "versionDescription": "{{pakVer}} (updated {{lastUpdTimeDt}})",
     "postTagRead": "Read",
     "postTagUnread": "Unread",
-    "feedFilterUnset": "Unset"
+    "feedFilterUnset": "Unset",
+    "createAccount": "Create account",
+    "signIn": "Sign in",
+    "listNameSubscribed": "Subscribed",
+    "timeline": "Timeline"
 }

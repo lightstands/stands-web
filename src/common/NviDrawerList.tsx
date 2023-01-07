@@ -19,6 +19,7 @@ import {
 import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
 import { useNavigate } from "./nav";
+import { useI18n } from "./i18n-wrapper";
 
 const FEED_POST_REGEXP = /\/feeds\/(.*?)\/posts\/(.+)\/?$/;
 const FEED_REGEXP = /\/feeds\/([^\/]*?)\/?(?!.+)$/;
@@ -33,6 +34,7 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
     const navigate = useNavigate();
     const pathname = () => loc.pathname;
     const currentSession = useStore(currentSessionStore);
+    const [t] = useI18n();
     const feedPostConfig = () => {
         const name = pathname();
         if (!name.startsWith("/feeds/")) {
@@ -79,7 +81,7 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
                         <ListItemIcon>
                             <TimelineIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Timeline" />
+                        <ListItemText primary={t("timeline")} />
                     </ListItemButton>
                     <ListItemButton
                         selected={pathname() === "/feedlists/default"}
@@ -91,7 +93,7 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
                         <ListItemIcon>
                             <ListIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Subscribed" />
+                        <ListItemText primary={t("listNameSubscribed")} />
                     </ListItemButton>
                 </Show>
 
@@ -133,7 +135,7 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
                                     props.afterItemClicked({});
                                 }}
                             >
-                                <ListItemText primary="Sign in" />
+                                <ListItemText primary={t("signIn")} />
                             </ListItemButton>
                             <ListItemButton
                                 onClick={() => {
@@ -141,7 +143,7 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
                                     props.afterItemClicked({});
                                 }}
                             >
-                                <ListItemText primary="Create account" />
+                                <ListItemText primary={t("createAccount")} />
                             </ListItemButton>
                         </>
                     }
@@ -156,7 +158,7 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
                         <ListItemIcon>
                             <SettingsIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Settings" />
+                        <ListItemText primary={t("settingsTitle")} />
                     </ListItemButton>
                 </Show>
             </List>

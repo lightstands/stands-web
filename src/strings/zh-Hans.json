@@ -36,5 +36,9 @@
     "signOut": "登出……",
     "feedFilterUnset": "无",
     "postTagRead": "已读",
-    "postTagUnread": "未读"
+    "postTagUnread": "未读",
+    "createAccount": "创建账户",
+    "signIn": "登录",
+    "listNameSubscribed": "已订阅",
+    "timeline": "时间线"
 }

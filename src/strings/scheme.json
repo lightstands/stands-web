@@ -9,6 +9,37 @@
                 "src/Settings/settings.tsx"
             ]
         },
+        "timeline": {
+            "type": "string",
+            "paths": [
+                "src/common/NviDrawerList.tsx"
+            ]
+        },
+        "listNameSubscribed": {
+            "type": "string",
+            "paths": [
+                "src/common/NviDrawerList.tsx"
+            ]
+        },
+        "signIn": {
+            "type": "string",
+            "paths": [
+                "src/common/NviDrawerList.tsx"
+            ]
+        },
+        "createAccount": {
+            "type": "string",
+            "paths": [
+                "src/common/NviDrawerList.tsx"
+            ]
+        },
+        "settingsTitle": {
+            "type": "string",
+            "paths": [
+                "src/common/NviDrawerList.tsx",
+                "src/Settings/settings.tsx"
+            ]
+        },
         "defaultRegion": {
             "type": "string",
             "paths": [
@@ -43,12 +74,6 @@
             "type": "string",
             "paths": [
                 "src/Errors/unknown.tsx"
-            ]
-        },
-        "settingsTitle": {
-            "type": "string",
-            "paths": [
-                "src/Settings/settings.tsx"
             ]
         },
         "signOut": {
