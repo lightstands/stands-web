@@ -10,9 +10,11 @@ function stringilize(s: string | string[]) {
 
 export type SynTag = string | string[];
 
+const PREFIX = "stands-web.lastsyntime:";
+
 export function setLasySynTime(tag: SynTag, time: number) {
     window.localStorage.setItem(
-        `stands-web.lastsyntime:${stringilize(tag)}`,
+        `${PREFIX}${stringilize(tag)}`,
         time.toString()
     );
 }
@@ -20,9 +22,7 @@ export function setLasySynTime(tag: SynTag, time: number) {
 export function getLastSynTime(tag: SynTag): number {
     try {
         return Number(
-            window.localStorage.getItem(
-                `stands-web.lastsyntime:${stringilize(tag)}`
-            )
+            window.localStorage.getItem(`${PREFIX}${stringilize(tag)}`)
         );
     } catch {
         return 0;
@@ -36,5 +36,18 @@ export function getLastSynTime(tag: SynTag): number {
  * @returns
  */
 export function isMeetSynTime(tag: SynTag, period: number) {
-    return getLastSynTime(tag) + period * 1000 <= new Date().getTime();
+    return (getLastSynTime(tag) + (period * 1000)) <= (new Date().getTime());
+}
+
+export function resetSynTime() {
+    const keys = [];
+    for (let i = 0; i < window.localStorage.length; i++) {
+        const k = window.localStorage.key(i);
+        if (k && k.startsWith(PREFIX)) {
+            keys.push(k);
+        }
+    }
+    for (const k of keys) {
+        window.localStorage.removeItem(k);
+    }
 }

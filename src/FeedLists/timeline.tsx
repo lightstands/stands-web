@@ -30,7 +30,7 @@ import "../common/patchs/mui-list.css";
 
 async function getTimelineArray() {
     const result: TimelineEntry[][] = [];
-    for await (const entry of makeTimeline()) {
+    for (const entry of await makeTimeline()) {
         if (entry.kind === "sep") {
             result.push([]);
         }
@@ -48,8 +48,6 @@ function formatDay(day: Date, today: Date) {
         return intlFormat(day, { month: "short", day: "numeric" });
     }
 }
-
-const LIST_TABINDEX_BASE = 1;
 
 const TimelinePage: Component = () => {
     useSync();

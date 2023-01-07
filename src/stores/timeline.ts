@@ -17,16 +17,13 @@ export type TimelinePost = {
 
 export type TimelineEntry = TimelineSeprator | TimelinePost;
 
-export async function* makeTimeline(): AsyncGenerator<
-    TimelineEntry,
-    void,
-    void
-> {
+export async function makeTimeline(): Promise<TimelineEntry[]> {
     const db = await openDb();
     const mostRecentEntry = await db.postmetas
         .orderBy("publishedAt")
         .reverse()
         .first();
+    const result: TimelineEntry[] = [];
     if (mostRecentEntry) {
         const recentEntries = (
             await db.postmetas
@@ -39,21 +36,22 @@ export async function* makeTimeline(): AsyncGenerator<
             const entryPublishedDate = new Date(entry.publishedAt * 1000);
             if (!currentDay || !isSameDay(currentDay, entryPublishedDate)) {
                 currentDay = entryPublishedDate;
-                yield {
+                result.push({
                     kind: "sep",
                     day: currentDay,
-                };
+                });
             }
             const feedUrlBlake3 = (await db.feedmetas.get(entry.feedRef))
                 ?.urlBlake3;
             if (feedUrlBlake3) {
-                yield {
+                result.push({
                     kind: "post",
                     post: entry,
                     feedUrlBlake3,
                     read: await isPostTagged(entry.ref, "_read"),
-                };
+                });
             }
         }
     }
+    return result;
 }

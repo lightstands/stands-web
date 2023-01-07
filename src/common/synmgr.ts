@@ -9,7 +9,10 @@ import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
 import { resetFeedMetas } from "../stores/feedmeta";
 import { resetPostMeta, syncAllPostMeta } from "../stores/postmeta";
-import { isMeetSynTime } from "../stores/lastsyn";
+import { isMeetSynTime, resetSynTime } from "../stores/lastsyn";
+import { default as rootLogger } from "../logger";
+
+const logger = rootLogger.child({ c: "common/synmgr" });
 
 export type TaskNames = "tags" | "feedlists" | "postmeta";
 
@@ -87,16 +90,16 @@ export function shouldRunPostMetaSync() {
 export async function forcedFullSync(client: ClientConfig, session: Session) {
     let updatedItems = 0;
     try {
-        if (!isSyncTaskWorking("tags")) {
-            await runTagSync(client, session);
-            updatedItems += 1;
-        }
         if (!isSyncTaskWorking("feedlists")) {
             await runFeedListSync(client, session);
             updatedItems += 1;
         }
         if (!isSyncTaskWorking("postmeta")) {
             await runPostMetaSync(client, session);
+            updatedItems += 1;
+        }
+        if (!isSyncTaskWorking("tags")) {
+            await runTagSync(client, session);
             updatedItems += 1;
         }
     } finally {
@@ -108,6 +111,7 @@ export async function forcedFullSync(client: ClientConfig, session: Session) {
 
 export async function resetData() {
     try {
+        resetSynTime();
         await Promise.all([
             setupTaskPromise(resetTags(), "tags"),
             setupTaskPromise(resetFeedLists(), "feedlists"),
@@ -132,20 +136,20 @@ export function useSync() {
     const session = useStore(currentSessionStore);
     let timerId: number | undefined = undefined;
 
-    const handler = () => {
+    const handler = async () => {
         const sessionObject = session()!.session;
         let updatedItems = 0;
         try {
-            if (!isSyncTaskWorking("tags") && shouldRunTagSync()) {
-                runTagSync(client, sessionObject);
-                updatedItems += 1;
-            }
             if (!isSyncTaskWorking("feedlists") && shouldRunFeedListSync()) {
-                runFeedListSync(client, sessionObject);
+                await runFeedListSync(client, sessionObject);
                 updatedItems += 1;
             }
             if (!isSyncTaskWorking("postmeta") && shouldRunPostMetaSync()) {
-                runPostMetaSync(client, sessionObject);
+                await runPostMetaSync(client, sessionObject);
+                updatedItems += 1;
+            }
+            if (!isSyncTaskWorking("tags") && shouldRunTagSync()) {
+                await runTagSync(client, sessionObject);
                 updatedItems += 1;
             }
         } finally {
@@ -157,13 +161,8 @@ export function useSync() {
 
     onMount(() => {
         if (session()) {
-            if (
-                new Date().getTime() - settingStore.get().lastTimeSync >
-                1000 * 60 * 5
-            ) {
-                handler();
-            }
-            timerId = window.setInterval(handler, 1000 * 60 * 10);
+            handler();
+            timerId = window.setInterval(() => handler(), 1000 * 60 * 10);
         }
     });
 
