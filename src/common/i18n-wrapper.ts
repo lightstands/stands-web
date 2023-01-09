@@ -15,6 +15,10 @@ export const SUPPORTED_LANGS = ["en", "zh-Hans"];
 
 const DEFAULT_LANG = "en";
 
+/**
+ * Decide the using language for the user.
+ * @returns the selected language tag
+ */
 export function autoMatchLangTag() {
     return match(
         Array.from(navigator.languages),
@@ -23,6 +27,11 @@ export function autoMatchLangTag() {
     );
 }
 
+/**
+ * A wrapper of `createI18nContext` from [@solid-primitives/i18n](https://github.com/solidjs-community/solid-primitives/tree/main/packages/i18n#readme).
+ *
+ * This wrapper will set the locale based on app settings and `autoMatchLangTag()` result.
+ */
 export function makeI18nContext(
     init?: Record<string, Record<string, unknown>>
 ) {
@@ -38,6 +47,11 @@ export function makeI18nContext(
     return value;
 }
 
+/**
+ * A wrapper of `useI18n` from [@solid-primitives/i18n](https://github.com/solidjs-community/solid-primitives/tree/main/packages/i18n#readme).
+ *
+ * This wrapper will automatically load the string file for the current language.
+ */
 export function useI18n() {
     const value = useI18nUnwrapped();
     const [, { locale, add, dict }] = value;
@@ -116,6 +130,11 @@ async function importDateFnLocale(tag: string): Promise<Locale> {
     }
 }
 
+/**
+ * Get the {@link Locale} object for date-fns.
+ *
+ * @returns Accessor for Locale
+ */
 export function useDateFnLocale(): Accessor<Locale> {
     const [t, { locale }] = useI18n();
     const [dateFnLocale, setDateFnLocale] = createSignal(
