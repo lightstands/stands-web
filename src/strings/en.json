@@ -41,5 +41,9 @@
     "createAccount": "Create account",
     "signIn": "Sign in",
     "listNameSubscribed": "Subscribed",
-    "timeline": "Timeline"
+    "timeline": "Timeline",
+    "localDayFormatDateFn": "MMM do",
+    "timelineVisitDefaultList": "Visit list {{listName}}",
+    "today": "Today",
+    "yesterday": "Yesterday"
 }

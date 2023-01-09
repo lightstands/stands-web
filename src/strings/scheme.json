@@ -12,13 +12,15 @@
         "timeline": {
             "type": "string",
             "paths": [
-                "src/common/NviDrawerList.tsx"
+                "src/common/NviDrawerList.tsx",
+                "src/FeedLists/timeline.tsx"
             ]
         },
         "listNameSubscribed": {
             "type": "string",
             "paths": [
-                "src/common/NviDrawerList.tsx"
+                "src/common/NviDrawerList.tsx",
+                "src/FeedLists/timeline.tsx"
             ]
         },
         "signIn": {
@@ -74,6 +76,30 @@
             "type": "string",
             "paths": [
                 "src/Errors/unknown.tsx"
+            ]
+        },
+        "localDayFormatDateFn": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/timeline.tsx"
+            ]
+        },
+        "today": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/timeline.tsx"
+            ]
+        },
+        "yesterday": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/timeline.tsx"
+            ]
+        },
+        "timelineVisitDefaultList": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/timeline.tsx"
             ]
         },
         "signOut": {

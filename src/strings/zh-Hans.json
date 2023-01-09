@@ -40,5 +40,9 @@
     "createAccount": "创建账户",
     "signIn": "登录",
     "listNameSubscribed": "已订阅",
-    "timeline": "时间线"
+    "timeline": "时间线",
+    "localDayFormatDateFn": "MMMdo",
+    "timelineVisitDefaultList": "访问“{{listName}}”列表",
+    "today": "今日",
+    "yesterday": "昨日"
 }

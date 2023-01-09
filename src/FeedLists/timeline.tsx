@@ -6,8 +6,8 @@ import {
     ListSubheader,
     Paper,
 } from "@suid/material";
-import { intlFormat, isSameDay, subDays } from "date-fns";
-import { Component, For } from "solid-js";
+import { format, intlFormat, isSameDay, subDays } from "date-fns";
+import { Component, createMemo, For } from "solid-js";
 
 import { ChevronRight as ChevronRightIcon } from "@suid/icons-material";
 
@@ -27,6 +27,7 @@ import { useScaffold } from "../common/Scaffold";
 import guardSignIn from "../common/guardSignIn";
 
 import "../common/patchs/mui-list.css";
+import { useDateFnLocale, useI18n } from "../common/i18n-wrapper";
 
 async function getTimelineArray() {
     const result: TimelineEntry[][] = [];
@@ -39,13 +40,24 @@ async function getTimelineArray() {
     return result;
 }
 
-function formatDay(day: Date, today: Date) {
+function formatDay(
+    day: Date,
+    today: Date,
+    localised: {
+        dayFormat: string;
+        todayKw: string;
+        yesterdayKw: string;
+        dateFnLocale: Locale;
+    }
+) {
     if (isSameDay(day, today)) {
-        return "Today";
+        return localised.todayKw;
     } else if (isSameDay(day, subDays(today, 1))) {
-        return "Yesterday";
+        return localised.yesterdayKw;
     } else {
-        return intlFormat(day, { month: "short", day: "numeric" });
+        return format(day, localised.dayFormat, {
+            locale: localised.dateFnLocale,
+        });
     }
 }
 
@@ -56,10 +68,19 @@ const TimelinePage: Component = () => {
     const currentTime = useCurrentTime(60 * 60 * 1000);
     const navigate = useNavigate();
     const scaffoldCx = useScaffold();
+    const [t] = useI18n();
+    const dateFnLocale = useDateFnLocale();
+
+    const formatDayLocalisedOpts = createMemo(() => ({
+        dayFormat: t("localDayFormatDateFn", undefined, "MMM do"),
+        todayKw: t("today"),
+        yesterdayKw: t("yesterday"),
+        dateFnLocale: dateFnLocale(),
+    }));
     return (
         <>
             <SharedAppBar
-                title="Timeline"
+                title={t("timeline")}
                 forceLeftIcon="drawer"
                 hide={scaffoldCx.state.scrollingDown}
             />
@@ -71,7 +92,7 @@ const TimelinePage: Component = () => {
                     class={
                         /* @once */ `${CommonStyle.SmartBodyWidth} ${CommonStyle.FixedCenterX} timeline-list`
                     }
-                    aria-label="Timeline"
+                    aria-label={t("timeline")}
                 >
                     <For each={timeline()}>
                         {(section, index) => {
@@ -86,7 +107,8 @@ const TimelinePage: Component = () => {
                                     <ListSubheader>
                                         {formatDay(
                                             headerData.day,
-                                            currentTime()
+                                            currentTime(),
+                                            formatDayLocalisedOpts()
                                         )}
                                     </ListSubheader>
                                     <Paper>
@@ -118,7 +140,9 @@ const TimelinePage: Component = () => {
                         onClick={() => navigate("/feedlists/default")}
                     >
                         <ListItemText
-                            primary={`Visit list "Subscribed"`}
+                            primary={t("timelineVisitDefaultList", {
+                                listName: t("listNameSubscribed"),
+                            })}
                             primaryTypographyProps={{ color: "primary" }}
                         />
                         <ListItemSecondaryAction>
