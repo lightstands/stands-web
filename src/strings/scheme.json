@@ -20,6 +20,7 @@
             "type": "string",
             "paths": [
                 "src/common/NviDrawerList.tsx",
+                "src/FeedLists/default.tsx",
                 "src/FeedLists/timeline.tsx"
             ]
         },
@@ -76,6 +77,66 @@
             "type": "string",
             "paths": [
                 "src/Errors/unknown.tsx"
+            ]
+        },
+        "deleteMultiples": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/default.tsx"
+            ]
+        },
+        "deleteOneOrNone": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/default.tsx"
+            ]
+        },
+        "feed": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/default.tsx"
+            ]
+        },
+        "unselect": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/default.tsx"
+            ]
+        },
+        "select": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/default.tsx"
+            ]
+        },
+        "deleteText": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/default.tsx"
+            ]
+        },
+        "addFeedAction": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/default.tsx"
+            ]
+        },
+        "selectStart": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/default.tsx"
+            ]
+        },
+        "selectedTitle": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/default.tsx"
+            ]
+        },
+        "feedListQuickExpl": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/default.tsx"
             ]
         },
         "localDayFormatDateFn": {

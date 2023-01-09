@@ -65,6 +65,7 @@ import BottomSheet from "../common/BottomSheet";
 import AddFeedDlg from "./AddFeedDlg";
 
 import "../common/patchs/mui-list.css";
+import { useI18n } from "../common/i18n-wrapper";
 
 const DefaultFeedListPage: Component = () => {
     useSync();
@@ -75,6 +76,7 @@ const DefaultFeedListPage: Component = () => {
     const storagePermission = usePersistentStoragePermission();
     const settings = useStore(settingStore);
     const scaffoldCx = useScaffold();
+    const [t] = useI18n();
     const [showAddFeed, setShowAddFeed] = createSignal(false);
     const [selectedItems, setSelectedItems] = createSignal<
         PublicFeed[] | undefined
@@ -273,6 +275,11 @@ const DefaultFeedListPage: Component = () => {
                     size="large"
                     color="inherit"
                     onClick={onRemoveSelectedFeeds}
+                    aria-label={
+                        itemNumber > 1
+                            ? t("deleteMultiples", { n: itemNumber.toString() })
+                            : t("deleteOneOrNone", { n: itemNumber.toString() })
+                    }
                 >
                     <DeleteIcon />
                 </IconButton>
@@ -292,9 +299,15 @@ const DefaultFeedListPage: Component = () => {
                         <DeleteIcon />
                     </ListItemIcon>
                     <ListItemText
-                        primary={`Delete ${itemNumber} ${
-                            itemNumber > 1 ? "items" : "item"
-                        }`}
+                        primary={
+                            itemNumber > 1
+                                ? t("deleteMultiples", {
+                                      n: itemNumber.toString(),
+                                  })
+                                : t("deleteOneOrNone", {
+                                      n: itemNumber.toString(),
+                                  })
+                        }
                     />
                 </ListItemButton>
             );
@@ -322,7 +335,7 @@ const DefaultFeedListPage: Component = () => {
                 <List disablePadding sx={{ minWidth: "160px" }} dense>
                     <Show when={menuTarget() !== null}>
                         <ListSubheader>
-                            {(menuTarget() as PublicFeed).title || "Feed"}
+                            {(menuTarget() as PublicFeed).title || t("feed")}
                         </ListSubheader>
                         <ListItemButton
                             onClick={[
@@ -332,11 +345,11 @@ const DefaultFeedListPage: Component = () => {
                         >
                             {isItemSelected(menuTarget() as PublicFeed) ? (
                                 <>
-                                    <ListItemText primary="Unselect" />
+                                    <ListItemText primary={t("unselect")} />
                                 </>
                             ) : (
                                 <>
-                                    <ListItemText primary="Select" />
+                                    <ListItemText primary={t("select")} />
                                 </>
                             )}
                         </ListItemButton>
@@ -347,7 +360,7 @@ const DefaultFeedListPage: Component = () => {
                             <ListItemIcon>
                                 <DeleteIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Delete" />
+                            <ListItemText primary={t("deleteText")} />
                         </ListItemButton>
                     </Show>
                     <ListItemButton
@@ -356,7 +369,7 @@ const DefaultFeedListPage: Component = () => {
                             setMenuTarget(false);
                         }}
                     >
-                        <ListItemText primary="Add a feed" />
+                        <ListItemText primary={t("addFeedAction")} />
                     </ListItemButton>
                 </List>
             </Popover>
@@ -366,7 +379,7 @@ const DefaultFeedListPage: Component = () => {
                 fallback={
                     <SharedAppBar
                         position="sticky"
-                        title="Subscribed"
+                        title={t("listNameSubscribed")}
                         forceLeftIcon="drawer"
                         hide={scaffoldCx.state.scrollingDown}
                     >
@@ -376,7 +389,7 @@ const DefaultFeedListPage: Component = () => {
                                 <ListItemButton
                                     onClick={enterItemSelectionMode}
                                 >
-                                    <ListItemText primary="Select..." />
+                                    <ListItemText primary={t("selectStart")} />
                                 </ListItemButton>,
                             ]}
                         />
@@ -389,9 +402,9 @@ const DefaultFeedListPage: Component = () => {
                             <CloseIcon />
                         </ToolbarIcon>
                         <ToolbarTitle
-                            primary={`${
-                                selectedItems()?.length?.toString() || "0"
-                            } selected`}
+                            primary={t("selectedTitle", {
+                                n: selectedItems()?.length?.toString() || "0",
+                            })}
                             color="primary"
                         />
                         <AdvMenu
@@ -444,7 +457,7 @@ const DefaultFeedListPage: Component = () => {
                     </Card>
                 </Show>
                 <main>
-                    <List aria-label={'All feeds in the "Subscribed" list'}>
+                    <List aria-label={t("feedListQuickExpl")}>
                         <For each={listItemDetails()}>
                             {(item, index) => {
                                 if (item) {
@@ -493,7 +506,7 @@ const DefaultFeedListPage: Component = () => {
                     >
                         <Fab
                             color="primary"
-                            aria-label="Add a feed"
+                            aria-label={t("addFeedAction")}
                             onClick={() => setShowAddFeed(true)}
                             disabled={!listDetail()}
                             tabIndex={0}

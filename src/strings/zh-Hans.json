@@ -44,5 +44,15 @@
     "localDayFormatDateFn": "MMMdo",
     "timelineVisitDefaultList": "访问“{{listName}}”列表",
     "today": "今日",
-    "yesterday": "昨日"
+    "yesterday": "昨日",
+    "addFeedAction": "添加订阅",
+    "deleteText": "删除",
+    "deleteMultiples": "删除{{n}}个项目",
+    "deleteOneOrNone": "删除{{n}}个项目",
+    "feed": "订阅",
+    "feedListQuickExpl": "所有订阅",
+    "select": "选择",
+    "selectedTitle": "已选择{{n}}个项目",
+    "selectStart": "选择多个项目...",
+    "unselect": "取消选择"
 }

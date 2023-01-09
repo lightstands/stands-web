@@ -45,5 +45,15 @@
     "localDayFormatDateFn": "MMM do",
     "timelineVisitDefaultList": "Visit list {{listName}}",
     "today": "Today",
-    "yesterday": "Yesterday"
+    "yesterday": "Yesterday",
+    "feed": "Feed",
+    "addFeedAction": "Add ad feed",
+    "deleteText": "Delete",
+    "deleteMultiples": "Delete {{n}} items",
+    "deleteOneOrNone": "Delete {{n}} item",
+    "feedListQuickExpl": "All feeds",
+    "select": "Select",
+    "selectedTitle": "{{n}} selected",
+    "selectStart": "Select...",
+    "unselect": "Unselect"
 }
