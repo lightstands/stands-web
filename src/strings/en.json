@@ -55,5 +55,14 @@
     "select": "Select",
     "selectedTitle": "{{n}} selected",
     "selectStart": "Select...",
-    "unselect": "Unselect"
+    "unselect": "Unselect",
+    "addFeedTitle": "New Feed for \"{{listName}}\"...",
+    "addingFeed": "Adding feed to list...",
+    "addedFeed": "\"{{feedName}}\" added",
+    "feedStdTip": "The feed must use Atom or RSS standard.",
+    "resolvingFeed": "Resolving \"{{feedUri}}\"...",
+    "addingFeedLong": "Adding \"{{feedName}}\" to list...",
+    "addedFeedLong": "{{feedName}} have been added to your list.",
+    "feedDefaultName": "Feed",
+    "addFeedURI": "Feed Address"
 }

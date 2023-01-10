@@ -20,6 +20,7 @@
             "type": "string",
             "paths": [
                 "src/common/NviDrawerList.tsx",
+                "src/FeedLists/AddFeedDlg.tsx",
                 "src/FeedLists/default.tsx",
                 "src/FeedLists/timeline.tsx"
             ]
@@ -77,6 +78,60 @@
             "type": "string",
             "paths": [
                 "src/Errors/unknown.tsx"
+            ]
+        },
+        "feedDefaultName": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/AddFeedDlg.tsx"
+            ]
+        },
+        "addFeedTitle": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/AddFeedDlg.tsx"
+            ]
+        },
+        "addingFeed": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/AddFeedDlg.tsx"
+            ]
+        },
+        "addedFeed": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/AddFeedDlg.tsx"
+            ]
+        },
+        "addFeedURI": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/AddFeedDlg.tsx"
+            ]
+        },
+        "feedStdTip": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/AddFeedDlg.tsx"
+            ]
+        },
+        "resolvingFeed": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/AddFeedDlg.tsx"
+            ]
+        },
+        "addingFeedLong": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/AddFeedDlg.tsx"
+            ]
+        },
+        "addedFeedLong": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/AddFeedDlg.tsx"
             ]
         },
         "deleteMultiples": {

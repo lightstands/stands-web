@@ -14,6 +14,7 @@ import ToolbarTitle from "../common/ToolbarTitle";
 import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
 import { addFeedToList } from "../stores/feedlists";
+import { useI18n } from "../common/i18n-wrapper";
 
 interface AddFeedDlgProps {
     listId: number;
@@ -27,6 +28,7 @@ const AddFeedDlg: Component<AddFeedDlgProps> = (props) => {
     const [feedUri, setFeedUri] = createSignal("");
     const client = useClient();
     const session = useStore(currentSessionStore);
+    const [t] = useI18n();
     const [feed, setFeed] = createSignal<PublicFeed>();
 
     const addToList = async () => {
@@ -50,6 +52,10 @@ const AddFeedDlg: Component<AddFeedDlgProps> = (props) => {
             setCurrentState(0);
         }
     };
+
+    const getFeedName = () => {
+        return feed()?.title || t("feedDefaultName", undefined, "Feed");
+    };
     return (
         <>
             <Toolbar>
@@ -68,7 +74,11 @@ const AddFeedDlg: Component<AddFeedDlgProps> = (props) => {
                         >
                             <CloseIcon />
                         </IconButton>
-                        <ToolbarTitle primary="New Feed for Subscribed..." />
+                        <ToolbarTitle
+                            primary={t("addFeedTitle", {
+                                listName: t("listNameSubscribed"),
+                            })}
+                        />
                         <IconButton
                             size="large"
                             edge="end"
@@ -80,7 +90,13 @@ const AddFeedDlg: Component<AddFeedDlgProps> = (props) => {
                         </IconButton>
                     </Match>
                     <Match when={currentState() === 1 || currentState() === 2}>
-                        <ToolbarTitle primary="Adding feed to list..." />
+                        <ToolbarTitle
+                            primary={t(
+                                "addingFeed",
+                                { listName: t("listNameSubscribed") },
+                                "Adding feed to list..."
+                            )}
+                        />
                     </Match>
                     <Match when={currentState() === 3}>
                         <IconButton
@@ -98,7 +114,16 @@ const AddFeedDlg: Component<AddFeedDlgProps> = (props) => {
                         >
                             <CloseIcon />
                         </IconButton>
-                        <ToolbarTitle primary={`"${feed()!.title}" added`} />
+                        <ToolbarTitle
+                            primary={t(
+                                "addedFeed",
+                                {
+                                    listName: t("listNameSubscribed"),
+                                    feedName: getFeedName(),
+                                },
+                                `"{{feedName}}" added`
+                            )}
+                        />
                     </Match>
                 </Switch>
             </Toolbar>
@@ -113,28 +138,44 @@ const AddFeedDlg: Component<AddFeedDlgProps> = (props) => {
                     <Match when={currentState() === 0}>
                         <TextField
                             variant="standard"
-                            label="URI"
+                            label={t("addFeedURI")}
                             value={feedUri()}
                             onChange={(ev) => setFeedUri(ev.target.value)}
                             autoFocus
                         />
                         <Typography variant="caption" sx={{ marginY: "8px" }}>
-                            The feed must use Atom or RSS standard.
+                            {t(
+                                "feedStdTip",
+                                undefined,
+                                "The feed must use Atom or RSS standard."
+                            )}
                         </Typography>
                     </Match>
                     <Match when={currentState() === 1}>
                         <Typography sx={{ marginY: "8px" }}>
-                            Resolving "{feedUri()}"...
+                            {t(
+                                "resolvingFeed",
+                                { feedUri: feed()!.url },
+                                `Resolving "{{feedUri}}"...`
+                            )}
                         </Typography>
                     </Match>
                     <Match when={currentState() === 2}>
                         <Typography sx={{ marginY: "8px" }}>
-                            Adding "{feed()?.title}" to list...
+                            {t(
+                                "addingFeedLong",
+                                { feedName: getFeedName() },
+                                `Adding "{{feedName}}" to list...`
+                            )}
                         </Typography>
                     </Match>
                     <Match when={currentState() === 3}>
                         <Typography sx={{ marginY: "8px" }}>
-                            {feed()!.title} have been added to your list.
+                            {t(
+                                "addedFeedLong",
+                                { feedName: getFeedName() },
+                                `{{feedName}} have been added to your list.`
+                            )}
                         </Typography>
                     </Match>
                 </Switch>

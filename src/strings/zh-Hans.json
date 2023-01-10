@@ -54,5 +54,14 @@
     "select": "选择",
     "selectedTitle": "已选择{{n}}个项目",
     "selectStart": "选择多个项目...",
-    "unselect": "取消选择"
+    "unselect": "取消选择",
+    "addFeedTitle": "为“{{listName}}”新增订阅",
+    "addingFeed": "正在向列表增加订阅",
+    "addedFeed": "“{{feedName}}” 已添加。",
+    "feedStdTip": "订阅源必须使用Atom或RSS标准。",
+    "resolvingFeed": "正在处理“{{feedUri}}”……",
+    "addingFeedLong": "正在将“{{feedName}}”添加至列表",
+    "addedFeedLong": "{{feedName}}已经添加到你的列表。",
+    "feedDefaultName": "订阅源",
+    "addFeedURI": "订阅源地址"
 }
