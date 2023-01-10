@@ -1,4 +1,4 @@
-.post-list .MuiListItemText-secondary {
+.timeline-list .MuiListItemText-secondary {
     text-overflow: ellipsis;
     overflow-wrap: break-word;
     overflow: hidden;
@@ -11,7 +11,7 @@
 }
 
 @media (width > 1200px) {
-    .post-list .MuiListItemText-secondary {
+    .timeline-list .MuiListItemText-secondary {
         max-height: 1.2rem;
         -webkit-line-clamp: 1;
         line-clamp: 1;

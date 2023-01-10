@@ -25,9 +25,10 @@ import { useSync } from "../common/synmgr";
 import { useNavigate } from "../common/nav";
 import { useScaffold } from "../common/Scaffold";
 import guardSignIn from "../common/guardSignIn";
+import { useDateFnLocale, useI18n } from "../common/i18n-wrapper";
 
 import "../common/patchs/mui-list.css";
-import { useDateFnLocale, useI18n } from "../common/i18n-wrapper";
+import "./timeline.css";
 
 async function getTimelineArray() {
     const result: TimelineEntry[][] = [];
