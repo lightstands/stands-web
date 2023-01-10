@@ -1,4 +1,4 @@
-import { Box, Drawer, Modal, Paper } from "@suid/material";
+import { Box, Drawer, Modal, Paper, useTheme } from "@suid/material";
 import { ParentComponent, Show } from "solid-js";
 
 import { useScaffold } from "./Scaffold";
@@ -7,11 +7,11 @@ import CommonStyle from "./Style.module.css";
 interface BottomSheetProps {
     open: boolean;
     onClose?: (ev: {}, reason: "backdropClick" | "escapeKeyDown") => void;
-    zIndex?: number;
 }
 
 const BottomSheet: ParentComponent<BottomSheetProps> = (props) => {
     const scaffoldCx = useScaffold();
+    const theme = useTheme();
     return (
         <Show
             when={(scaffoldCx.state.width || 0) >= 772}
@@ -21,7 +21,7 @@ const BottomSheet: ParentComponent<BottomSheetProps> = (props) => {
                     anchor="bottom"
                     open={props.open}
                     onClose={props.onClose}
-                    sx={{ zIndex: props.zIndex }}
+                    sx={{ zIndex: theme.zIndex.modal }}
                 >
                     <Box
                         sx={{
@@ -35,11 +35,7 @@ const BottomSheet: ParentComponent<BottomSheetProps> = (props) => {
                 </Drawer>
             }
         >
-            <Modal
-                open={props.open}
-                onClose={props.onClose}
-                style={{ "z-index": props.zIndex }}
-            >
+            <Modal open={props.open} onClose={props.onClose}>
                 <Paper
                     class={CommonStyle.FixedCenter}
                     sx={{

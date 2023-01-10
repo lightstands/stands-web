@@ -103,7 +103,6 @@ const AltShare: Component<AltShareProps> = (props) => {
         <BottomSheet
             open={typeof props.sharing !== "undefined"}
             onClose={props.onClose}
-            zIndex={2000}
         >
             <Toolbar>
                 <ToolbarIcon
