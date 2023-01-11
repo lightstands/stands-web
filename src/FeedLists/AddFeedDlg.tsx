@@ -15,6 +15,7 @@ import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
 import { addFeedToList } from "../stores/feedlists";
 import { useI18n } from "../common/i18n-wrapper";
+import { syncPostMetaOf } from "../stores/postmeta";
 
 interface AddFeedDlgProps {
     listId: number;
@@ -39,6 +40,7 @@ const AddFeedDlg: Component<AddFeedDlgProps> = (props) => {
             feed()!.urlBlake3
         );
         setCurrentState(3);
+        await syncPostMetaOf(client, feed()!.ref);
     };
 
     const resolveUrl = async () => {
@@ -145,7 +147,7 @@ const AddFeedDlg: Component<AddFeedDlgProps> = (props) => {
                     </Match>
                     <Match when={currentState() === 1}>
                         <Typography sx={{ marginY: "8px" }}>
-                            {t("resolvingFeed", { feedUri: feed()!.url })}
+                            {t("resolvingFeed", { feedUri: feedUri() })}
                         </Typography>
                     </Match>
                     <Match when={currentState() === 2}>
