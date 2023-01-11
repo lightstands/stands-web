@@ -377,12 +377,6 @@
                 "src/Settings/settings.tsx"
             ]
         },
-        "offlineExpEntry": {
-            "type": "string",
-            "paths": [
-                "src/Settings/settings.tsx"
-            ]
-        },
         "compatOptsEntry": {
             "type": "string",
             "paths": [

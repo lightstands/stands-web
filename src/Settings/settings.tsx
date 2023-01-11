@@ -313,14 +313,6 @@ const SettingsPage: Component = () => {
                     <Paper>
                         <ListItemButton
                             divider
-                            onClick={() => navigate("/settings/offline")}
-                        >
-                            <ListItemText
-                                primary={t("offlineExpEntry", undefined)}
-                            />
-                        </ListItemButton>
-                        <ListItemButton
-                            divider
                             onClick={() => navigate("/settings/compatibility")}
                         >
                             <ListItemText
