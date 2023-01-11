@@ -10,6 +10,8 @@ import {
 import { untrack } from "solid-js/web";
 import { UAParser } from "ua-parser-js";
 
+import { openExternalUrl } from "../platform/open-url";
+
 import innerDocStyle from "./inner-doc.css?inline";
 
 interface SafeDocViewProps {
@@ -57,7 +59,7 @@ const SafeDocView: Component<SafeDocViewProps> = (props) => {
             untrack(() => {
                 setJumpExLink(undefined);
                 if (window.confirm(`Open this link?\n\n${link}`)) {
-                    window.open(link, "_blank");
+                    openExternalUrl(link);
                 }
             });
         }

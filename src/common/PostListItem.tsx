@@ -6,6 +6,7 @@ import { OpenInNew as OpenInNewIcon } from "@suid/icons-material";
 
 import Style from "./PostListItem.module.css";
 import { useNavigate } from "./nav";
+import { openExternalUrl } from "../platform/open-url";
 
 interface PostListItemProps {
     metadata: PublicPost;
@@ -37,7 +38,7 @@ const PostListItem: Component<PostListItemProps> = (props) => {
                                 `Open this link?\n\n${props.metadata.link}`
                             )
                         ) {
-                            window.open(props.metadata.link, "_blank");
+                            openExternalUrl(props.metadata.link!);
                         }
                     }}
                 >

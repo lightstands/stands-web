@@ -58,6 +58,7 @@ import ToolbarTitle from "../common/ToolbarTitle";
 
 import PostListItem from "../common/PostListItem";
 import { useDateFnLocale, useI18n } from "../common/i18n-wrapper";
+import { openExternalUrl } from "../platform/open-url";
 
 function isLiveQueryReady<T>(
     accessor: () => T | undefined
@@ -223,7 +224,7 @@ const FeedPage: Component = () => {
                                     typeof feedMetadata()?.link === "undefined"
                                 }
                                 onClick={() =>
-                                    window.open(feedMetadata()!.link, "_blank")
+                                    openExternalUrl(feedMetadata()!.link!)
                                 }
                             >
                                 <ListItemIcon>

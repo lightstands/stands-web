@@ -60,6 +60,7 @@ import {
     useDateFnLocale,
     useI18n,
 } from "../common/i18n-wrapper";
+import { openExternalUrl } from "../platform/open-url";
 
 const LANG_NAMES = new Map([
     ["en", "English"],
@@ -367,9 +368,8 @@ const SettingsPage: Component = () => {
                         <ListItemButton
                             divider
                             onClick={() =>
-                                window.open(
-                                    "https://github.com/lightstands/stands-web/",
-                                    "_blank"
+                                openExternalUrl(
+                                    "https://github.com/lightstands/stands-web/"
                                 )
                             }
                         >
@@ -385,9 +385,8 @@ const SettingsPage: Component = () => {
                         <ListItemButton
                             divider
                             onClick={() =>
-                                window.open(
-                                    "https://www.gnu.org/licenses/agpl-3.0.en.html",
-                                    "_blank"
+                                openExternalUrl(
+                                    "https://www.gnu.org/licenses/agpl-3.0.en.html"
                                 )
                             }
                         >

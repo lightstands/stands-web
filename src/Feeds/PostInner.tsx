@@ -30,6 +30,7 @@ import AltShare, { AltSharingObject } from "./AltShare";
 import { useAppSettings } from "../stores/settings";
 
 import "./PostInner.css";
+import { openExternalUrl } from "../platform/open-url";
 
 interface PostInnerProps {
     feedUrlBlake3: string;
@@ -217,7 +218,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
         const items = [
             <ListItemButton
                 disabled={postMetadata.loading || !postMetadata()?.link}
-                onClick={() => window.open(postMetadata()!.link, "_blank")}
+                onClick={() => openExternalUrl(postMetadata()!.link!)}
             >
                 <ListItemText primary="Open link..." />
             </ListItemButton>,
