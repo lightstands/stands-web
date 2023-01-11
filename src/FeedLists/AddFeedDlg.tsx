@@ -54,7 +54,7 @@ const AddFeedDlg: Component<AddFeedDlgProps> = (props) => {
     };
 
     const getFeedName = () => {
-        return feed()?.title || t("feedDefaultName", undefined, "Feed");
+        return feed()?.title || t("feedDefaultName");
     };
     return (
         <>
@@ -115,14 +115,10 @@ const AddFeedDlg: Component<AddFeedDlgProps> = (props) => {
                             <CloseIcon />
                         </IconButton>
                         <ToolbarTitle
-                            primary={t(
-                                "addedFeed",
-                                {
-                                    listName: t("listNameSubscribed"),
-                                    feedName: getFeedName(),
-                                },
-                                `"{{feedName}}" added`
-                            )}
+                            primary={t("addedFeed", {
+                                listName: t("listNameSubscribed"),
+                                feedName: getFeedName(),
+                            })}
                         />
                     </Match>
                 </Switch>
@@ -144,38 +140,22 @@ const AddFeedDlg: Component<AddFeedDlgProps> = (props) => {
                             autoFocus
                         />
                         <Typography variant="caption" sx={{ marginY: "8px" }}>
-                            {t(
-                                "feedStdTip",
-                                undefined,
-                                "The feed must use Atom or RSS standard."
-                            )}
+                            {t("feedStdTip")}
                         </Typography>
                     </Match>
                     <Match when={currentState() === 1}>
                         <Typography sx={{ marginY: "8px" }}>
-                            {t(
-                                "resolvingFeed",
-                                { feedUri: feed()!.url },
-                                `Resolving "{{feedUri}}"...`
-                            )}
+                            {t("resolvingFeed", { feedUri: feed()!.url })}
                         </Typography>
                     </Match>
                     <Match when={currentState() === 2}>
                         <Typography sx={{ marginY: "8px" }}>
-                            {t(
-                                "addingFeedLong",
-                                { feedName: getFeedName() },
-                                `Adding "{{feedName}}" to list...`
-                            )}
+                            {t("addingFeedLong", { feedName: getFeedName() })}
                         </Typography>
                     </Match>
                     <Match when={currentState() === 3}>
                         <Typography sx={{ marginY: "8px" }}>
-                            {t(
-                                "addedFeedLong",
-                                { feedName: getFeedName() },
-                                `{{feedName}} have been added to your list.`
-                            )}
+                            {t("addedFeedLong", { feedName: getFeedName() })}
                         </Typography>
                     </Match>
                 </Switch>
