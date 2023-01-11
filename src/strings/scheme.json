@@ -281,6 +281,30 @@
                 "src/FeedLists/timeline.tsx"
             ]
         },
+        "compatSharingTitle": {
+            "type": "string",
+            "paths": [
+                "src/Settings/compat.tsx"
+            ]
+        },
+        "alwaysAltShare": {
+            "type": "string",
+            "paths": [
+                "src/Settings/compat.tsx"
+            ]
+        },
+        "alwaysAltShareExplain": {
+            "type": "string",
+            "paths": [
+                "src/Settings/compat.tsx"
+            ]
+        },
+        "noSysShareErr": {
+            "type": "string",
+            "paths": [
+                "src/Settings/compat.tsx"
+            ]
+        },
         "signOut": {
             "type": "string",
             "paths": [

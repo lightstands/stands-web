@@ -70,5 +70,9 @@
     "filterTagTitle": "Read or Not",
     "noTitle": "No Title",
     "visitWebsiteAction": "Visit the website",
-    "filter": "Filter"
+    "filter": "Filter",
+    "alwaysAltShare": "Always alternative sharing dialog",
+    "alwaysAltShareExplain": "Use alternative method instead of the system one",
+    "noSysShareErr": "We could not provide the system sharing on this device. Another browser or operating system may help.",
+    "compatSharingTitle": "Sharing"
 }

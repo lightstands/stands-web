@@ -69,5 +69,9 @@
     "filterTagTitle": "阅读状态",
     "noTitle": "没有标题",
     "visitWebsiteAction": "访问该网站",
-    "filter": "过滤器"
+    "filter": "过滤器",
+    "alwaysAltShare": "总是使用替代分享窗口",
+    "alwaysAltShareExplain": "使用应用提供的替代分享窗口，而不是系统的分享窗口。",
+    "noSysShareErr": "替代分享窗口已启用，因为我们无法在该设备上使用系统分享。更换浏览器或设备可能会有帮助。",
+    "compatSharingTitle": "分享"
 }

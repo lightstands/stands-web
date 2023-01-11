@@ -14,26 +14,28 @@ import SharedAppBar from "../common/SharedAppBar";
 import SettingListInject from "./setting-list-inject.css?inline";
 import CommonStyle from "../common/Style.module.css";
 import { setAppSetting, useAppSettings } from "../stores/settings";
+import { useI18n } from "../common/i18n-wrapper";
 
 const CompatPage: Component = () => {
     const appSettings = useAppSettings();
+    const [t] = useI18n();
     return (
         <>
-            <SharedAppBar title="Compatibility" />
+            <SharedAppBar title={t("compatOptsEntry")} />
             <style>{SettingListInject}</style>
             <Box
                 class={`${CommonStyle.SmartBodyWidth} ${CommonStyle.FixedCenterX}`}
             >
                 <List class="SettingList">
-                    <ListSubheader>Sharing</ListSubheader>
+                    <ListSubheader>{t("compatSharingTitle")}</ListSubheader>
                     <Paper>
                         <ListItem>
                             <ListItemText
-                                primary="Always alternative sharing method"
+                                primary={t("alwaysAltShare")}
                                 secondary={
                                     typeof navigator.share !== "undefined"
-                                        ? "Use alternative method instead of the system one"
-                                        : "We could not provide the system sharing on this device. Another browser or operating system may help."
+                                        ? t("alwaysAltShareExplain")
+                                        : t("noSysShareErr")
                                 }
                                 primaryTypographyProps={{
                                     id: "compat-always-alt-sharing",
@@ -46,6 +48,8 @@ const CompatPage: Component = () => {
                                 <Switch
                                     aria-labelledby="compat-always-alt-sharing"
                                     checked={
+                                        typeof navigator.share ===
+                                            "undefined" ||
                                         appSettings().systemSharing === "never"
                                     }
                                     disabled={
