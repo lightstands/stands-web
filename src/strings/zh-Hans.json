@@ -73,5 +73,19 @@
     "alwaysAltShare": "总是使用替代分享窗口",
     "alwaysAltShareExplain": "使用应用提供的替代分享窗口，而不是系统的分享窗口。",
     "noSysShareErr": "替代分享窗口已启用，因为我们无法在该设备上使用系统分享。更换浏览器或设备可能会有帮助。",
-    "compatSharingTitle": "分享"
+    "compatSharingTitle": "分享",
+    "storageOverviewWorking": "正在计算大小……",
+    "storageOverviewError": "无法收集存储空间大小（{{errName}}）。",
+    "updatedNever": "从未与LightStands同步过。",
+    "updatedAt": "于{{dt}}更新。",
+    "overview": "概览",
+    "autoDownload": "自动下载",
+    "metadata": "元数据",
+    "syncPeriodInApp": "使用应用每 {{period}}",
+    "syncWorking": "正在工作……",
+    "fullSyncAction": "与LightStands同步",
+    "overviewUnavailable": "概览不可用",
+    "storageLess1PaUsed": "存储空间用量少于1%",
+    "storageUsed": "使用了{{n}}%存储空间",
+    "dataAutoUpdateTip": "LightStands for Web可以自动与LightStands同步信息。"
 }

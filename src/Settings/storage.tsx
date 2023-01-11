@@ -13,41 +13,24 @@ import {
 } from "@suid/material";
 import { Component, createResource, Show } from "solid-js";
 import { useStore } from "@nanostores/solid";
-import { formatDistance } from "date-fns";
+import { formatDistance, formatDuration } from "date-fns";
 
 import { Sync as SyncIcon } from "@suid/icons-material";
 
 import SharedAppBar from "../common/SharedAppBar";
 import ToolbarTitle from "../common/ToolbarTitle";
 import CommonStyle from "../common/Style.module.css";
-import { useCurrentTime, useLiveQuery } from "../common/utils";
-import { openDb } from "../stores/db";
+import { useCurrentTime } from "../common/utils";
 import { settingStore } from "../stores/settings";
 import SettingListInject from "./setting-list-inject.css?inline";
 import { forcedFullSync, getWorkingTasks } from "../common/synmgr";
 import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
-import { supportsPersistentStorage } from "../common/storage";
-
-const SIZE_UNITS = ["byte", "kilobyte", "megabyte", "gigabyte", "petabyte"];
-
-function formatSize(nbytes: number): string {
-    for (let i = SIZE_UNITS.length - 1; i >= 0; i--) {
-        const n = nbytes / Math.pow(1000, i);
-        if (n > 1) {
-            return `${n.toFixed(2)} ${SIZE_UNITS[i]}s`;
-        }
-    }
-    return `${nbytes.toFixed(2)} ${SIZE_UNITS[0]}`;
-}
+import { useDateFnLocale, useI18n } from "../common/i18n-wrapper";
 
 // Compatibility table see https://devdocs.io/dom/storagemanager
 function isOverviewSupported() {
     return !!(navigator.storage && navigator.storage.estimate);
-}
-
-function countableWord(n: number | undefined, word: string, suffix?: string) {
-    return `${word}${n && n > 1 ? (suffix ? suffix : "s") : ""}`;
 }
 
 const StoragePage: Component = () => {
@@ -55,30 +38,22 @@ const StoragePage: Component = () => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const currentTime = useCurrentTime(60 * 1000);
+    const [t] = useI18n();
+    const dateFnLocale = useDateFnLocale();
     const [storageEstimate] = createResource(() => {
         if (isOverviewSupported()) {
             return navigator.storage.estimate();
         }
     });
 
-    const tagCount = useLiveQuery(async () => {
-        const db = await openDb();
-        return await db.postTags.count();
-    });
-
-    const postMetaCount = useLiveQuery(async () => {
-        const db = await openDb();
-        return await db.postmetas.count();
-    });
-
     const getOverviewString = () => {
         if (storageEstimate.loading) {
-            return "Calculating size...";
+            return t("storageOverviewWorking");
         } else {
             if (storageEstimate.error) {
-                return `Failed to collect size information (${
-                    storageEstimate.error.name || "Unknown"
-                }). `;
+                return t("storageOverviewError", {
+                    errName: storageEstimate.error.name || "Unknown",
+                });
             } else {
                 const est = storageEstimate();
                 if (est) {
@@ -87,25 +62,18 @@ const StoragePage: Component = () => {
                         typeof est.usage !== "undefined"
                     ) {
                         const percentage = (est.usage / est.quota) * 100;
-                        const avaliableString = `${formatSize(
-                            est.quota
-                        )} avaliable`;
                         if (percentage < 1) {
-                            return `less than 1% used (${avaliableString})`;
+                            return t("storageLess1PaUsed");
                         } else {
-                            return `${percentage.toFixed(
-                                1
-                            )}% used (${avaliableString})`;
+                            return t("storageUsed", {
+                                n: percentage.toFixed(1),
+                            });
                         }
-                    } else if (typeof est.quota !== "undefined") {
-                        return `${formatSize(est.quota)} avaliable`;
-                    } else if (typeof est.usage !== "undefined") {
-                        return `${formatSize(est.usage)} used`;
                     } else {
-                        return "Overview unavaliable";
+                        return t("overviewUnavailable");
                     }
                 } else {
-                    return "Overview unavaliable";
+                    return t("overviewUnavailable");
                 }
             }
         }
@@ -113,13 +81,14 @@ const StoragePage: Component = () => {
 
     const getUpdatedAtExplain = (lastTimeSync: number) => {
         if (lastTimeSync === 0) {
-            return "Never updated with LightStands.";
+            return t("updatedNever");
         } else {
-            return `Updated ${formatDistance(
-                settings().lastTimeSync,
-                currentTime(),
-                { addSuffix: true }
-            )}.`;
+            return t("updatedAt", {
+                dt: formatDistance(settings().lastTimeSync, currentTime(), {
+                    addSuffix: true,
+                    locale: dateFnLocale(),
+                }),
+            });
         }
     };
 
@@ -129,7 +98,7 @@ const StoragePage: Component = () => {
     return (
         <Box>
             <SharedAppBar>
-                <ToolbarTitle primary="Storage" />
+                <ToolbarTitle primary={t("storageEntry")} />
             </SharedAppBar>
             <style>{SettingListInject}</style>
             <Box
@@ -137,48 +106,27 @@ const StoragePage: Component = () => {
             >
                 <List class="SettingList">
                     <Show when={isOverviewSupported()}>
-                        <ListSubheader>Overview</ListSubheader>
+                        <ListSubheader>{t("overview")}</ListSubheader>
                         <Paper>
                             <ListItem divider>
                                 <ListItemText primary={getOverviewString()} />
                             </ListItem>
                         </Paper>
-                        <Typography>
-                            The number here may significantly differ from the
-                            actual number due to privacy concern and other
-                            reasons.
-                            <Link href="https://developer.mozilla.org/en-US/docs/Web/API/Storage_API#quotas_and_usage_estimates">
-                                Learn more about why the number is different...
-                            </Link>
-                        </Typography>
                     </Show>
 
-                    <ListSubheader>Usage</ListSubheader>
+                    <ListSubheader>{t("autoDownload")}</ListSubheader>
                     <Paper>
                         <ListItem divider>
-                            <ListItemText
-                                primary={`${tagCount()} ${countableWord(
-                                    tagCount(),
-                                    "tag"
-                                )}`}
-                            />
-                        </ListItem>
-                        <ListItem divider>
-                            <ListItemText
-                                primary={`${postMetaCount()} ${countableWord(
-                                    postMetaCount(),
-                                    "post"
-                                )}`}
-                            />
-                        </ListItem>
-                    </Paper>
-
-                    <ListSubheader>Automatic Download</ListSubheader>
-                    <Paper>
-                        <ListItem divider>
-                            <ListItemText primary="Metadata" />
+                            <ListItemText primary={t("metadata")} />
                             <ListItemSecondaryAction>
-                                <Typography>Every 30 minutes in app</Typography>
+                                <Typography>
+                                    {t("syncPeriodInApp", {
+                                        period: formatDuration(
+                                            { minutes: 30 },
+                                            { locale: dateFnLocale() }
+                                        ),
+                                    })}
+                                </Typography>
                             </ListItemSecondaryAction>
                         </ListItem>
                         <Show when={!!session()}>
@@ -193,23 +141,17 @@ const StoragePage: Component = () => {
                                 <ListItemText
                                     primary={
                                         getWorkingTasks().length > 0
-                                            ? "Working..."
-                                            : "Sync with LightStands"
+                                            ? t("syncWorking")
+                                            : t("fullSyncAction")
                                     }
                                 />
                             </ListItemButton>
                         </Show>
                     </Paper>
                     <Typography>
-                        LightStands for Web can automatically keep the data up
-                        to date. {getUpdatedAtExplain(settings().lastTimeSync)}
+                        {t("dataAutoUpdateTip")}{" "}
+                        {getUpdatedAtExplain(settings().lastTimeSync)}
                     </Typography>
-                    <Show when={!supportsPersistentStorage()}>
-                        <Typography>
-                            The browser does not support persistent storage,
-                            your data may frequently be wiped.
-                        </Typography>
-                    </Show>
                 </List>
             </Box>
         </Box>

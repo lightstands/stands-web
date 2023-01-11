@@ -74,5 +74,19 @@
     "alwaysAltShare": "Always alternative sharing dialog",
     "alwaysAltShareExplain": "Use alternative method instead of the system one",
     "noSysShareErr": "We could not provide the system sharing on this device. Another browser or operating system may help.",
-    "compatSharingTitle": "Sharing"
+    "compatSharingTitle": "Sharing",
+    "storageOverviewWorking": "Calculating size...",
+    "storageOverviewError": "Failed to collect size information ({{errName}}).",
+    "updatedNever": "Never updated with LightStands.",
+    "updatedAt": "Updated {{dt}}",
+    "overview": "Overview",
+    "autoDownload": "Automatic Download",
+    "metadata": "Metadata",
+    "syncPeriodInApp": "Every {{period}} in app",
+    "syncWorking": "Working...",
+    "fullSyncAction": "Sync with LightStands",
+    "overviewUnavailable": "Overview unavailable",
+    "storageLess1PaUsed": "Less than 1% used",
+    "storageUsed": "{{n}}% used",
+    "dataAutoUpdateTip": "LightStands for Web can automatically keep the data up to date."
 }
