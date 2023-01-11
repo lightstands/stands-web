@@ -63,5 +63,12 @@
     "addingFeedLong": "正在将“{{feedName}}”添加至列表",
     "addedFeedLong": "{{feedName}}已经添加到你的列表。",
     "feedDefaultName": "订阅源",
-    "addFeedURI": "订阅源地址"
+    "addFeedURI": "订阅源地址",
+    "feedFilterExplain": "管理对列表应用的过滤器",
+    "feedTheEnd": "这就是全部了。",
+    "feedUpdatedAt": "{{dt}}更新",
+    "filterTagTitle": "阅读状态",
+    "noTitle": "没有标题",
+    "visitWebsiteAction": "访问该网站",
+    "filter": "过滤器"
 }

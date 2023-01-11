@@ -80,6 +80,69 @@
                 "src/Errors/unknown.tsx"
             ]
         },
+        "noTitle": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/feed.tsx"
+            ]
+        },
+        "visitWebsiteAction": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/feed.tsx"
+            ]
+        },
+        "postTagRead": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/feed.tsx",
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "postTagUnread": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/feed.tsx",
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "feedFilterExplain": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/feed.tsx"
+            ]
+        },
+        "filter": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/feed.tsx"
+            ]
+        },
+        "filterTagTitle": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/feed.tsx"
+            ]
+        },
+        "feedFilterUnset": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/feed.tsx",
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "feedTheEnd": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/feed.tsx"
+            ]
+        },
+        "feedUpdatedAt": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/feed.tsx"
+            ]
+        },
         "feedDefaultName": {
             "type": "string",
             "paths": [
@@ -303,24 +366,6 @@
             ]
         },
         "feedsDefaultFilter": {
-            "type": "string",
-            "paths": [
-                "src/Settings/settings.tsx"
-            ]
-        },
-        "feedFilterUnset": {
-            "type": "string",
-            "paths": [
-                "src/Settings/settings.tsx"
-            ]
-        },
-        "postTagRead": {
-            "type": "string",
-            "paths": [
-                "src/Settings/settings.tsx"
-            ]
-        },
-        "postTagUnread": {
             "type": "string",
             "paths": [
                 "src/Settings/settings.tsx"

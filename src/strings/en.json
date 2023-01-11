@@ -64,5 +64,12 @@
     "addingFeedLong": "Adding \"{{feedName}}\" to list...",
     "addedFeedLong": "{{feedName}} have been added to your list.",
     "feedDefaultName": "Feed",
-    "addFeedURI": "Feed Address"
+    "addFeedURI": "Feed Address",
+    "feedFilterExplain": "Manage the filters applied on this page",
+    "feedTheEnd": "That's the end",
+    "feedUpdatedAt": "Updated {{dt}}",
+    "filterTagTitle": "Read or Not",
+    "noTitle": "No Title",
+    "visitWebsiteAction": "Visit the website",
+    "filter": "Filter"
 }

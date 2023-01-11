@@ -57,6 +57,7 @@ import { useClient } from "../client";
 import ToolbarTitle from "../common/ToolbarTitle";
 
 import PostListItem from "../common/PostListItem";
+import { useDateFnLocale, useI18n } from "../common/i18n-wrapper";
 
 function isLiveQueryReady<T>(
     accessor: () => T | undefined
@@ -95,6 +96,9 @@ const FeedPage: Component = () => {
     const [filterPopOpen, setFilterPopOpen] = createSignal(false);
 
     const settings = useStore(settingStore);
+
+    const [t] = useI18n();
+    const dateFnLocale = useDateFnLocale();
 
     const applyFilter = async (post: PublicPost) => {
         if (searchParams.filter_tag) {
@@ -203,7 +207,7 @@ const FeedPage: Component = () => {
                     }
                 >
                     <ToolbarTitle
-                        primary={feedMetadata()?.title || "No title"}
+                        primary={feedMetadata()?.title || t("noTitle")}
                     />
                 </Show>
                 <Box
@@ -225,7 +229,9 @@ const FeedPage: Component = () => {
                                 <ListItemIcon>
                                     <OpenInNewIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="Visit the website..." />
+                                <ListItemText
+                                    primary={t("visitWebsiteAction")}
+                                />
                             </ListItemButton>,
                         ]}
                     />
@@ -246,7 +252,7 @@ const FeedPage: Component = () => {
                     >
                         <Show when={searchParams.filter_tag === "_read"}>
                             <Chip
-                                label="Read"
+                                label={t("postTagRead")}
                                 onDelete={unsetFilterTag}
                                 color="primary"
                             />
@@ -254,7 +260,7 @@ const FeedPage: Component = () => {
 
                         <Show when={searchParams.filter_tag === "!_read"}>
                             <Chip
-                                label="Unread"
+                                label={t("postTagUnread")}
                                 onDelete={unsetFilterTag}
                                 color="primary"
                             />
@@ -271,7 +277,7 @@ const FeedPage: Component = () => {
                         <Button
                             ref={filterButEl!}
                             class="tooltip"
-                            aria-description="Manage the filters applied on this page"
+                            aria-description={t("feedFilterExplain")}
                             onClick={() => setFilterPopOpen(true)}
                         >
                             <Show
@@ -284,7 +290,7 @@ const FeedPage: Component = () => {
                                     }}
                                 />
                             </Show>
-                            Filter
+                            {t("filter")}
                         </Button>
                         <Popover
                             id={filterPopId}
@@ -300,7 +306,7 @@ const FeedPage: Component = () => {
                             <List disablePadding sx={{ minWidth: "160px" }}>
                                 <FormControl sx={{ width: "100%" }}>
                                     <ListSubheader id="filter-tag-label">
-                                        Read or Not
+                                        {t("filterTagTitle")}
                                     </ListSubheader>
 
                                     <RadioGroup
@@ -320,7 +326,7 @@ const FeedPage: Component = () => {
                                             }}
                                             value={""}
                                             control={<Radio size="small" />}
-                                            label="Unset"
+                                            label={t("feedFilterUnset")}
                                         />
                                         <FormControlLabel
                                             sx={{
@@ -330,7 +336,7 @@ const FeedPage: Component = () => {
                                             }}
                                             value={"!_read"}
                                             control={<Radio size="small" />}
-                                            label="Unread"
+                                            label={t("postTagUnread")}
                                         />
                                         <FormControlLabel
                                             sx={{
@@ -340,7 +346,7 @@ const FeedPage: Component = () => {
                                             }}
                                             value={"_read"}
                                             control={<Radio size="small" />}
-                                            label="Read"
+                                            label={t("postTagRead")}
                                         />
                                     </RadioGroup>
                                 </FormControl>
@@ -383,28 +389,19 @@ const FeedPage: Component = () => {
                 ref={listEndEl!}
             >
                 <Show when={isListEnded()} fallback={<Typography></Typography>}>
-                    <Typography>That's the end.</Typography>
+                    <Typography>{t("feedTheEnd")}</Typography>
                 </Show>
                 <Typography>
-                    Updated{" "}
-                    {isLiveQueryReady(feedMetadata)
-                        ? formatDistance(
-                              new Date(feedMetadata().lastFetchedAt * 1000),
-                              new Date(),
-                              { addSuffix: true }
-                          )
-                        : "..."}
+                    {t("feedUpdatedAt", {
+                        dt: isLiveQueryReady(feedMetadata)
+                            ? formatDistance(
+                                  new Date(feedMetadata().lastFetchedAt * 1000),
+                                  new Date(),
+                                  { addSuffix: true, locale: dateFnLocale() }
+                              )
+                            : "...",
+                    })}
                 </Typography>
-                <Show
-                    when={
-                        isLiveQueryReady(feedMetadata) &&
-                        typeof feedMetadata().link !== "undefined"
-                    }
-                >
-                    <Link href={feedMetadata()!.link} target="_blank">
-                        Go to {new URL(feedMetadata()!.link!).hostname}...
-                    </Link>
-                </Show>
             </Box>
         </>
     );
