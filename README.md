@@ -31,3 +31,5 @@ Recommend use [pnpm](https://pnpm.io) to manage packages.
 
 ## LICENSE
 SPDX: AGPL-3.0-or-later
+
+The files under `public/` directory are not included. They are not allowed to be distributed with any other distribution.
