@@ -1,7 +1,5 @@
-import {
-    createI18nContext,
-    useI18n as useI18nUnwrapped,
-} from "@solid-primitives/i18n";
+import { ParentComponent, createContext, useContext } from "solid-js";
+import { createI18nContext, I18nContext } from "@solid-primitives/i18n";
 import { match } from "@formatjs/intl-localematcher";
 import { default as rootLogger } from "../logger";
 import { Accessor, createEffect, createSignal } from "solid-js";
@@ -31,6 +29,8 @@ export function autoMatchLangTag() {
  * A wrapper of `createI18nContext` from [@solid-primitives/i18n](https://github.com/solidjs-community/solid-primitives/tree/main/packages/i18n#readme).
  *
  * This wrapper will set the locale based on app settings and `autoMatchLangTag()` result.
+ *
+ * This wrapper does not include the context for {@link useDateFnLocale}, use {@link I18nScope} instead.
  */
 export function makeI18nContext(
     init?: Record<string, Record<string, unknown>>
@@ -47,49 +47,17 @@ export function makeI18nContext(
     return value;
 }
 
-/**
- * A wrapper of `useI18n` from [@solid-primitives/i18n](https://github.com/solidjs-community/solid-primitives/tree/main/packages/i18n#readme).
- *
- * This wrapper will automatically load the string file for the current language.
- */
-export function useI18n() {
-    const value = useI18nUnwrapped();
-    const [, { locale, add, dict }] = value;
-
-    createEffect(() => {
-        const current = locale();
-        if (!dict(current)) {
-            const target = `../strings/${current}.json`;
-            synchronised("i18n-wrapper-load", async () => {
-                if (dict(current)) return;
-                await import(`../strings/${current}.json`)
-                    .then((mod: Record<string, any>) => {
-                        add(current, mod);
-                        logger.debug({ act: "load", stat: "ok", target });
-                    })
-                    .catch((reason) => {
-                        logger.fatal(
-                            { act: "load", stat: "failed", reason, target },
-                            "failed to load language",
-                            current
-                        );
-                    });
-            });
-        }
-    });
-
-    return value;
-}
+const DateFnLocaleCx = createContext<Accessor<Locale>>(() => en_GB);
 
 const cachedDateFnLocale: Record<string, Locale> = {
     en_GB,
 };
 
-type TemplateFn = (
+type TemplateFn = <T = any>(
     key: string,
     params?: Record<string, any>,
     defaultValue?: string
-) => string;
+) => T;
 
 export function autoMatchRegion(t: TemplateFn) {
     return t("defaultRegion", undefined, "GB");
@@ -131,16 +99,35 @@ async function importDateFnLocale(tag: string): Promise<Locale> {
 }
 
 /**
- * Get the {@link Locale} object for date-fns.
- *
- * @returns Accessor for Locale
+ * Provides runtime values and fetch dependencies for I18N and L10N
  */
-export function useDateFnLocale(): Accessor<Locale> {
-    const [t, { locale }] = useI18n();
-    const [dateFnLocale, setDateFnLocale] = createSignal(
-        cachedDateFnLocale[locale()] ? cachedDateFnLocale[locale()] : en_GB
-    );
+export const I18nScope: ParentComponent = (props) => {
+    const cx = makeI18nContext();
+    const [t, { locale, add, dict }] = cx;
+    const [dateFnLocale, setDateFnLocale] = createSignal(en_GB);
     const region = useRegion(t);
+
+    createEffect(() => {
+        const current = locale();
+        if (!dict(current)) {
+            const target = `../strings/${current}.json`;
+            synchronised("i18n-wrapper-load", async () => {
+                if (dict(current)) return;
+                await import(`../strings/${current}.json`)
+                    .then((mod: Record<string, any>) => {
+                        add(current, mod);
+                        logger.debug({ act: "load", stat: "ok", target });
+                    })
+                    .catch((reason) => {
+                        logger.fatal(
+                            { act: "load", stat: "failed", reason, target },
+                            "failed to load language",
+                            current
+                        );
+                    });
+            });
+        }
+    });
 
     createEffect(() => {
         const currentLangTag = locale();
@@ -185,5 +172,25 @@ export function useDateFnLocale(): Accessor<Locale> {
         }
     });
 
-    return dateFnLocale;
+    return (
+        <I18nContext.Provider value={cx}>
+            <DateFnLocaleCx.Provider value={dateFnLocale}>
+                {props.children}
+            </DateFnLocaleCx.Provider>
+        </I18nContext.Provider>
+    );
+};
+
+export { useI18n } from "@solid-primitives/i18n";
+
+/**
+ * Get the {@link Locale} object for date-fns.
+ *
+ * This function must be using in {@link I18nScope}
+ *
+ * @returns Accessor for Locale
+ */
+export function useDateFnLocale(): Accessor<Locale> {
+    const cx = useContext(DateFnLocaleCx);
+    return cx;
 }
