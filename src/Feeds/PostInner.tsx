@@ -9,6 +9,7 @@ import {
     Box,
 } from "@suid/material";
 import { aunwrap, fetchContent, getPost } from "lightstands-js";
+import { useStore } from "@nanostores/solid";
 
 import {
     Close as CloseIcon,
@@ -23,15 +24,15 @@ import { useScaffold } from "../common/Scaffold";
 import Delayed from "./Delayed";
 import Style from "../common/Style.module.css";
 import { isPostTagged, tagPostAndSync, untagPostAndSync } from "../stores/tags";
-import { useStore } from "@nanostores/solid";
 import { currentSessionStore } from "../stores/session";
 import AdvMenu, { getExpandableIconNumber } from "../common/AdvMenu";
 import AltShare, { AltSharingObject } from "./AltShare";
 import { useAppSettings } from "../stores/settings";
 import { useI18n } from "../platform/i18n";
+import { openExternalUrl } from "../platform/open-url";
+import useScrollDownDetector from "../common/useScrollDownDetector";
 
 import "./PostInner.css";
-import { openExternalUrl } from "../platform/open-url";
 
 interface PostInnerProps {
     feedUrlBlake3: string;
@@ -39,8 +40,6 @@ interface PostInnerProps {
 }
 
 const PostInner: Component<PostInnerProps> = (props) => {
-    let lastScrollTop = 0;
-
     const appSettings = useAppSettings();
     const client = useClient();
     const session = useStore(currentSessionStore);
@@ -65,8 +64,8 @@ const PostInner: Component<PostInnerProps> = (props) => {
             return await response.text();
         }
     );
-    const [scrolled, setScrolled] = createSignal(false);
-    const [scrolling, setScrolling] = createSignal(false);
+    const [{ scrolling, scrolled }, handleContainerScroll] =
+        useScrollDownDetector();
     const isPermanentDrawerOpen = () =>
         scaffoldCx.state.drawerOpen &&
         scaffoldCx.state.drawerType == "permanent";
@@ -257,20 +256,6 @@ const PostInner: Component<PostInnerProps> = (props) => {
         }
         return items;
     };
-
-    const onContainerScroll = (
-        ev: UIEvent & { currentTarget: HTMLDivElement; target: Element }
-    ) => {
-        setScrolled(ev.currentTarget.scrollTop !== 0);
-        const scrollTop = Math.max(0, ev.target.scrollTop);
-        const maxScrollTop = ev.target.scrollHeight - ev.target.clientHeight;
-        if (scrollTop > lastScrollTop && scrollTop < maxScrollTop) {
-            setScrolling(true);
-        } else {
-            setScrolling(false);
-        }
-        lastScrollTop = scrollTop;
-    };
     return (
         <>
             <Paper
@@ -293,7 +278,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
 
                 <Box
                     sx={{ overflow: "auto", overscrollBehavior: "contain" }}
-                    onScroll={onContainerScroll}
+                    onScroll={handleContainerScroll}
                 >
                     <Toolbar
                         role="toolbar"

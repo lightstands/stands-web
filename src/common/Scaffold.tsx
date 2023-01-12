@@ -11,6 +11,7 @@ import {
 import { createStore, Store } from "solid-js/store";
 
 import NviDrawerList from "./NviDrawerList";
+import useScrollDownDetector from "./useScrollDownDetector";
 
 interface ScaffoldProps {}
 
@@ -38,6 +39,7 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
     const [el, setEl] = createSignal<HTMLDivElement>();
     const [drawerOpen, setDrawerOpen] = createSignal(false);
     const size = createElementSize(el);
+    const [{ scrolling }, handleContainerScroll] = useScrollDownDetector();
     const [state, setState] = createStore<ScaffoldState>({
         drawerType: "temporary",
         drawerOpen: false,
@@ -78,6 +80,9 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
                 : null,
         });
     });
+    createEffect(() => {
+        setState({ scrollingDown: scrolling() });
+    });
     return (
         <Cx.Provider value={cx}>
             <Box
@@ -114,17 +119,7 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
                 </Drawer>
                 <Box
                     sx={{ height: "100vh", flexGrow: 1, overflowY: "auto" }}
-                    onScroll={(ev) => {
-                        const currentScrollTop = Math.max(
-                            ev.currentTarget.scrollTop,
-                            0
-                        ); // Safari for iOS may give negative number, forced to 0
-                        setState(
-                            "scrollingDown",
-                            currentScrollTop > lastScrollTop
-                        );
-                        lastScrollTop = currentScrollTop;
-                    }}
+                    onScroll={handleContainerScroll}
                 >
                     {props.children}
                 </Box>
