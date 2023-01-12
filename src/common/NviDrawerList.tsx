@@ -19,7 +19,7 @@ import {
 import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
 import { useNavigate } from "./nav";
-import { useI18n } from "./i18n-wrapper";
+import { useI18n } from "../platform/i18n";
 
 const FEED_POST_REGEXP = /\/feeds\/(.*?)\/posts\/(.+)\/?$/;
 const FEED_REGEXP = /\/feeds\/([^\/]*?)\/?(?!.+)$/;

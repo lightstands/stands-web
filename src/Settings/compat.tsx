@@ -14,7 +14,7 @@ import SharedAppBar from "../common/SharedAppBar";
 import SettingListInject from "./setting-list-inject.css?inline";
 import CommonStyle from "../common/Style.module.css";
 import { setAppSetting, useAppSettings } from "../stores/settings";
-import { useI18n } from "../common/i18n-wrapper";
+import { useI18n } from "../platform/i18n";
 
 const CompatPage: Component = () => {
     const appSettings = useAppSettings();

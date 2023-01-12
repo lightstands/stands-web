@@ -26,7 +26,7 @@ import SettingListInject from "./setting-list-inject.css?inline";
 import { forcedFullSync, getWorkingTasks } from "../common/synmgr";
 import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
-import { useDateFnLocale, useI18n } from "../common/i18n-wrapper";
+import { useDateFnLocale, useI18n } from "../platform/i18n";
 
 // Compatibility table see https://devdocs.io/dom/storagemanager
 function isOverviewSupported() {

@@ -59,7 +59,7 @@ import {
     SUPPORTED_LANGS,
     useDateFnLocale,
     useI18n,
-} from "../common/i18n-wrapper";
+} from "../platform/i18n";
 import { openExternalUrl } from "../platform/open-url";
 
 const LANG_NAMES = new Map([

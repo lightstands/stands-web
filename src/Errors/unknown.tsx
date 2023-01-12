@@ -4,7 +4,7 @@
 // Copy from https://github.com/TheMagicBoard/Web-project/blob/master/src/pages/ErrorPage/index.tsx
 import { useLocation } from "@solidjs/router";
 import { Component, Match, Switch } from "solid-js";
-import { useI18n } from "../common/i18n-wrapper";
+import { useI18n } from "../platform/i18n";
 
 interface ErrorPageProps {
     httpErrCode: number;

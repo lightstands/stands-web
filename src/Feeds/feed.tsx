@@ -57,7 +57,7 @@ import { useClient } from "../client";
 import ToolbarTitle from "../common/ToolbarTitle";
 
 import PostListItem from "../common/PostListItem";
-import { useDateFnLocale, useI18n } from "../common/i18n-wrapper";
+import { useDateFnLocale, useI18n } from "../platform/i18n";
 import { openExternalUrl } from "../platform/open-url";
 
 function isLiveQueryReady<T>(

@@ -65,7 +65,7 @@ import BottomSheet from "../common/BottomSheet";
 import AddFeedDlg from "./AddFeedDlg";
 
 import "../common/patchs/mui-list.css";
-import { useI18n } from "../common/i18n-wrapper";
+import { useI18n } from "../platform/i18n";
 
 const DefaultFeedListPage: Component = () => {
     useSync();

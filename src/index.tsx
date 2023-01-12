@@ -9,7 +9,7 @@ import type { ClientConfig } from "lightstands-js";
 
 import App from "./App";
 import { ClientProvider } from "./client";
-import { I18nScope } from "./common/i18n-wrapper";
+import { I18nScope } from "./platform/i18n";
 
 import "./index.css";
 

@@ -5,7 +5,7 @@ import { default as rootLogger } from "../logger";
 import { Accessor, createEffect, createSignal } from "solid-js";
 import { settingStore, useAppSettings } from "../stores/settings";
 import en_GB from "date-fns/locale/en-GB";
-import { synchronised } from "./locks";
+import { synchronised } from "../common/locks";
 
 const logger = rootLogger.child({ c: "common/i18n-wrapper" });
 

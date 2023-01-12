@@ -14,7 +14,7 @@ import ToolbarTitle from "../common/ToolbarTitle";
 import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
 import { addFeedToList } from "../stores/feedlists";
-import { useI18n } from "../common/i18n-wrapper";
+import { useI18n } from "../platform/i18n";
 import { syncPostMetaOf } from "../stores/postmeta";
 
 interface AddFeedDlgProps {
