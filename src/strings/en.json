@@ -88,5 +88,10 @@
     "overviewUnavailable": "Overview unavailable",
     "storageLess1PaUsed": "Less than 1% used",
     "storageUsed": "{{n}}% used",
-    "dataAutoUpdateTip": "LightStands for Web can automatically keep the data up to date."
+    "dataAutoUpdateTip": "LightStands for Web can automatically keep the data up to date.",
+    "contentInProgress": "Waiting for traffic...",
+    "markReadAction": "Mark as read",
+    "markUnreadAction": "Mark as unread",
+    "openLinkAction": "Open link...",
+    "shareAction": "Share"
 }

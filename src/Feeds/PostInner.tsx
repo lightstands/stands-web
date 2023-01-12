@@ -28,6 +28,7 @@ import { currentSessionStore } from "../stores/session";
 import AdvMenu, { getExpandableIconNumber } from "../common/AdvMenu";
 import AltShare, { AltSharingObject } from "./AltShare";
 import { useAppSettings } from "../stores/settings";
+import { useI18n } from "../platform/i18n";
 
 import "./PostInner.css";
 import { openExternalUrl } from "../platform/open-url";
@@ -82,6 +83,8 @@ const PostInner: Component<PostInnerProps> = (props) => {
 
     const [alterSharingObject, setAlterSharingObject] =
         createSignal<AltSharingObject>();
+
+    const [t] = useI18n();
 
     const markAsRead = async () => {
         const currentSession = session();
@@ -175,7 +178,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
                         size="large"
                         color="inherit"
                         class="tooltip"
-                        aria-description="Mark as unread"
+                        aria-description={t("markUnreadAction")}
                         onClick={markAsUnread}
                         disabled={!postMetadata()}
                     >
@@ -186,7 +189,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
                         size="large"
                         color="inherit"
                         class="tooltip"
-                        aria-description="Mark as read"
+                        aria-description={t("markReadAction")}
                         onClick={markAsRead}
                         disabled={!postMetadata()}
                     >
@@ -201,7 +204,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
                     size="large"
                     color="inherit"
                     class="tooltip"
-                    aria-description="Share"
+                    aria-description={t("shareAction")}
                     disabled={!canSharePostLink()}
                     onClick={sharePostLink}
                 >
@@ -220,7 +223,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
                 disabled={postMetadata.loading || !postMetadata()?.link}
                 onClick={() => openExternalUrl(postMetadata()!.link!)}
             >
-                <ListItemText primary="Open link..." />
+                <ListItemText primary={t("openLinkAction")} />
             </ListItemButton>,
         ];
         if (n - items.length < 0) {
@@ -229,15 +232,27 @@ const PostInner: Component<PostInnerProps> = (props) => {
                     disabled={!canSharePostLink()}
                     onClick={sharePostLink}
                 >
-                    <ListItemText primary="Share..." />
+                    <ListItemText primary={t("shareAction")} />
                 </ListItemButton>
             );
         }
         if (n - items.length < 0 && session()) {
             items.unshift(
-                <ListItemButton disabled={!postMetadata()} onClick={markAsRead}>
-                    <ListItemText primary="Mark as read" />
-                </ListItemButton>
+                isPostRead() ? (
+                    <ListItemButton
+                        disabled={!postMetadata()}
+                        onClick={markAsUnread}
+                    >
+                        <ListItemText primary={t("markUnreadAction")} />
+                    </ListItemButton>
+                ) : (
+                    <ListItemButton
+                        disabled={!postMetadata()}
+                        onClick={markAsRead}
+                    >
+                        <ListItemText primary={t("markReadAction")} />
+                    </ListItemButton>
+                )
             );
         }
         return items;
@@ -333,7 +348,7 @@ const PostInner: Component<PostInnerProps> = (props) => {
                                             textAlign: "center",
                                         }}
                                     >
-                                        Waiting for traffic...
+                                        {t("contentInProgress")}
                                     </Typography>
                                 </Delayed>
                             }

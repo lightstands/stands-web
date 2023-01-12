@@ -87,5 +87,10 @@
     "overviewUnavailable": "概览不可用",
     "storageLess1PaUsed": "存储空间用量少于1%",
     "storageUsed": "使用了{{n}}%存储空间",
-    "dataAutoUpdateTip": "LightStands for Web可以自动与LightStands同步信息。"
+    "dataAutoUpdateTip": "LightStands for Web可以自动与LightStands同步信息。",
+    "contentInProgress": "正在下载内容……",
+    "markReadAction": "标记为已读",
+    "markUnreadAction": "标记为未读",
+    "openLinkAction": "打开链接...",
+    "shareAction": "分享"
 }
