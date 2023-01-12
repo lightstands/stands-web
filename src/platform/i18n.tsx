@@ -117,9 +117,9 @@ export const I18nScope: ParentComponent = (props) => {
             const target = `../strings/${current}.json`;
             synchronised("i18n-wrapper-load", async () => {
                 if (dict(current)) return;
-                await import(`../strings/${current}.json`)
-                    .then((mod: Record<string, any>) => {
-                        add(current, mod);
+                await import(`../strings/${current}.json?raw`)
+                    .then((mod: { default: string }) => {
+                        add(current, JSON.parse(mod.default));
                         logger.debug({ act: "load", stat: "ok", target });
                     })
                     .catch((reason) => {
