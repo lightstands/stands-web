@@ -1,5 +1,9 @@
 import { ParentComponent, createContext, useContext } from "solid-js";
-import { createI18nContext, I18nContext } from "@solid-primitives/i18n";
+import {
+    createI18nContext,
+    I18nContext,
+    useI18n as useI18nUnwrapped,
+} from "@solid-primitives/i18n";
 import { match } from "@formatjs/intl-localematcher";
 import { default as rootLogger } from "../logger";
 import { Accessor, createEffect, createSignal } from "solid-js";
@@ -181,7 +185,12 @@ export const I18nScope: ParentComponent = (props) => {
     );
 };
 
-export { useI18n } from "@solid-primitives/i18n";
+/**
+ * A wrapper of `useI18n` from [@solid-primitives/i18n](https://github.com/solidjs-community/solid-primitives/tree/main/packages/i18n#readme).
+ */
+export function useI18n() {
+    return useI18nUnwrapped();
+}
 
 /**
  * Get the {@link Locale} object for date-fns.
