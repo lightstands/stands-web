@@ -9,6 +9,7 @@ import {
 import ToolbarTitle from "../common/ToolbarTitle";
 import BottomSheet from "../common/BottomSheet";
 import ToolbarIcon from "../common/ToolbarIcon";
+import { useI18n } from "../platform/i18n";
 
 import "./AltShare.css";
 
@@ -68,7 +69,12 @@ interface AltShareProps {
 
 type BuiltInSupportedMethod = "copyLink";
 
+function reverseQuote(s: string) {
+    return s.replace('"', "'").replace("'", '"');
+}
+
 const AltShare: Component<AltShareProps> = (props) => {
+    const [t] = useI18n();
     const canCopyLink = () => {
         return Boolean(
             navigator.clipboard &&
@@ -114,10 +120,10 @@ const AltShare: Component<AltShareProps> = (props) => {
                 <ToolbarTitle
                     primary={
                         props.sharing?.title
-                            ? `Sharing "${props.sharing.title
-                                  .replace('"', "'")
-                                  .replace("'", '"')}"`
-                            : "Sharing..."
+                            ? t("sharingTitle", {
+                                  title: reverseQuote(props.sharing.title),
+                              })
+                            : t("sharingTitleWithoutTitle")
                     }
                 />
             </Toolbar>
@@ -142,9 +148,7 @@ const AltShare: Component<AltShareProps> = (props) => {
                                 alignItems: "center",
                             }}
                         >
-                            <Typography>
-                                No sharing method available.
-                            </Typography>
+                            <Typography>{t("sharingUnavailable")}</Typography>
                         </Box>
                     }
                 >
@@ -152,7 +156,7 @@ const AltShare: Component<AltShareProps> = (props) => {
                         <li>
                             <ShareIconButton
                                 icon={<ContentCopyIcon />}
-                                title="Copy link"
+                                title={t("sharingCpLink")}
                                 iconBackgroundColor="whitesmoke"
                                 onClick={copyLink}
                             />

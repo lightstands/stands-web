@@ -74,6 +74,30 @@
                 "src/Errors/unknown.tsx"
             ]
         },
+        "sharingTitle": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/AltShare.tsx"
+            ]
+        },
+        "sharingTitleWithoutTitle": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/AltShare.tsx"
+            ]
+        },
+        "sharingUnavailable": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/AltShare.tsx"
+            ]
+        },
+        "sharingCpLink": {
+            "type": "string",
+            "paths": [
+                "src/Feeds/AltShare.tsx"
+            ]
+        },
         "markUnreadAction": {
             "type": "string",
             "paths": [

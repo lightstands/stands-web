@@ -93,5 +93,9 @@
     "markReadAction": "Mark as read",
     "markUnreadAction": "Mark as unread",
     "openLinkAction": "Open link...",
-    "shareAction": "Share"
+    "shareAction": "Share",
+    "sharingCpLink": "Copy link",
+    "sharingTitle": "Sharing \"{{title}}\"",
+    "sharingTitleWithoutTitle": "Sharing...",
+    "sharingUnavailable": "No sharing method available."
 }

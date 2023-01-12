@@ -92,5 +92,9 @@
     "markReadAction": "标记为已读",
     "markUnreadAction": "标记为未读",
     "openLinkAction": "打开链接...",
-    "shareAction": "分享"
+    "shareAction": "分享",
+    "sharingCpLink": "复制链接",
+    "sharingTitle": "分享 \"{{title}}\"",
+    "sharingTitleWithoutTitle": "分享到...",
+    "sharingUnavailable": "分享不可用，没有可用的分享方法。"
 }
