@@ -1,7 +1,7 @@
 /* @refresh reload */
 // Copyright 2022 Rubicon.
 // SPDX-License-Identifier: 	AGPL-3.0-or-later
-import "@formatjs/intl-locale";
+import "./autopolyfill";
 
 import { render } from "solid-js/web";
 import { Router } from "@solidjs/router";

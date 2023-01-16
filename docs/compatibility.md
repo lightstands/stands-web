@@ -58,7 +58,24 @@ For processing about time & date, use `date-fns` package.
 
 ### CSS Generals
 
-| Name                                              | Available | Note                                                                                       |
-|---------------------------------------------------|-----------|--------------------------------------------------------------------------------------------|
-| `position: sticky`                                | Yes       |                                                                                            |
-| Table elements as `sticky` positioning containers | Yes       | https://developer.mozilla.org/en-US/docs/Web/CSS/position#browser_compatibility Firefox 🐛 |
+| Name                                              | Available                                                                                                   | Note                                                                                                             |
+|---------------------------------------------------|-------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| `position: sticky`                                | Yes                                                                                                         |                                                                                                                  |
+| Table elements as `sticky` positioning containers | Yes                                                                                                         | https://developer.mozilla.org/en-US/docs/Web/CSS/position#browser_compatibility Firefox 🐛                       |
+| `:focus-visible`                                  | Yes (polyfilled via postcss, postcss-preset-env and [focus-visible](https://github.com/WICG/focus-visible)) | https://caniuse.com/css-focus-visible ( Chrome 86+, Edge 86+, Safari (and on iOS) 15.4+, Firefox 85+, Opera 72+) |
+| `:blank`                                          | No                                                                                                          | https://caniuse.com/mdn-css_selectors_blank (No browser implemented this feature)                                |
+| `:focus-within`                                   | Yes                                                                                                         |                                                                                                                  |
+| `:has()`                                          | No                                                                                                          | https://caniuse.com/css-has (Chrome 105+, Edge 105+, Safari (and on iOS) 15.4+, Firefox 🚫, Opera 91+)           |
+
+### Media Query
+| Name                   | Available                                                                     | Note                                                             |
+|------------------------|-------------------------------------------------------------------------------|------------------------------------------------------------------|
+| `prefers-color-scheme` | Yes (polyfilled via postcss, postcss-preset-env and css-prefers-color-scheme) | https://caniuse.com/prefers-color-scheme (Chrome 76+, Opera 62+) |
+
+### JavaScript DOM
+
+| Name                          | Available | Note                                                                                                |
+|-------------------------------|-----------|-----------------------------------------------------------------------------------------------------|
+| `Element.prototype.classList` | Yes       |                                                                                                     |
+| `MutationObserver`            | Yes       |                                                                                                     |
+| `requestAnimationFrame`       | Yes       | https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame#browser_compatibility |
