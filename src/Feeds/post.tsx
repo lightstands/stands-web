@@ -1,18 +1,13 @@
 import { useParams } from "@solidjs/router";
-import { Modal } from "@suid/material";
 import { Component } from "solid-js";
 import { useSync } from "../common/synmgr";
 
 import PostInner from "./PostInner";
 
-const PostSheet: Component = () => {
+const PostPage: Component = () => {
     useSync();
     const args = useParams<{ feed: string; post: string }>();
-    return (
-        <Modal open={true}>
-            <PostInner feedUrlBlake3={args.feed} postIdBlake3={args.post} />
-        </Modal>
-    );
+    return <PostInner feedUrlBlake3={args.feed} postIdBlake3={args.post} />;
 };
 
-export default PostSheet;
+export default PostPage;

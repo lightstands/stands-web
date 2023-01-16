@@ -67,16 +67,18 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
             }
         }
     );
+
+    const handleJustNavigate = (path: string) => {
+        navigate(path);
+        props.afterItemClicked({});
+    };
     return (
         <>
             <List sx={{ width: "100%", height: "100%" }} disablePadding>
                 <Show when={!!currentSession()}>
                     <ListItemButton
                         selected={pathname() === "/"}
-                        onClick={() => {
-                            navigate("/");
-                            props.afterItemClicked({});
-                        }}
+                        onClick={[handleJustNavigate, "/"]}
                     >
                         <ListItemIcon>
                             <TimelineIcon />
@@ -85,10 +87,7 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
                     </ListItemButton>
                     <ListItemButton
                         selected={pathname() === "/feedlists/default"}
-                        onClick={() => {
-                            navigate("/feedlists/default");
-                            props.afterItemClicked({});
-                        }}
+                        onClick={[handleJustNavigate, "/feedlists/default"]}
                     >
                         <ListItemIcon>
                             <ListIcon />
@@ -102,6 +101,10 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
                         <ListItemButton
                             sx={{ pl: 4 }}
                             selected={!!feedPostConfig()?.feed}
+                            onClick={[
+                                handleJustNavigate,
+                                `/feeds/${feedPostConfig()?.feed}/`,
+                            ]}
                         >
                             <ListItemText
                                 inset={!!currentSession()}
@@ -126,14 +129,12 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
                     fallback={
                         <>
                             <ListItemButton
-                                onClick={() => {
-                                    navigate(
-                                        `/sign-in?back=${encodeURIComponent(
-                                            pathname()
-                                        )}`
-                                    );
-                                    props.afterItemClicked({});
-                                }}
+                                onClick={[
+                                    handleJustNavigate,
+                                    `/sign-in?back=${encodeURIComponent(
+                                        pathname()
+                                    )}`,
+                                ]}
                             >
                                 <ListItemText primary={t("signIn")} />
                             </ListItemButton>
@@ -150,10 +151,7 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
                 >
                     <ListItemButton
                         selected={pathname().startsWith("/settings")}
-                        onClick={() => {
-                            navigate("/settings");
-                            props.afterItemClicked({});
-                        }}
+                        onClick={[handleJustNavigate, "/settings"]}
                     >
                         <ListItemIcon>
                             <SettingsIcon />

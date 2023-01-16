@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "@solidjs/router";
+import { useParams } from "@solidjs/router";
 import {
     Component,
     createEffect,
@@ -194,7 +194,6 @@ const FeedPage: Component = () => {
     });
     return (
         <>
-            <Outlet /> {/* For post dialog */}
             <SharedAppBar
                 position="sticky"
                 hide={scaffoldCx.state.scrollingDown}

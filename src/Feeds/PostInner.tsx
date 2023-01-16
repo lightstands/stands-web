@@ -261,11 +261,6 @@ const PostInner: Component<PostInnerProps> = (props) => {
             <Paper
                 sx={{
                     display: "flex",
-                    position: "relative",
-                    left: isPermanentDrawerOpen() ? "240px" : undefined,
-                    maxWidth: isPermanentDrawerOpen()
-                        ? "calc(100% - 240px)"
-                        : "100%",
                     height: "100%",
                     flexDirection: "column",
                     borderRadius: "1px",

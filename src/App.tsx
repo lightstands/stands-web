@@ -77,10 +77,8 @@ const App: Component = () => {
                     <Route path="/default" component={DefaultFeedListPage} />
                 </Route>
                 <Route path="/feeds">
-                    <Route path="/:feed" component={() => <FeedPage />}>
-                        <Route path="/" />
-                        <Route path="/posts/:post" component={PostPage} />
-                    </Route>
+                    <Route path="/:feed/posts/:post" component={PostPage} />
+                    <Route path="/:feed" component={FeedPage} />
                 </Route>
             </Route>
 
