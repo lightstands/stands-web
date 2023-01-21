@@ -3,12 +3,11 @@
  * SPDX-License-Identifier: 	AGPL-3.0-or-later
  */
 
-
 @media screen and (width >= 600px) {
     .SmartDialog {
         width: 560px;
         height: fit-content;
-        position: absolute;
+        position: relative;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -19,7 +18,7 @@
     .SmartDialog {
         min-width: 120px;
         width: 100%;
-        position: absolute;
+        position: relative;
         top: 0px;
         bottom: 0px;
     }

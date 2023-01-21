@@ -245,8 +245,11 @@ const ConfirmPage: Component = () => {
     };
     return (
         <>
-            <Box class={Style.SmartDialog}>
-                <Card elevation={isMidSmallerScreen() ? 0 : 1}>
+            <Box sx={{ height: "100%" }}>
+                <Card
+                    class={Style.SmartDialog}
+                    elevation={isMidSmallerScreen() ? 0 : 1}
+                >
                     <Switch>
                         <Match when={app.loading}>
                             <LinearProgress />
