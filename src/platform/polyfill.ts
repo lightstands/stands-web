@@ -1,5 +1,5 @@
-import hasFocusVisible from "./platform/feature/css/focus-visible";
-import hasPreferColorScheme from "./platform/feature/mediaquery/prefers-color-scheme";
+import hasFocusVisible from "./feature/css/focus-visible";
+import hasPreferColorScheme from "./feature/mediaquery/prefers-color-scheme";
 
 import "@formatjs/intl-locale";
 
