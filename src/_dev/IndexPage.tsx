@@ -7,9 +7,7 @@ const IndexPage: Component = () => {
         <>
             <Typography variant="h6">Developer Pages</Typography>
             <ul>
-                <li>
-                    <Link href="/_dev/oauth2">OAuth 2 Playground</Link>
-                </li>
+                <li>OAuth 2 Playground (removed)</li>
                 <li>
                     <Link href="/_dev/session">Current Session</Link>
                 </li>
