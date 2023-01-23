@@ -5,8 +5,6 @@ import { Component, For, Show } from "solid-js";
 import { Outlet, Route, Routes } from "@solidjs/router";
 import { lazy } from "solid-js";
 
-const OAuth2ConfirmPage = lazy(() => import("./OAuth2/confirm"));
-
 const SessionSignIn = lazy(() => import("./Sessions/signin"));
 
 const devPages = import.meta.env.DEV
@@ -44,7 +42,6 @@ const SettingCompatPage = lazy(() => import("./Settings/compat"));
 const App: Component = () => {
     return (
         <Routes>
-            <Route path="/oauth2" component={OAuth2ConfirmPage} />
             <Route path="/sign-in" component={SessionSignIn} />
             <Route path="/sign-out" component={SignOutPage} />
             <Route path="/sign-up">
