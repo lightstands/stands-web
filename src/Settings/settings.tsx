@@ -60,7 +60,6 @@ import {
     useDateFnLocale,
     useI18n,
 } from "../platform/i18n";
-import { openExternalUrl } from "../platform/open-url";
 
 const LANG_NAMES = new Map([
     ["en", "English"],
@@ -105,6 +104,8 @@ const SettingsPage: Component = () => {
     const settings = useAppSettings();
     const [t, { locale }] = useI18n();
     const dateFnLocale = useDateFnLocale();
+
+    const pureNavigate = (to: string) => navigate(to);
 
     return (
         <>
@@ -314,7 +315,7 @@ const SettingsPage: Component = () => {
                     <Paper>
                         <ListItemButton
                             divider
-                            onClick={() => navigate("/settings/compatibility")}
+                            onClick={[pureNavigate, "/settings/compatibility"]}
                         >
                             <ListItemText
                                 primary={t(
@@ -338,7 +339,7 @@ const SettingsPage: Component = () => {
 
                         <ListItemButton
                             divider
-                            onClick={() => navigate("/settings/storage")}
+                            onClick={[pureNavigate, "/settings/storage"]}
                         >
                             <ListItemText
                                 primary={t("storageEntry", undefined)}
@@ -367,11 +368,9 @@ const SettingsPage: Component = () => {
                         </ListItem>
                         <ListItemButton
                             divider
-                            onClick={() =>
-                                openExternalUrl(
-                                    "https://github.com/lightstands/stands-web/"
-                                )
-                            }
+                            component={"a"}
+                            href="https://github.com/lightstands/stands-web/"
+                            rel="noopener"
                         >
                             <ListItemText
                                 primary={
@@ -384,15 +383,13 @@ const SettingsPage: Component = () => {
                         </ListItemButton>
                         <ListItemButton
                             divider
-                            onClick={() =>
-                                openExternalUrl(
-                                    "https://www.gnu.org/licenses/agpl-3.0.en.html"
-                                )
-                            }
+                            component="a"
+                            href="https://www.gnu.org/licenses/agpl-3.0.en.html"
+                            rel="noopener"
                         >
                             <ListItemText
                                 primary={
-                                    <Typography>
+                                    <Typography color="ButtonText">
                                         {t("freeSoftwareClaim", undefined)}
                                         <OpenInNewIcon fontSize="inherit" />
                                     </Typography>
