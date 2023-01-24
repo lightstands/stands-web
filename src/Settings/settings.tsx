@@ -81,27 +81,6 @@ const SettingsPage: Component = () => {
     } = useServiceWorker();
     const scaffoldCx = useScaffold();
     const [openSetPassword, setOpenSetPassword] = createSignal(false);
-    const [userPrivateInfo] = createResource(
-        (): [ClientConfig, { session: Session } | undefined] => [
-            client,
-            session(),
-        ],
-        async ([client, session]) => {
-            if (session) {
-                try {
-                    return await aunwrap(
-                        getUserPrivateInfo(
-                            client,
-                            session.session,
-                            session.session.accessTokenObject.userid
-                        )
-                    );
-                } catch (e) {
-                    return undefined;
-                }
-            }
-        }
-    );
     const settings = useAppSettings();
     const [t, { locale }] = useI18n();
     const dateFnLocale = useDateFnLocale();
@@ -150,51 +129,31 @@ const SettingsPage: Component = () => {
                             </ListItemButton>
                         </Paper>
                     </Show>
-                    <ListSubheader>{t("acctTitle", undefined)}</ListSubheader>
+                    <ListSubheader>{t("acctTitle")}</ListSubheader>
                     <Paper>
-                        <ListItemButton
-                            disabled={
-                                userPrivateInfo.loading ||
-                                typeof userPrivateInfo() === "undefined" ||
-                                true
+                        <ListItem
+                            component={"a"}
+                            href={
+                                import.meta.env.VITE_LIGHTSTANDS_USER_PANEL_BASE
                             }
-                            divider
                         >
                             <ListItemText
                                 primary={
-                                    userPrivateInfo()?.email
-                                        ? t("chEmailAddrButText", undefined)
-                                        : t("setEmailButText", undefined)
+                                    <Typography color="ButtonText">
+                                        {t(
+                                            "goToUserPanel",
+                                            {
+                                                domain: new URL(
+                                                    import.meta.env.VITE_LIGHTSTANDS_USER_PANEL_BASE
+                                                ).host,
+                                            },
+                                            "Use {{domain}} to manage your account"
+                                        )}
+                                        <OpenInNewIcon fontSize="inherit" />
+                                    </Typography>
                                 }
-                                secondary={userPrivateInfo()?.email}
                             />
-                        </ListItemButton>
-                        <ListItemButton
-                            disabled={
-                                userPrivateInfo.loading ||
-                                typeof userPrivateInfo() === "undefined" ||
-                                true
-                            }
-                            divider
-                        >
-                            <ListItemText
-                                primary={t("chUsernameButText", undefined)}
-                                secondary={userPrivateInfo()?.username || "..."}
-                            />
-                        </ListItemButton>
-                        <Show
-                            when={session()?.session.accessTokenObject.scope.includes(
-                                "user.change_password"
-                            )}
-                        >
-                            <ListItemButton
-                                onClick={() => setOpenSetPassword(true)}
-                            >
-                                <ListItemText
-                                    primary={t("setPassButText", undefined)}
-                                />
-                            </ListItemButton>
-                        </Show>
+                        </ListItem>
                     </Paper>
                     <ListSubheader>{t("general", {})}</ListSubheader>
                     <Paper>
