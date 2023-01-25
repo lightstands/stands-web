@@ -46,10 +46,6 @@ import {
     settingStore,
     useAppSettings,
 } from "../stores/settings";
-import {
-    requestPersistentStorage,
-    usePersistentStoragePermission,
-} from "../common/storage";
 import { useServiceWorker } from "../common/swbridge";
 import { useScaffold } from "../common/Scaffold";
 import guardSignIn from "../common/guardSignIn";
@@ -73,7 +69,6 @@ const SettingsPage: Component = () => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
-    const storagePermission = usePersistentStoragePermission();
     const {
         updateServiceWorker,
         needRefresh: [needRefresh],
@@ -327,23 +322,11 @@ const SettingsPage: Component = () => {
                         </ListItemButton>
                     </Paper>
                     <Paper>
-                        <Show when={storagePermission() === "prompt"}>
-                            <ListItemButton
-                                divider
-                                onClick={() => requestPersistentStorage()}
-                            >
-                                <ListItemText primary="Grant persistent storage permission" />
-                                {/* Rubicon: No need to translate, to be removed */}
-                            </ListItemButton>
-                        </Show>
-
                         <ListItemButton
                             divider
                             onClick={[pureNavigate, "/settings/storage"]}
                         >
-                            <ListItemText
-                                primary={t("storageEntry", undefined)}
-                            />
+                            <ListItemText primary={t("storage", undefined)} />
                         </ListItemButton>
                     </Paper>
                     <ListSubheader>

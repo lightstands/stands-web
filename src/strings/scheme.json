@@ -360,6 +360,26 @@
                 "src/Settings/compat.tsx"
             ]
         },
+        "storage": {
+            "type": "string",
+            "paths": [
+                "src/Settings/compat.tsx",
+                "src/Settings/storage.tsx",
+                "src/Settings/settings.tsx"
+            ]
+        },
+        "persistentStorage": {
+            "type": "string",
+            "paths": [
+                "src/Settings/compat.tsx"
+            ]
+        },
+        "persistentStorageExplain": {
+            "type": "string",
+            "paths": [
+                "src/Settings/compat.tsx"
+            ]
+        },
         "storageOverviewWorking": {
             "type": "string",
             "paths": [
@@ -400,13 +420,6 @@
             "type": "string",
             "paths": [
                 "src/Settings/storage.tsx"
-            ]
-        },
-        "storageEntry": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx",
-                "src/Settings/settings.tsx"
             ]
         },
         "overview": {

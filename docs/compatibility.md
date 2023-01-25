@@ -39,12 +39,12 @@ Note. 🚫 = Not implemented, 🐛 = Bug (inclduing inconsistence).
 
 ### JavaScript Generals
 
-| Name                                                         | Available                            | Note                                                                                                                                                                                              |
-|--------------------------------------------------------------|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| BigInt                                                       | No                                   | https://caniuse.com/bigint Chrome 67+, Firefox 68+, Opera 54+                                                                                                                                     |
-| BigInt64Array                                                | No                                   | https://caniuse.com/mdn-javascript_builtins_bigint64array Chrome 67+, Safari 15+, Firefox 68+, Opera 54+, Safari on iOS 15+                                                                       |
-| `import()`                                                   | Yes                                  |                                                                                                                                                                                                   |
-| Web Locks (`LockManager.{query,request}`, `navigator.locks`) | Yes (polyfill via `navigator.locks`) | https://developer.mozilla.org/en-US/docs/Web/API/Web_Locks_API Chrome 69+, Edge 79+, Firefox 96+, Opera 56+, Safari and Safari on iOS 15.4+. Recommend to use `synchronised` from `common/locks`. |
+| Name          | Available | Note                                                                                                                        |
+|---------------|-----------|-----------------------------------------------------------------------------------------------------------------------------|
+| BigInt        | No        | https://caniuse.com/bigint Chrome 67+, Firefox 68+, Opera 54+                                                               |
+| BigInt64Array | No        | https://caniuse.com/mdn-javascript_builtins_bigint64array Chrome 67+, Safari 15+, Firefox 68+, Opera 54+, Safari on iOS 15+ |
+| `import()`    | Yes       |                                                                                                                             |
+
 
 ### JavaScript `Intl`
 
@@ -74,8 +74,19 @@ For processing about time & date, use `date-fns` package.
 
 ### JavaScript DOM
 
-| Name                          | Available | Note                                                                                                |
-|-------------------------------|-----------|-----------------------------------------------------------------------------------------------------|
-| `Element.prototype.classList` | Yes       |                                                                                                     |
-| `MutationObserver`            | Yes       |                                                                                                     |
-| `requestAnimationFrame`       | Yes       | https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame#browser_compatibility |
+| Name                                                         | Available                            | Note                                                                                                                                                                                              |
+|--------------------------------------------------------------|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Element.prototype.classList`                                | Yes                                  |                                                                                                                                                                                                   |
+| `MutationObserver`                                           | Yes                                  |                                                                                                                                                                                                   |
+| `requestAnimationFrame`                                      | Yes                                  | https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame#browser_compatibility                                                                                               |
+| Web Locks (`LockManager.{query,request}`, `navigator.locks`) | Yes (polyfill via `navigator.locks`) | https://developer.mozilla.org/en-US/docs/Web/API/Web_Locks_API Chrome 69+, Edge 79+, Firefox 96+, Opera 56+, Safari and Safari on iOS 15.4+. Recommend to use `synchronised` from `common/locks`. |
+| StorageManager `.persist()`, `.persisted()`                  | No                                   | Safari (and on iOS) 15.2+. For the `persisted`, Recommended to use compatibility layer in `platform/perm/storage`                                                                                 |
+| StorageManager `.estimate`                                   | No                                   | Safari (and on iOS) 🚫                                                                                                                                                                            |
+
+
+### Web Permission API
+
+| Name                            | Available | Note                                                                                                                                                                                                                                                                                                                                         |
+|---------------------------------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Permission API                  | No        | https://caniuse.com/permissions-api Safari (and on iOS) 16+                                                                                                                                                                                                                                                                                  |
+| `persistent-storage` permission | No        | https://caniuse.com/mdn-api_permissions_permission_persistent-storage Chrome 71+, Safari (and on iOS) 🚫, Opera 58+. Recommended to use compatibility layer in `platform/perm/storage`. The implementation in Firefox works wired: It is still "prompt" even if `StorageManager.persisted()` resolved with `true` (tested on ver.108, Linux) |

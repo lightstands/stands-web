@@ -5,7 +5,6 @@ import {
     ListSubheader,
     Paper,
     Typography,
-    Link,
     ListItemButton,
     ListItemIcon,
     List,
@@ -98,7 +97,7 @@ const StoragePage: Component = () => {
     return (
         <Box>
             <SharedAppBar>
-                <ToolbarTitle primary={t("storageEntry")} />
+                <ToolbarTitle primary={t("storage")} />
             </SharedAppBar>
             <style>{SettingListInject}</style>
             <Box

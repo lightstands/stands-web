@@ -12,3 +12,7 @@ export function memorised(k: string, fn: () => boolean) {
         }
     };
 }
+
+export function isDefined(val: unknown): boolean {
+    return typeof val !== "undefined";
+}

@@ -16,7 +16,7 @@
     "autoRegion": "自动（{{regionName}})",
     "settingsTitle": "设置",
     "versionDescription": "{{pakVer}} 已更新{{lastUpdTimeDt}}",
-    "storageEntry": "存储空间",
+    "storage": "存储空间",
     "accessibility": "便利",
     "compatOptsEntry": "兼容性",
     "about": "关于",
@@ -96,5 +96,7 @@
     "sharingCpLink": "复制链接",
     "sharingTitle": "分享 \"{{title}}\"",
     "sharingTitleWithoutTitle": "分享到...",
-    "sharingUnavailable": "分享不可用，没有可用的分享方法。"
+    "sharingUnavailable": "分享不可用，没有可用的分享方法。",
+    "persistentStorage": "持久存储",
+    "persistentStorageExplain": "请求浏览器不删除该应用存储的资料。该选项在一些浏览器上表现得比较奇怪。"
 }

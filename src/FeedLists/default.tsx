@@ -20,11 +20,6 @@ import {
     List,
     ListItemText,
     ListItemButton,
-    Card,
-    CardContent,
-    Typography,
-    CardActions,
-    Button,
     ListItem,
 } from "@suid/material";
 import {
@@ -49,14 +44,9 @@ import ToolbarIcon from "../common/ToolbarIcon";
 import AdvMenu, { getExpandableIconNumber } from "../common/AdvMenu";
 import guardSignIn from "../common/guardSignIn";
 import SharedAppBar from "../common/SharedAppBar";
-import Style from "../common/Style.module.css";
 import { settingStore } from "../stores/settings";
 import { useSync } from "../common/synmgr";
 import { useNavigate } from "../common/nav";
-import {
-    requestPersistentStorage,
-    usePersistentStoragePermission,
-} from "../common/storage";
 import { useLiveQuery } from "../common/utils";
 import { getDefaultFeedList, removeFeedFromList } from "../stores/feedlists";
 import { currentSessionStore } from "../stores/session";
@@ -73,8 +63,6 @@ const DefaultFeedListPage: Component = () => {
     const client = useClient();
     const session = useStore(currentSessionStore);
     const navigate = useNavigate();
-    const storagePermission = usePersistentStoragePermission();
-    const settings = useStore(settingStore);
     const scaffoldCx = useScaffold();
     const [t] = useI18n();
     const [showAddFeed, setShowAddFeed] = createSignal(false);
@@ -141,10 +129,6 @@ const DefaultFeedListPage: Component = () => {
         top: number;
         left: number;
     }>();
-
-    const setStoragePermission = async () => {
-        await requestPersistentStorage();
-    };
 
     const onItemMouseDown = (feed: PublicFeed | null, ev: MouseEvent) => {
         if (ev.button === 2 && menuTarget() === false) {
@@ -416,46 +400,6 @@ const DefaultFeedListPage: Component = () => {
             </Show>
 
             <Box>
-                <Show
-                    when={
-                        storagePermission() === "prompt" &&
-                        !settings().ignorePermissionTip
-                    }
-                >
-                    <Card
-                        class={Style.FixedCenterX}
-                        sx={{ maxWidth: "560px", marginTop: "16px" }}
-                    >
-                        <CardContent>
-                            <Typography>
-                                The browser may wipe up our storage on your
-                                device.
-                            </Typography>
-                            <Typography>
-                                We need your permission to store data on your
-                                device. The data is only for your experience, we
-                                won't use the data to track you without your
-                                attention.
-                            </Typography>
-                            <Typography>
-                                You may find the option in "Settings" later.
-                            </Typography>
-                        </CardContent>
-                        <CardActions class={Style.ButtonGroupEndAligned}>
-                            <Button onClick={setStoragePermission}>Ok</Button>
-                            <Button
-                                onClick={() =>
-                                    settingStore.setKey(
-                                        "ignorePermissionTip",
-                                        true
-                                    )
-                                }
-                            >
-                                Ignore
-                            </Button>
-                        </CardActions>
-                    </Card>
-                </Show>
                 <main>
                     <List aria-label={t("feedListQuickExpl")}>
                         <For each={listItemDetails()}>

@@ -30,7 +30,7 @@
     "settingsTitle": "Settings",
     "signOut": "Sign out...",
     "sourceCode": "Source Code",
-    "storageEntry": "Storage",
+    "storage": "Storage",
     "upgradeTipConfirm": "Refresh and upgrade",
     "upgragdeTipTitle": "New version available",
     "versionDescription": "{{pakVer}} (updated {{lastUpdTimeDt}})",
@@ -97,5 +97,7 @@
     "sharingCpLink": "Copy link",
     "sharingTitle": "Sharing \"{{title}}\"",
     "sharingTitleWithoutTitle": "Sharing...",
-    "sharingUnavailable": "No sharing method available."
+    "sharingUnavailable": "No sharing method available.",
+    "persistentStorage": "Persistent storage",
+    "persistentStorageExplain": "Ask the browser do not delete data from this application. This option may be wired on some platforms."
 }
