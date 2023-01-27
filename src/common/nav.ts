@@ -42,10 +42,10 @@ export function useNavigate(): Navigator {
 export function isUsingNavProtocol(
     state: unknown
 ): state is WrappedState<unknown> {
-    return (
-        window.history.state &&
-        typeof window.history.state === "object" &&
-        typeof window.history.state.prevLoc === "string"
+    return !!(
+        state &&
+        typeof state === "object" &&
+        typeof (state as Record<string, unknown>)["prevLoc"] === "string"
     );
 }
 
