@@ -44,7 +44,7 @@
         "date-fns": "^2.29.3",
         "dexie": "^3.2.2",
         "focus-visible": "^5.2.0",
-        "lightstands-js": "^1.3.2",
+        "lightstands-js": "^1.4.2",
         "nanostores": "^0.7.1",
         "navigator.locks": "^0.8.6",
         "pino": "^8.8.0",

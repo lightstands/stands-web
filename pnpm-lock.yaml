@@ -23,7 +23,7 @@ specifiers:
   dexie: ^3.2.2
   eslint: ^8.31.0
   focus-visible: ^5.2.0
-  lightstands-js: ^1.3.2
+  lightstands-js: ^1.4.2
   nanostores: ^0.7.1
   navigator.locks: ^0.8.6
   pino: ^8.8.0
@@ -58,7 +58,7 @@ dependencies:
   date-fns: 2.29.3
   dexie: 3.2.2
   focus-visible: 5.2.0
-  lightstands-js: 1.4.1
+  lightstands-js: 1.4.2
   nanostores: 0.7.1
   navigator.locks: 0.8.6
   pino: 8.8.0
@@ -3438,8 +3438,8 @@ packages:
       type-check: 0.4.0
     dev: true
 
-  /lightstands-js/1.4.1:
-    resolution: {integrity: sha512-i0jdxpsxBNzqPkxJTqntmLCt4c6ZpH3Z5I5q2aF8wN4yJlJl/dmBy1mScOmOnOZkm4RoVNpdwigzqAVZwXG60Q==}
+  /lightstands-js/1.4.2:
+    resolution: {integrity: sha512-txwFlfU7CFfp/UCQE2U7bLxsdZGT0hhhiQ10DPchkd3PXq6anXlBEhk1lW5Vo6OP4XIQAdrx6oXz1DONcRiqnA==}
     engines: {node: '>=10'}
     dependencies:
       '@noble/hashes': 1.1.5
