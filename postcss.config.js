@@ -7,6 +7,7 @@ module.exports = {
                 "focus-within-pseudo-class": false, // The supported platforms already have this feature
                 "has-pseudo-class": false,
             },
+            enableClientSidePolyfills: true,
         }),
     ],
 };
