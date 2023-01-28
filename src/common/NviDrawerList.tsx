@@ -14,12 +14,14 @@ import {
     List as ListIcon,
     Settings as SettingsIcon,
     Timeline as TimelineIcon,
+    BrowserUpdated as BrowserUpdatedIcon,
 } from "@suid/icons-material";
 
 import { useClient } from "../client";
 import { currentSessionStore } from "../stores/session";
 import { useNavigate } from "./nav";
 import { useI18n } from "../platform/i18n";
+import { useServiceWorker } from "./swbridge";
 
 const FEED_POST_REGEXP = /\/feeds\/(.*?)\/posts\/(.+)\/?$/;
 const FEED_REGEXP = /\/feeds\/([^\/]*?)\/?(?!.+)$/;
@@ -35,6 +37,11 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
     const pathname = () => loc.pathname;
     const currentSession = useStore(currentSessionStore);
     const [t] = useI18n();
+    const {
+        needRefresh: [needRefresh],
+        updateServiceWorker,
+    } = useServiceWorker();
+
     const feedPostConfig = () => {
         const name = pathname();
         if (!name.startsWith("/feeds/")) {
@@ -57,6 +64,7 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
             }
         }
     };
+
     const [feedMetadata] = createResource(
         feedPostConfig,
         (conf): Promise<PublicFeed | undefined> => {
@@ -124,6 +132,16 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
             </List>
             <List disablePadding>
                 <Divider />
+                <Show when={needRefresh()}>
+                    <ListItemButton onClick={() => updateServiceWorker()}>
+                        <ListItemIcon>
+                            <BrowserUpdatedIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                            primary={t("upgradeTipConfirm", undefined)}
+                        />
+                    </ListItemButton>
+                </Show>
                 <Show
                     when={!!currentSession()}
                     fallback={
