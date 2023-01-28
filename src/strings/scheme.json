@@ -21,8 +21,15 @@
             "paths": [
                 "src/common/NviDrawerList.tsx",
                 "src/FeedLists/AddFeedDlg.tsx",
-                "src/FeedLists/default.tsx",
-                "src/FeedLists/timeline.tsx"
+                "src/FeedLists/timeline.tsx",
+                "src/FeedLists/default.tsx"
+            ]
+        },
+        "upgradeTipConfirm": {
+            "type": "string",
+            "paths": [
+                "src/common/NviDrawerList.tsx",
+                "src/Settings/settings.tsx"
             ]
         },
         "signIn": {
@@ -245,6 +252,30 @@
                 "src/FeedLists/AddFeedDlg.tsx"
             ]
         },
+        "localDayFormatDateFn": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/timeline.tsx"
+            ]
+        },
+        "today": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/timeline.tsx"
+            ]
+        },
+        "yesterday": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/timeline.tsx"
+            ]
+        },
+        "timelineVisitDefaultList": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/timeline.tsx"
+            ]
+        },
         "deleteMultiples": {
             "type": "string",
             "paths": [
@@ -303,30 +334,6 @@
             "type": "string",
             "paths": [
                 "src/FeedLists/default.tsx"
-            ]
-        },
-        "localDayFormatDateFn": {
-            "type": "string",
-            "paths": [
-                "src/FeedLists/timeline.tsx"
-            ]
-        },
-        "today": {
-            "type": "string",
-            "paths": [
-                "src/FeedLists/timeline.tsx"
-            ]
-        },
-        "yesterday": {
-            "type": "string",
-            "paths": [
-                "src/FeedLists/timeline.tsx"
-            ]
-        },
-        "timelineVisitDefaultList": {
-            "type": "string",
-            "paths": [
-                "src/FeedLists/timeline.tsx"
             ]
         },
         "compatOptsEntry": {
@@ -476,37 +483,13 @@
                 "src/Settings/settings.tsx"
             ]
         },
-        "upgradeTipConfirm": {
-            "type": "string",
-            "paths": [
-                "src/Settings/settings.tsx"
-            ]
-        },
         "acctTitle": {
             "type": "string",
             "paths": [
                 "src/Settings/settings.tsx"
             ]
         },
-        "chEmailAddrButText": {
-            "type": "string",
-            "paths": [
-                "src/Settings/settings.tsx"
-            ]
-        },
-        "setEmailButText": {
-            "type": "string",
-            "paths": [
-                "src/Settings/settings.tsx"
-            ]
-        },
-        "chUsernameButText": {
-            "type": "string",
-            "paths": [
-                "src/Settings/settings.tsx"
-            ]
-        },
-        "setPassButText": {
+        "goToUserPanel": {
             "type": "string",
             "paths": [
                 "src/Settings/settings.tsx"

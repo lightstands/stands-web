@@ -113,3 +113,13 @@ export const revokeSession = action(
 export const useSession = () => {
     return useStore(currentSessionStore);
 };
+
+export const addSession = action(
+    currentSessionStore,
+    "add",
+    (store, session: Session) => {
+        store.set({
+            session,
+        });
+    }
+);
