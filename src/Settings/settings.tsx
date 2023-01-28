@@ -131,11 +131,12 @@ const SettingsPage: Component = () => {
                     </Show>
                     <ListSubheader>{t("acctTitle")}</ListSubheader>
                     <Paper>
-                        <ListItem
+                        <ListItemButton
                             component={"a"}
                             href={
                                 import.meta.env.VITE_LIGHTSTANDS_USER_PANEL_BASE
                             }
+                            rel="noopener"
                         >
                             <ListItemText
                                 primary={
@@ -147,13 +148,13 @@ const SettingsPage: Component = () => {
                                                     import.meta.env.VITE_LIGHTSTANDS_USER_PANEL_BASE
                                                 ).host,
                                             },
-                                            "Use {{domain}} to manage your account"
+                                            "Manage your account"
                                         )}
                                         <OpenInNewIcon fontSize="inherit" />
                                     </Typography>
                                 }
                             />
-                        </ListItem>
+                        </ListItemButton>
                     </Paper>
                     <ListSubheader>{t("general", {})}</ListSubheader>
                     <Paper>

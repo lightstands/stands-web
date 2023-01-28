@@ -1,10 +1,26 @@
 // Copyright 2022 Rubicon.
 // SPDX-License-Identifier: 	AGPL-3.0-or-later
 
-import { useNavigate, useSearchParams } from "@solidjs/router";
-import Box from "@suid/material/Box";
-import Typography from "@suid/material/Typography";
-import { Component, createEffect } from "solid-js";
+import { useSearchParams } from "@solidjs/router";
+import { Box, Typography } from "@suid/material";
+import {
+    aunwrap,
+    completeAuthorizationCodeFlow,
+    OAuth2Error,
+} from "lightstands-js";
+import {
+    Component,
+    createEffect,
+    createSignal,
+    Match,
+    Show,
+    Switch,
+} from "solid-js";
+
+import { useClient } from "../client";
+import { useNavigate } from "../common/nav";
+import { getCodeVerifier } from "../stores/code-verifier";
+import { addSession, refresh } from "../stores/session";
 
 type Params = Record<string, string>;
 
@@ -13,23 +29,80 @@ type LSOAuth2CallbackSearchParams = Params & {
     state: string;
 };
 
-type LSOAuth2ErrorCallbackSearchParams = Params & {
-    error: string;
-    error_description: string;
-    error_uri?: string;
-    state?: string;
-};
+type LSOAuth2ErrorCallbackSearchParams = Params &
+    OAuth2Error & { state?: string };
+
+function isOAuth2Error(o: unknown): o is OAuth2Error {
+    if (typeof o === "object" && o !== null) {
+        const obj = o as Record<string, unknown>;
+        return (
+            typeof obj["error"] === "string" &&
+            typeof obj["error_description"] === "string"
+        );
+    }
+    return false;
+}
 
 const OAuth2Callback: Component = () => {
+    const client = useClient();
     const [searchParams] = useSearchParams<
         LSOAuth2CallbackSearchParams | LSOAuth2ErrorCallbackSearchParams
     >();
+    const [knownError, setKnownError] = createSignal<{
+        name: "oauth2" | "unknown";
+        reason?: unknown;
+    }>();
     const navigate = useNavigate();
+
+    const currentURI = () => {
+        const base = new URL(window.location.toString());
+        base.hash = "";
+        base.search = "";
+        return base;
+    };
+
+    const exchSession = async (code: string) => {
+        const verifier = getCodeVerifier();
+        if (verifier) {
+            try {
+                const newSession = await aunwrap(
+                    completeAuthorizationCodeFlow(
+                        client,
+                        currentURI().toString(),
+                        verifier,
+                        code
+                    )
+                );
+                addSession(newSession);
+                refresh(client);
+            } catch (e) {
+                if (isOAuth2Error(e)) {
+                    setKnownError({
+                        name: "oauth2",
+                        reason: e,
+                    });
+                } else {
+                    setKnownError({
+                        name: "unknown",
+                        reason: e,
+                    });
+                }
+            }
+        }
+    };
+
     createEffect(() => {
-        if (typeof searchParams.code !== "undefined") {
+        if (searchParams.code) {
             const params = searchParams as LSOAuth2CallbackSearchParams;
+            exchSession(params.code).then(() => {
+                navigate(params.state || "/");
+            });
         } else {
             const params = searchParams as LSOAuth2ErrorCallbackSearchParams;
+            setKnownError({
+                name: "oauth2",
+                reason: params,
+            });
         }
     });
 
@@ -57,6 +130,32 @@ const OAuth2Callback: Component = () => {
                 <Typography component="code">
                     {JSON.stringify(paramsObject, undefined, 2)}
                 </Typography>
+                <Show when={knownError()}>
+                    <Switch>
+                        <Match when={knownError()?.name === "oauth2"}>
+                            <Typography>
+                                There's an error during verification. Please try
+                                again later. If it's still, please let us know.
+                            </Typography>
+                            <Typography>
+                                {(knownError()!.reason as OAuth2Error).error},{" "}
+                                {
+                                    (knownError()!.reason as OAuth2Error)
+                                        .error_description
+                                }
+                            </Typography>
+                        </Match>
+                        <Match when={knownError()!.name === "unknown"}>
+                            <Typography>
+                                There's an unknown error. Please try again
+                                later. If it's still, please let us know.
+                            </Typography>
+                            <Typography>
+                                {String(knownError()!.reason)}
+                            </Typography>
+                        </Match>
+                    </Switch>
+                </Show>
             </Box>
         </>
     );

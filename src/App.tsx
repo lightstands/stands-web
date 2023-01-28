@@ -5,8 +5,6 @@ import { Component, For, Show } from "solid-js";
 import { Outlet, Route, Routes } from "@solidjs/router";
 import { lazy } from "solid-js";
 
-const SessionSignIn = lazy(() => import("./Sessions/signin"));
-
 const devPages = import.meta.env.DEV
     ? {
           "/": lazy(() => import("./_dev/IndexPage")),
@@ -19,7 +17,9 @@ const devPages = import.meta.env.DEV
 
 const UnknownErrorPage = lazy(() => import("./Errors/unknown"));
 
+const SessionStartPage = lazy(() => import("./Sessions/start"));
 const SignOutPage = lazy(() => import("./Sessions/signout"));
+const OAuth2CallbackPage = lazy(() => import("./OAuth2/callback"));
 
 const FeedPage = lazy(() => import("./Feeds/feed"));
 
@@ -42,7 +42,7 @@ const SettingCompatPage = lazy(() => import("./Settings/compat"));
 const App: Component = () => {
     return (
         <Routes>
-            <Route path="/sign-in" component={SessionSignIn} />
+            <Route path="/sign-in" component={SessionStartPage} />
             <Route path="/sign-out" component={SignOutPage} />
             <Route path="/sign-up">
                 <Route path="/" component={SignUpEmailFlow0} />
@@ -77,6 +77,7 @@ const App: Component = () => {
                     <Route path="/:feed" component={FeedPage} />
                 </Route>
             </Route>
+            <Route path="/oauth2-callback" component={OAuth2CallbackPage} />
 
             <Show when={import.meta.env.DEV}>
                 <Route path="/_dev">
