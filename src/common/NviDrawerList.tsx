@@ -157,10 +157,11 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
                                 <ListItemText primary={t("signIn")} />
                             </ListItemButton>
                             <ListItemButton
-                                onClick={() => {
-                                    navigate("/sign-up/");
-                                    props.afterItemClicked({});
-                                }}
+                                component="a"
+                                href={new URL(
+                                    "./sign-up/",
+                                    import.meta.env.VITE_LIGHTSTANDS_USER_PANEL_BASE
+                                ).toString()}
                             >
                                 <ListItemText primary={t("createAccount")} />
                             </ListItemButton>
