@@ -95,5 +95,6 @@
     "sharingTitleWithoutTitle": "Sharing...",
     "sharingUnavailable": "No sharing method available.",
     "persistentStorage": "Persistent storage",
-    "persistentStorageExplain": "Ask the browser do not delete data from this application. This option may be wired on some platforms."
+    "persistentStorageExplain": "Ask the browser do not delete data from this application. This option may be wired on some platforms.",
+    "closeDrawer": "Close Drawer"
 }

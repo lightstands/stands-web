@@ -5,6 +5,7 @@ import {
     ListItemIcon,
     ListItemText,
     Divider,
+    Button,
 } from "@suid/material";
 import { Component, createResource, Show } from "solid-js";
 import { aunwrap, getFeedInfo, PublicFeed } from "lightstands-js";
@@ -28,6 +29,7 @@ const FEED_REGEXP = /\/feeds\/([^\/]*?)\/?(?!.+)$/;
 
 interface NviDrawerListProps {
     afterItemClicked: (ev: {}) => void;
+    hiddenCloseItem?: boolean;
 }
 
 const NviDrawerList: Component<NviDrawerListProps> = (props) => {
@@ -82,6 +84,14 @@ const NviDrawerList: Component<NviDrawerListProps> = (props) => {
     };
     return (
         <>
+            <Button
+                class="show-on-focus"
+                onClick={props.afterItemClicked}
+                variant="contained"
+                sx={{ position: "absolute" }}
+            >
+                {t("closeDrawer", undefined, "Close Drawer")}
+            </Button>
             <List sx={{ width: "100%", height: "100%" }} disablePadding>
                 <Show when={!!currentSession()}>
                     <ListItemButton

@@ -9,6 +9,12 @@
                 "src/platform/i18n.tsx"
             ]
         },
+        "closeDrawer": {
+            "type": "string",
+            "paths": [
+                "src/common/NviDrawerList.tsx"
+            ]
+        },
         "timeline": {
             "type": "string",
             "paths": [
@@ -21,8 +27,8 @@
             "paths": [
                 "src/common/NviDrawerList.tsx",
                 "src/FeedLists/AddFeedDlg.tsx",
-                "src/FeedLists/timeline.tsx",
-                "src/FeedLists/default.tsx"
+                "src/FeedLists/default.tsx",
+                "src/FeedLists/timeline.tsx"
             ]
         },
         "upgradeTipConfirm": {
@@ -252,30 +258,6 @@
                 "src/FeedLists/AddFeedDlg.tsx"
             ]
         },
-        "localDayFormatDateFn": {
-            "type": "string",
-            "paths": [
-                "src/FeedLists/timeline.tsx"
-            ]
-        },
-        "today": {
-            "type": "string",
-            "paths": [
-                "src/FeedLists/timeline.tsx"
-            ]
-        },
-        "yesterday": {
-            "type": "string",
-            "paths": [
-                "src/FeedLists/timeline.tsx"
-            ]
-        },
-        "timelineVisitDefaultList": {
-            "type": "string",
-            "paths": [
-                "src/FeedLists/timeline.tsx"
-            ]
-        },
         "deleteMultiples": {
             "type": "string",
             "paths": [
@@ -336,6 +318,30 @@
                 "src/FeedLists/default.tsx"
             ]
         },
+        "localDayFormatDateFn": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/timeline.tsx"
+            ]
+        },
+        "today": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/timeline.tsx"
+            ]
+        },
+        "yesterday": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/timeline.tsx"
+            ]
+        },
+        "timelineVisitDefaultList": {
+            "type": "string",
+            "paths": [
+                "src/FeedLists/timeline.tsx"
+            ]
+        },
         "compatOptsEntry": {
             "type": "string",
             "paths": [
@@ -371,8 +377,8 @@
             "type": "string",
             "paths": [
                 "src/Settings/compat.tsx",
-                "src/Settings/storage.tsx",
-                "src/Settings/settings.tsx"
+                "src/Settings/settings.tsx",
+                "src/Settings/storage.tsx"
             ]
         },
         "persistentStorage": {
@@ -385,90 +391,6 @@
             "type": "string",
             "paths": [
                 "src/Settings/compat.tsx"
-            ]
-        },
-        "storageOverviewWorking": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
-            ]
-        },
-        "storageOverviewError": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
-            ]
-        },
-        "storageLess1PaUsed": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
-            ]
-        },
-        "storageUsed": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
-            ]
-        },
-        "overviewUnavailable": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
-            ]
-        },
-        "updatedNever": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
-            ]
-        },
-        "updatedAt": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
-            ]
-        },
-        "overview": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
-            ]
-        },
-        "autoDownload": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
-            ]
-        },
-        "metadata": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
-            ]
-        },
-        "syncPeriodInApp": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
-            ]
-        },
-        "syncWorking": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
-            ]
-        },
-        "fullSyncAction": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
-            ]
-        },
-        "dataAutoUpdateTip": {
-            "type": "string",
-            "paths": [
-                "src/Settings/storage.tsx"
             ]
         },
         "signOut": {
@@ -571,6 +493,90 @@
             "type": "string",
             "paths": [
                 "src/Settings/settings.tsx"
+            ]
+        },
+        "storageOverviewWorking": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
+            ]
+        },
+        "storageOverviewError": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
+            ]
+        },
+        "storageLess1PaUsed": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
+            ]
+        },
+        "storageUsed": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
+            ]
+        },
+        "overviewUnavailable": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
+            ]
+        },
+        "updatedNever": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
+            ]
+        },
+        "updatedAt": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
+            ]
+        },
+        "overview": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
+            ]
+        },
+        "autoDownload": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
+            ]
+        },
+        "metadata": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
+            ]
+        },
+        "syncPeriodInApp": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
+            ]
+        },
+        "syncWorking": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
+            ]
+        },
+        "fullSyncAction": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
+            ]
+        },
+        "dataAutoUpdateTip": {
+            "type": "string",
+            "paths": [
+                "src/Settings/storage.tsx"
             ]
         },
         "defaultRegion": {

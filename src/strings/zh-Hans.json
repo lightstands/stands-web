@@ -95,5 +95,6 @@
     "sharingUnavailable": "分享不可用，没有可用的分享方法。",
     "persistentStorage": "持久存储",
     "persistentStorageExplain": "请求浏览器不删除该应用存储的资料。该选项在一些浏览器上表现得比较奇怪。",
-    "goToUserPanel": "管理你的账户"
+    "goToUserPanel": "管理你的账户",
+    "closeDrawer": "关闭抽屉"
 }

@@ -35,7 +35,6 @@ const Cx = createContext<ScaffoldContext>();
 - Block swipe to back gesture on iOS 13.4+, by preventDefault on touchstart event.
 */
 const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
-    let lastScrollTop = 0;
     const [el, setEl] = createSignal<HTMLDivElement>();
     const [drawerOpen, setDrawerOpen] = createSignal(false);
     const size = createElementSize(el);
@@ -115,6 +114,7 @@ const Scaffold: ParentComponent<ScaffoldProps> = (props) => {
                                 ? setDrawerOpen(false)
                                 : undefined
                         }
+                        hiddenCloseItem={state.drawerType === "temporary"}
                     />
                 </Drawer>
                 <Box

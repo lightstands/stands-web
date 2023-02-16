@@ -54,3 +54,20 @@ code {
     inline-size: fit-content;
     max-inline-size: 25ch;
 }
+
+.show-on-focus {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+}
+
+.show-on-focus:focus {
+    z-index: 9999;
+    width: auto;
+    height: auto;
+    clip: auto;
+    margin: auto;
+}
