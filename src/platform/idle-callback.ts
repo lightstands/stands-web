@@ -16,7 +16,9 @@ export function requestIdleCallback(
     } else {
         return window.setTimeout(
             fn,
-            typeof opts?.timeout !== "undefined" ? opts.timeout : 1000
+            typeof opts?.timeout !== "undefined"
+                ? Math.min(opts.timeout, 220)
+                : 220
         );
     }
 }
