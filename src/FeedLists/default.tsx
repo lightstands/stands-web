@@ -157,7 +157,13 @@ const DefaultFeedListPage: Component = () => {
     };
 
     createEffect(() => {
-        if (!showAddFeed()) {
+        if (
+            !(
+                showAddFeed() ||
+                (scaffoldCx.state.drawerType === "temporary" &&
+                    scaffoldCx.state.drawerOpen)
+            )
+        ) {
             document.addEventListener("contextmenu", onBodyContextMenu);
         } else {
             document.removeEventListener("contextmenu", onBodyContextMenu);
