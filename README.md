@@ -27,7 +27,7 @@ Recommend use [pnpm](https://pnpm.io) to manage packages.
 ## Documents
 
 - [Deployment](./docs/deploy-guide.md)
-- Compatibility (TBD)
+- [Compatibility](./docs/compatibility.md)
 
 ## LICENSE
 SPDX: AGPL-3.0-or-later
