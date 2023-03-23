@@ -21,7 +21,9 @@ const UrlOpenConfirm: Component<UrlOpenConfirmProps> = (props) => {
                 </Typography>
             </Toolbar>
             <Box sx={{ marginX: "16px" }}>
-                <Typography>{props.url?.toString()}</Typography>
+                <Typography sx={{ wordWrap: "break-word" }}>
+                    {props.url?.toString()}
+                </Typography>
             </Box>
             <Box
                 class={Style.ButtonGroupEndAligned}
