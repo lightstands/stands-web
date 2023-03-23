@@ -14,12 +14,7 @@ import { ChevronRight as ChevronRightIcon } from "@suid/icons-material";
 import PostListItem from "../common/PostListItem";
 import SharedAppBar from "../common/SharedAppBar";
 import { useCurrentTime, useLiveQuery } from "../common/utils";
-import {
-    makeTimeline,
-    TimelineEntry,
-    TimelinePost,
-    TimelineSeprator,
-} from "../stores/timeline";
+import { makeTimeline } from "../stores/timeline";
 import CommonStyle from "../common/Style.module.css";
 import { useSync } from "../common/synmgr";
 import { useNavigate } from "../common/nav";
@@ -29,17 +24,7 @@ import { useDateFnLocale, useI18n } from "../platform/i18n";
 
 import "../common/patchs/mui-list.css";
 import "./timeline.css";
-
-async function getTimelineArray() {
-    const result: TimelineEntry[][] = [];
-    for (const entry of await makeTimeline()) {
-        if (entry.kind === "sep") {
-            result.push([]);
-        }
-        result[result.length - 1].push(entry);
-    }
-    return result;
-}
+import { openDb } from "../stores/db";
 
 function formatDay(
     day: Date,
@@ -65,7 +50,10 @@ function formatDay(
 const TimelinePage: Component = () => {
     useSync();
     guardSignIn();
-    const timeline = useLiveQuery(getTimelineArray);
+    const timeline = useLiveQuery(async () => {
+        const db = await openDb();
+        return await makeTimeline(db);
+    });
     const currentTime = useCurrentTime(60 * 60 * 1000);
     const navigate = useNavigate();
     const scaffoldCx = useScaffold();
@@ -95,25 +83,20 @@ const TimelinePage: Component = () => {
                     }
                     aria-label={t("timeline")}
                 >
-                    <For each={timeline()}>
-                        {(section, index) => {
-                            const headerData = section[0] as TimelineSeprator;
-                            const posts = section.slice(1) as TimelinePost[];
-                            const preSectionCount = timeline()!
-                                .slice(undefined, index() + 1)
-                                .map((e) => e.length - 1) // exclude the header data
-                                .reduce((p, c) => p + c);
+                    <For each={timeline()?.groups}>
+                        {(section) => {
+                            const preSectionCount = section.startIdx;
                             return (
                                 <>
                                     <ListSubheader>
                                         {formatDay(
-                                            headerData.day,
+                                            section.day,
                                             currentTime(),
                                             formatDayLocalisedOpts()
                                         )}
                                     </ListSubheader>
                                     <Paper>
-                                        <For each={posts}>
+                                        <For each={section.posts}>
                                             {(entry, entryIndex) => {
                                                 const currentIndex =
                                                     preSectionCount +
@@ -126,7 +109,7 @@ const TimelinePage: Component = () => {
                                                         metadata={entry.post}
                                                         divider
                                                         aria-posinset={currentIndex.toString()}
-                                                        aria-setsize={timeline()!.length.toString()}
+                                                        aria-setsize={timeline()?.total.toString()}
                                                     />
                                                 );
                                             }}

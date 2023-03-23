@@ -1,13 +1,7 @@
 import { isSameDay } from "date-fns";
 import { PublicPost } from "lightstands-js";
-import { openDb } from "./db";
+import { MyDatabase } from "./db";
 import { isPostTagged } from "./tags";
-
-export type TimelineSeprator = {
-    kind: "sep";
-    day: Date;
-};
-
 export type TimelinePost = {
     kind: "post";
     post: PublicPost;
@@ -15,15 +9,25 @@ export type TimelinePost = {
     read: boolean;
 };
 
-export type TimelineEntry = TimelineSeprator | TimelinePost;
+export type TimelineGroup = {
+    day: Date;
+    posts: TimelinePost[];
+    startIdx: number;
+};
 
-export async function makeTimeline(): Promise<TimelineEntry[]> {
-    const db = await openDb();
+export type Timeline = {
+    groups: TimelineGroup[];
+    total: number;
+};
+
+export async function makeTimeline(db: MyDatabase): Promise<Timeline> {
     const mostRecentEntry = await db.postmetas
         .orderBy("publishedAt")
         .reverse()
         .first();
-    const result: TimelineEntry[] = [];
+    const result: TimelineGroup[] = [];
+    let currentGroup: TimelineGroup | undefined;
+    let total = 0;
     if (mostRecentEntry) {
         const recentEntries = (
             await db.postmetas
@@ -31,27 +35,36 @@ export async function makeTimeline(): Promise<TimelineEntry[]> {
                 .aboveOrEqual(mostRecentEntry.publishedAt - 60 * 60 * 24 * 14)
                 .sortBy("publishedAt")
         ).reverse();
-        let currentDay: Date | undefined;
+        total = recentEntries.length;
+        let idx = 0;
         for (const entry of recentEntries) {
             const entryPublishedDate = new Date(entry.publishedAt * 1000);
-            if (!currentDay || !isSameDay(currentDay, entryPublishedDate)) {
-                currentDay = entryPublishedDate;
-                result.push({
-                    kind: "sep",
-                    day: currentDay,
-                });
+            if (
+                !currentGroup ||
+                !isSameDay(currentGroup.day, entryPublishedDate)
+            ) {
+                currentGroup = {
+                    day: entryPublishedDate,
+                    posts: [],
+                    startIdx: idx,
+                };
+                result.push(currentGroup);
             }
             const feedUrlBlake3 = (await db.feedmetas.get(entry.feedRef))
                 ?.urlBlake3;
             if (feedUrlBlake3) {
-                result.push({
+                currentGroup.posts.push({
                     kind: "post",
                     post: entry,
                     feedUrlBlake3,
                     read: await isPostTagged(entry.ref, "_read"),
                 });
             }
+            idx++;
         }
     }
-    return result;
+    return {
+        groups: result,
+        total,
+    };
 }
