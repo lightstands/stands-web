@@ -1,0 +1,21 @@
+.dialog {
+    max-width: 560px;
+    max-height: 80%;
+
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@media (width <= 772px) {
+    .dialog {
+        width: 90%;
+    }
+}
+
+@media (width <= 320px) {
+    .dialog {
+        width: 100%;
+    }
+}

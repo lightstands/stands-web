@@ -1,18 +1,23 @@
 import {
     Component,
-    createEffect,
     createSignal,
     createUniqueId,
     JSX,
     onCleanup,
     onMount,
 } from "solid-js";
-import { untrack } from "solid-js/web";
 import { UAParser } from "ua-parser-js";
 
-import { openExternalUrl } from "../platform/open-url";
+import UrlOpenConfirm from "./UrlOpenConfirm";
 
 import innerDocStyle from "./inner-doc.css?inline";
+
+function hasProperty<X extends {}, K extends PropertyKey>(
+    o: X,
+    k: K
+): o is X & Record<K, unknown> {
+    return k in o;
+}
 
 interface SafeDocViewProps {
     srcdoc?: string;
@@ -46,24 +51,16 @@ const SafeDocView: Component<SafeDocViewProps> = (props) => {
 
     const onLinkClick = (ev: MouseEvent) => {
         ev.preventDefault();
-        if (ev.target instanceof HTMLAnchorElement) {
+        if (
+            ev.target &&
+            hasProperty(ev.target, "href") &&
+            typeof ev.target.href === "string"
+        ) {
             setJumpExLink(ev.target.href);
         } else {
             throw new Error("unreachable");
         }
     };
-
-    createEffect(() => {
-        const link = jumpExLink();
-        if (link) {
-            untrack(() => {
-                setJumpExLink(undefined);
-                if (window.confirm(`Open this link?\n\n${link}`)) {
-                    openExternalUrl(link);
-                }
-            });
-        }
-    });
 
     const onDOMLoaded = () => {
         const doc = el.contentDocument!;
@@ -146,21 +143,27 @@ const SafeDocView: Component<SafeDocViewProps> = (props) => {
     });
 
     return (
-        <iframe
-            ref={el!}
-            srcdoc={props.srcdoc}
-            title={props.title}
-            sandbox={/* @once */ sandboxOptions()}
-            referrerpolicy="strict-origin"
-            height={props.height}
-            width={props.width}
-            style={{ border: "0", ...props.style }}
-            id={elId}
-            onLoad={onDocLoaded}
-        >
-            LightStands could not display your content, since your browser does
-            not support.
-        </iframe>
+        <>
+            <UrlOpenConfirm
+                url={jumpExLink()}
+                onClose={() => setJumpExLink()}
+            />
+            <iframe
+                ref={el!}
+                srcdoc={props.srcdoc}
+                title={props.title}
+                sandbox={/* @once */ sandboxOptions()}
+                referrerpolicy="strict-origin"
+                height={props.height}
+                width={props.width}
+                style={{ border: "0", ...props.style }}
+                id={elId}
+                onLoad={onDocLoaded}
+            >
+                LightStands could not display your content, since your browser
+                does not support.
+            </iframe>
+        </>
     );
 };
 
